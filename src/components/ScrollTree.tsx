@@ -143,14 +143,12 @@ export function GrowthTree({
   });
   const p = useSpring(scrollYProgress, { stiffness: 180, damping: 38, mass: 0.7 });
 
-  // Growth is carried by scale, from a seedling standing on the line to the
-  // full crown. A light top-clip on the first stretch keeps the very smallest
-  // state from reading as a shrunken adult tree.
-  const scale = useTransform(p, [0, 1], [0.11, 1]);
-  const clipTop = useTransform(p, [0, 0.34], [34, 0]);
-  const clipPath = useTransform(clipTop, (v) => `inset(${v}% 0% 0% 0%)`);
+  // Growth is carried by scale alone. It starts at roughly the size the third
+  // stage used to reach: any smaller and the crown reads as truncated rather
+  // than young, which is why the earlier top-clip is gone.
+  const scale = useTransform(p, [0, 1], [0.58, 1]);
   const drift = useTransform(p, [0, 1], [1, 0]);
-  const shadow = useTransform(p, [0, 1], [0.12, 1]);
+  const shadow = useTransform(p, [0, 1], [0.58, 1]);
 
   return (
     <div ref={ref} className="relative h-[340vh]">
@@ -164,11 +162,9 @@ export function GrowthTree({
             style={{ scale, transformOrigin: "50% 100%" }}
             className="absolute bottom-[30vh] left-1/2 h-[48vh] -translate-x-1/2"
           >
-            <motion.div style={{ clipPath }} className="h-full">
-              <DriftBridge value={drift}>
-                {(d) => <SlicedTree drift={d} className="h-full" />}
-              </DriftBridge>
-            </motion.div>
+            <DriftBridge value={drift}>
+              {(d) => <SlicedTree drift={d} className="h-full" />}
+            </DriftBridge>
           </motion.div>
 
           {/* cast shadow, so the tree sits on the line instead of floating */}
