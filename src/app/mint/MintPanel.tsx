@@ -119,17 +119,9 @@ export default function MintPanel() {
     setError(null);
     setTxHash(null);
 
-    // No contract yet: keep the walkthrough, and keep saying it is one.
-    if (!isDeployed) {
-      setPhase("confirming");
-      window.setTimeout(() => setPhase("minting"), 900);
-      window.setTimeout(() => {
-        const ids = Array.from({ length: qty }, (_, i) => (i % TREES.length) + 1);
-        setMinted(ids);
-        setPhase("done");
-      }, 2600);
-      return;
-    }
+    // Nothing pretends to mint. Without a contract there is no button to press
+    // in the first place, so reaching here means one exists.
+    if (!isDeployed) return;
 
     try {
       const wallet = await getWalletClient();
@@ -258,9 +250,8 @@ export default function MintPanel() {
                 <div className="flex items-center gap-2">
                   <span className="size-2 rounded-full bg-moss" />
                   <p className="text-[13px] text-ink-2">
-                    {txHash
-                      ? "Minted. The reforestation share left in the same transaction."
-                      : "Simulation complete. No transaction was sent."}
+                    Minted. The reforestation share left in the same
+                    transaction.
                   </p>
                 </div>
                 <h3 className="display mt-4 text-[26px]">
@@ -269,9 +260,10 @@ export default function MintPanel() {
                     : `${minted.length} tokens are yours.`}
                 </h3>
                 <p className="mt-2 max-w-[48ch] text-[13.5px] leading-relaxed text-ink-2">
-                  {txHash
-                    ? `${toPartner} ${PAYMENT.symbol} left for the reforestation reserve in that same transaction, on its way to One Tree Planted. Your trees grow as the collection's total donation crosses each threshold.`
-                    : "A token grows as the collection's total donation crosses each threshold, which is a value anyone can read from the contract."}
+                  {toPartner} {PAYMENT.symbol} left for the reforestation
+                  reserve in that same transaction, on its way to One Tree
+                  Planted. Your trees grow as the collection&apos;s total
+                  donation crosses each threshold.
                 </p>
                 {txHash && (
                   <p className="mt-3">
@@ -324,10 +316,11 @@ export default function MintPanel() {
                     onClick={() => {
                       setPhase("idle");
                       setMinted([]);
+                      setTxHash(null);
                     }}
                     className="inline-flex h-10 items-center rounded-full border border-line px-4 text-[13px] text-ink-2 hover:border-line-2"
                   >
-                    Run it again
+                    Mint another
                   </button>
                 </div>
               </motion.div>
@@ -448,7 +441,7 @@ export default function MintPanel() {
                     <Button
                       size="lg"
                       className="w-full"
-                      disabled={!ack || busy || (isDeployed && !live) || blocked}
+                      disabled={!ack || busy || !isDeployed || !live || blocked}
                       onClick={run}
                     >
                       {phase === "approving"
@@ -457,11 +450,13 @@ export default function MintPanel() {
                           ? "Confirm the mint in your wallet…"
                           : phase === "minting"
                             ? "Minting…"
-                            : slotsLeft === 0
-                              ? `Wallet limit reached`
-                              : shortfall !== null
-                                ? `Not enough ${PAYMENT.symbol}`
-                                : `Mint ${qty} tree${qty > 1 ? "s" : ""}`}
+                            : !isDeployed
+                              ? "The mint is not live"
+                              : slotsLeft === 0
+                                ? "Wallet limit reached"
+                                : shortfall !== null
+                                  ? `Not enough ${PAYMENT.symbol}`
+                                  : `Mint ${qty} tree${qty > 1 ? "s" : ""}`}
                     </Button>
                   ) : (
                     <Button size="lg" className="w-full" onClick={() => setOpen(true)}>
@@ -487,7 +482,7 @@ export default function MintPanel() {
                   {!error && !txHash && (
                     <p className="mt-3 text-center text-[11.5px] text-ink-3">
                       {!isDeployed
-                        ? "Simulation only. No contract is deployed, so no transaction is sent and nothing is charged."
+                        ? `No contract is deployed and ${PAYMENT.symbol} is not launched, so there is nothing to mint yet. This screen is what the mint will do, not a preview that hands out tokens.`
                         : live
                           ? `${toPartner} ${PAYMENT.symbol} of this leaves for the reforestation reserve in the same transaction.`
                           : "The contract is deployed but the mint is not open yet."}
