@@ -13,6 +13,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 
 const SUPPLY = 1000;
+/** Photographed silhouettes available per species. */
+const VARIANTS = 3;
 const SEED = "tree-genesis-forest-v1";
 
 /**
@@ -142,6 +144,8 @@ async function main() {
       number,
       name: `Tree #${String(number).padStart(4, "0")}`,
       species: pair.species,
+      // Which photographed silhouette of that species this token uses.
+      variant: Math.floor(random() * VARIANTS),
       rarity: pair.rarity,
       region: REGION[pair.species],
       forest: weighted(random, TRAITS.Forest),

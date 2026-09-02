@@ -18,7 +18,7 @@ import {
   SPECIES,
   STAGES,
   TREES,
-  speciesImage,
+  tokenImage,
   treeById,
   type StageId,
 } from "@/lib/data";
@@ -133,12 +133,13 @@ export default async function TreePage({
           <div>
             <div className="relative aspect-square overflow-hidden rounded-[24px] bg-paper-2">
               <Image
-                src={speciesImage(tree.species, "lg")}
+                src={tokenImage(tree.id, 4)}
                 alt={`Tree #${tree.tokenId}`}
                 fill
                 priority
                 sizes="(max-width: 1024px) 92vw, 560px"
-                className="object-contain p-8"
+                unoptimized
+                className="object-cover"
               />
               <div className="absolute left-5 top-5 flex gap-2">
                 <RarityBadge rarity={tree.rarity} />

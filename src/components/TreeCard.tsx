@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SPECIES, speciesImage, type Tree } from "@/lib/data";
+import { SPECIES, tokenImage, type Tree } from "@/lib/data";
 import { RarityBadge, StageBadge } from "./ui";
 
 export default function TreeCard({ tree, priority = false }: { tree: Tree; priority?: boolean }) {
@@ -13,12 +13,13 @@ export default function TreeCard({ tree, priority = false }: { tree: Tree; prior
     >
       <div className="relative aspect-square overflow-hidden rounded-[14px] bg-paper-2">
         <Image
-          src={speciesImage(tree.species)}
+          src={tokenImage(tree.id, 4)}
           alt={`Tree #${tree.tokenId} — ${species.name}`}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
           priority={priority}
-          className="scale-[0.94] object-contain p-3 transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-100"
+          unoptimized
+          className="object-cover transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.04]"
         />
         <div className="absolute left-2.5 top-2.5">
           <RarityBadge rarity={tree.rarity} />

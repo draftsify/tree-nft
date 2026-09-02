@@ -252,6 +252,14 @@ export function speciesImage(id: SpeciesId, size: "sm" | "lg" = "sm") {
   return `/species/${id}${size === "lg" ? "-lg" : ""}.webp`;
 }
 
+/**
+ * The composed artwork for a token, at a stage. Same URL the metadata gives a
+ * marketplace, so the site and OpenSea show the same picture.
+ */
+export function tokenImage(tokenNumber: number, stage = 1) {
+  return `/api/nft/${tokenNumber - 1}/${stage}.png`;
+}
+
 /* ── impact ledger ────────────────────────────────────── */
 
 export type Donation = {
@@ -336,7 +344,7 @@ export const MINT = {
     { label: "Operations", pct: 14, note: "Contract audit, gas, hosting and the verification process." },
     { label: "Treasury", pct: 8, note: "Multisig reserve held against future collections." },
   ],
-  metadata: "Arweave, referenced by an on-chain pointer that resolves without our servers.",
+  metadata: "Served from this site and composed on request from eighteen photographed masters. Deterministic per token and stage, so an image is built once and cached.",
 };
 
 export const FAQ: { q: string; a: string }[] = [
