@@ -11,6 +11,8 @@
  * reviewed without the grid implying that tokens exist.
  */
 
+import treesData from "@/../data/trees.json";
+
 export type Rarity = "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary";
 
 export type StageId = "seed" | "sapling" | "young" | "mature";
@@ -176,76 +178,67 @@ export type Tree = {
   priceEth: number;
 };
 
-const FORESTS = ["Highland", "Coastal", "Riverbank", "Ridge", "Valley Floor"];
-const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
-const CANOPIES = ["Dense", "Open", "Layered", "Windswept", "Twin Crown"];
-const TRUNKS = ["Straight", "Leaning", "Split", "Burl", "Hollow"];
-const EFFECTS = ["None", "None", "Morning Light", "Rain", "Frost", "Fireflies"];
-/** Deterministic pseudo-random so server and client render the same grid. */
-function rng(seed: number) {
-  let s = seed * 9301 + 49297;
-  return () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
-}
+/**
+ * The collection, read from `data/trees.json`.
+ *
+ * That file is the one place traits are decided. The artwork route composes
+ * from it, the metadata route serves from it, and the interface reads from it
+ * here, so a token cannot show one species in its attributes and another in
+ * its picture.
+ */
+const source = treesData as {
+  supply: number;
+  trees: {
+    number: number;
+    species: string;
+    rarity: string;
+    region: string;
+    forest: string;
+    season: string;
+    canopy: string;
+    trunk: string;
+    effect: string;
+    genesis: boolean;
+  }[];
+};
 
-function pick<T>(r: () => number, arr: T[]): T {
-  return arr[Math.floor(r() * arr.length)];
-}
-
-function rarityFor(r: number): Rarity {
-  if (r < 0.01) return "Legendary";
-  if (r < 0.05) return "Epic";
-  if (r < 0.15) return "Rare";
-  if (r < 0.4) return "Uncommon";
-  return "Common";
-}
-
-function speciesFor(rarity: Rarity, r: () => number): SpeciesId {
-  if (rarity === "Legendary") return pick(r, ["baobab", "redwood"] as SpeciesId[]);
-  if (rarity === "Epic") return pick(r, ["baobab", "redwood", "sakura"] as SpeciesId[]);
-  if (rarity === "Rare") return pick(r, ["redwood", "sakura", "maple"] as SpeciesId[]);
-  return pick(r, ["oak", "pine", "maple", "sakura"] as SpeciesId[]);
-}
-
-function makeTree(id: number): Tree {
-  const r = rng(id + 1000);
-  const rarity = rarityFor(r());
-  const species = speciesFor(rarity, r);
+function toTree(row: (typeof source.trees)[number]): Tree {
   return {
-    id,
-    tokenId: String(id).padStart(5, "0"),
-    species,
-    rarity,
+    id: row.number,
+    tokenId: String(row.number).padStart(5, "0"),
+    species: row.species as SpeciesId,
+    rarity: row.rarity as Rarity,
     // Nothing has been funded, so nothing has advanced past the first stage.
     stage: "seed",
-    mintedAt: null,
-    forest: pick(r, FORESTS),
-    region: SPECIES.find((s) => s.id === species)!.region,
-    season: pick(r, SEASONS),
-    canopy: pick(r, CANOPIES),
-    trunk: pick(r, TRUNKS),
-    effect: pick(r, EFFECTS),
-    genesis: true,
+    forest: row.forest,
+    region: row.region,
+    season: row.season,
+    canopy: row.canopy,
+    trunk: row.trunk,
+    effect: row.effect,
+    genesis: row.genesis,
     treesFunded: null,
     owner: null,
+    mintedAt: null,
     status: "pending",
     priceEth: MINT_PRICE_ETH,
   };
 }
 
+export const ALL_TREES: Tree[] = source.trees.map(toTree);
+
 /**
- * A preview of the trait system, not a list of minted tokens. Rendered wherever
- * the artwork needs to be shown, always alongside a label saying so.
+ * What the collection page renders. The full thousand exist and are reachable
+ * by id; the grid shows a slice so the page is not sixty megabytes of
+ * on-demand renders.
  */
-export const TREES: Tree[] = Array.from({ length: 48 }, (_, i) => makeTree(i + 1));
+export const TREES: Tree[] = ALL_TREES.slice(0, 60);
 
 /** Sample ids used to lay out the holder screen. Nobody holds anything yet. */
 export const MY_TREE_IDS: number[] = [];
 
-export function treeById(id: number): Tree {
-  return TREES.find((t) => t.id === id) ?? makeTree(id);
+export function treeById(id: number): Tree | null {
+  return ALL_TREES[id - 1] ?? null;
 }
 
 export function speciesImage(id: SpeciesId, size: "sm" | "lg" = "sm") {

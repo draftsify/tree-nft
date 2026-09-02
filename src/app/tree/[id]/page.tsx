@@ -17,12 +17,17 @@ import {
   DONATIONS,
   SPECIES,
   STAGES,
+  ALL_TREES,
   TREES,
   tokenImage,
   treeById,
   type StageId,
 } from "@/lib/data";
 
+/**
+ * Prerender the slice the collection page links to. The rest of the thousand
+ * render on demand rather than lengthening every build.
+ */
 export function generateStaticParams() {
   return TREES.map((t) => ({ id: String(t.id) }));
 }
@@ -33,7 +38,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const tree = TREES.find((t) => t.id === Number(id));
+  const tree = treeById(Number(id));
   if (!tree) return { title: "Not found" };
   const species = SPECIES.find((s) => s.id === tree.species)!;
   return {
@@ -51,9 +56,8 @@ export default async function TreePage({
 }) {
   const { id } = await params;
   const n = Number(id);
-  if (!Number.isInteger(n) || n < 1 || n > TREES.length) notFound();
-
   const tree = treeById(n);
+  if (!tree) notFound();
   const species = SPECIES.find((s) => s.id === tree.species)!;
   const stageIndex = STAGE_ORDER.indexOf(tree.stage);
   /** The batch this token was funded by, once one exists. */
@@ -334,10 +338,10 @@ export default async function TreePage({
             All trees
           </Link>
           <Link
-            href={`/tree/${Math.min(TREES.length, n + 1)}`}
+            href={`/tree/${Math.min(ALL_TREES.length, n + 1)}`}
             className="text-[13px] text-ink-2 underline-offset-4 hover:underline"
           >
-            #{String(Math.min(TREES.length, n + 1)).padStart(5, "0")} →
+            #{String(Math.min(ALL_TREES.length, n + 1)).padStart(5, "0")} →
           </Link>
         </div>
       </Section>
