@@ -29,7 +29,7 @@ afterwards. Check both against their sources now, not later.
 | | Value | Check it against |
 | --- | --- | --- |
 | Reforestation reserve | `DONATION_RECIPIENT` in `.env` | an address you control, ideally a multisig |
-| Treasury | `0x8E301F169637a79E12Ce67f5f1dA1A1Fb4BE7C87` | your own records |
+| Treasury | `0xe3fEd943483d4c5D544b234b8311A4D6A08613e3` | your own records |
 | Payment token | `PAYMENT_TOKEN` in `.env` | the deployed $TREE contract |
 
 **The contract does not pay One Tree Planted directly, and must not be told

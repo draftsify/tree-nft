@@ -22,7 +22,7 @@ async function setup() {
   const [owner, buyer, other, stranger] = await viem.getWalletClients();
 
   const donation = getAddress("0x62233D5483515A79ac06CEcEbac7D399fDF8a99b");
-  const treasury = getAddress("0x8E301F169637a79E12Ce67f5f1dA1A1Fb4BE7C87");
+  const treasury = getAddress("0xe3fEd943483d4c5D544b234b8311A4D6A08613e3");
 
   const token = await viem.deployContract("MockTree", []);
   const tree = await viem.deployContract("Tree", [
