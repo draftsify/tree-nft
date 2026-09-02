@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import Accordion from "@/components/Accordion";
-import Marquee from "@/components/Marquee";
 import { DrawLine, Reveal, ScrollWords } from "@/components/Reveal";
 import { GrowthTree, HeroTree } from "@/components/ScrollTree";
 import TreeCard from "@/components/TreeCard";
@@ -486,26 +485,6 @@ The donation route.
           </Reveal>
         </div>
       </Section>
-
-      {/* ── benefits marquee ────────────────────────────── */}
-      <div className="border-y border-line bg-paper-2 py-5">
-        <Marquee
-          duration={60}
-          items={[
-            "Traits frozen at mint",
-            "Metadata versioned",
-            "Donation hash per batch",
-            "Planting reports attached",
-            "Impact log append-only",
-            "Contract-enforced supply",
-            "Withdrawals through a multisig",
-          ].map((t) => (
-            <span key={t} className="display text-[clamp(1.4rem,3.4vw,2.6rem)] text-ink/70">
-              {t}
-            </span>
-          ))}
-        />
-      </div>
 
       {/* ── faq ─────────────────────────────────────────── */}
       <Section id="faq" className="py-28 md:py-36">

@@ -104,12 +104,45 @@ cd contracts && npm install
 npx hardhat test    # 32 tests over the three contracts
 ```
 
-`scripts/local-*` stand up a local node with a stand-in $TREE and walk one
-wallet through approve then mint, which is the only way to exercise that path
-before the real token exists. `local-open.ts` refuses to run against anything
-but localhost. Setting `NEXT_PUBLIC_LOCAL_WALLET=1` points the front end at an
-injected wallet instead of Privy for the same purpose; it is a local flag and
-must not be set in production.
+### Running a real mint, locally
+
+The one path that cannot be exercised on a real network before $TREE exists is
+approve then mint. This runs it end to end against a local node answering as
+Robinhood Chain. The keys below are the published Hardhat test accounts and are
+not secrets; nothing here touches a real network, and `local-open.ts` refuses
+to run against anything but localhost.
+
+```bash
+cd contracts
+npx hardhat node --chain-id 4663 --port 8546      # leave running
+
+# in a second shell, from contracts/
+export RPC_URL=http://127.0.0.1:8546
+export DEPLOYER_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+node scripts/local-multicall.mjs                  # after every node restart
+npx hardhat run scripts/local-token.ts --network robinhood
+
+export PAYMENT_TOKEN=<the address it prints>
+export DONATION_RECIPIENT=0x1111111111111111111111111111111111111111
+export TREASURY=0xe3fEd943483d4c5D544b234b8311A4D6A08613e3
+export PROVENANCE_HASH=$(cd .. && node scripts/provenance.mjs | grep PROVENANCE_HASH= | cut -d= -f2)
+export CONFIRM_DEPLOY=yes
+npx hardhat run scripts/deploy.ts --network robinhood
+
+export TREE_ADDRESS=<the address it prints>
+export OWNER_KEY=$DEPLOYER_KEY
+export BUYER_KEY=0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
+npx tsx scripts/local-open.ts
+```
+
+Two mints should leave 9,332.4 with the recipient and 6,221.6 with the treasury,
+which is the 60/40 split of 15,554, and `tokenURI` should still be the
+unrevealed URI because the starting index has not been drawn.
+
+To click through it rather than read it, point `.env.local` at those addresses
+and set `NEXT_PUBLIC_LOCAL_WALLET=1`, which swaps Privy for an injected wallet.
+That flag is for local work and must not be set in production.
 
 The tests are worth reading before the contracts. Several assert absences rather
 than behaviour — that no function exists to move the donation recipient, to set
