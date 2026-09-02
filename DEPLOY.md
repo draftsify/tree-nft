@@ -12,8 +12,10 @@ script prints before confirming: two of the addresses can never be changed.
 
 You need:
 
-- A deployment wallet holding a little ETH on Robinhood Chain. Gas for the
-  whole sequence is well under $1; $10 is generous.
+- A deployment wallet holding a little ETH on Robinhood Chain for gas. The
+  whole sequence costs well under $1; $10 is generous.
+- The $TREE token deployed, and its address. The mint is paid in it, and the
+  address is written into an immutable field.
 - The private key of that wallet, in your own shell. **Never paste it into a
   file in this repository, into a commit, or into a chat.**
 
@@ -28,6 +30,7 @@ afterwards. Check both against their sources now, not later.
 | --- | --- | --- |
 | Donation recipient | `0x62233D5483515A79ac06CEcEbac7D399fDF8a99b` | https://onetreeplanted.org/pages/donate-crypto |
 | Treasury | `0x8E301F169637a79E12Ce67f5f1dA1A1Fb4BE7C87` | your own records |
+| Payment token | `PAYMENT_TOKEN` in `.env` | the deployed $TREE contract |
 
 If the donation address on One Tree Planted's page differs by a single
 character, stop. A transfer to the wrong address cannot be undone, and the

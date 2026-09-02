@@ -12,7 +12,7 @@ import {
   Section,
   StatusDot,
 } from "@/components/ui";
-import { MINT, MY_TREE_IDS, SPECIES, STAGES, TREES } from "@/lib/data";
+import { MINT, MY_TREE_IDS, PAYMENT, SPECIES, STAGES, TREES } from "@/lib/data";
 
 export default function MyForest() {
   const { connected, address, setOpen } = useWallet();
@@ -101,11 +101,14 @@ export default function MyForest() {
           </div>
           <div className="border-b border-line py-7 pr-6">
             <div className="num display text-[36px]">
-              {(trees.length * MINT.priceEth).toFixed(4)}
+              {(trees.length * MINT.price).toLocaleString("en-US")}
             </div>
-            <div className="mt-2 text-[13px] font-medium text-ink">ETH contributed</div>
+            <div className="mt-2 text-[13px] font-medium text-ink">
+              {PAYMENT.symbol} contributed
+            </div>
             <p className="mt-1.5 text-[12px] text-ink-3">
-              {(trees.length * MINT.priceEth * 0.6).toFixed(4)} ETH of it routed to reforestation.
+              {(trees.length * MINT.price * 0.6).toLocaleString("en-US")}{" "}
+              {PAYMENT.symbol} of it sent to reforestation.
             </p>
           </div>
           <div className="border-b border-line py-7 pr-6">

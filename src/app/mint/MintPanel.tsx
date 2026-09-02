@@ -4,13 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { formatEther, parseEventLogs } from "viem";
+import { formatUnits, parseEventLogs, type Address } from "viem";
 import { useWallet } from "@/components/WalletProvider";
 import { Button, Eyebrow, Provisional, RarityBadge } from "@/components/ui";
-import { IMPACT, MINT, SPECIES, TREES, speciesImage } from "@/lib/data";
+import { IMPACT, MINT, PAYMENT, SPECIES, TREES, priceLabel, speciesImage } from "@/lib/data";
 import { explorerTx } from "@/lib/chain";
 import {
   CONTRACT_ADDRESS,
+  ERC20_ABI,
   TREE_ABI,
   isDeployed,
   publicClient,
@@ -18,7 +19,7 @@ import {
   type ChainState,
 } from "@/lib/contract";
 
-type Phase = "idle" | "confirming" | "minting" | "done";
+type Phase = "idle" | "approving" | "confirming" | "minting" | "done";
 
 export default function MintPanel() {
   const { connected, setOpen, getWalletClient } = useWallet();
@@ -39,12 +40,14 @@ export default function MintPanel() {
   }, []);
   useEffect(refresh, [refresh]);
 
-  const priceEth = chain ? Number(formatEther(chain.mintPrice)) : MINT.priceEth;
+  const price = chain
+    ? Number(formatUnits(chain.mintPrice, PAYMENT.decimals))
+    : MINT.price;
   const supply = chain?.maxSupply ?? MINT.supply;
   const mintedCount = chain?.totalSupply ?? IMPACT.minted;
   const perWallet = chain?.perWallet ?? MINT.perWallet;
-  const total = (qty * priceEth).toFixed(4);
-  const toPartner = (qty * priceEth * 0.6).toFixed(4);
+  const total = (qty * price).toLocaleString("en-US");
+  const toPartner = Math.round(qty * price * 0.6).toLocaleString("en-US");
   const live = chain !== null && chain.mintOpen;
 
   async function run() {
@@ -64,17 +67,42 @@ export default function MintPanel() {
     }
 
     try {
-      setPhase("confirming");
       const wallet = await getWalletClient();
       if (!wallet) throw new Error("No wallet connected.");
+      if (!chain) throw new Error("Could not read the contract.");
 
-      const value = (chain?.mintPrice ?? BigInt(0)) * BigInt(qty);
+      const owner = wallet.account!.address as Address;
+      const due = chain.mintPrice * BigInt(qty);
+
+      // An ERC-20 mint needs the spender approved first. Approve exactly what
+      // this mint costs rather than an unlimited allowance: a buyer should not
+      // have to leave a standing permission behind to buy one token.
+      const allowance = await publicClient.readContract({
+        address: chain.paymentToken,
+        abi: ERC20_ABI,
+        functionName: "allowance",
+        args: [owner, CONTRACT_ADDRESS as Address],
+      });
+
+      if (allowance < due) {
+        setPhase("approving");
+        const approveHash = await wallet.writeContract({
+          address: chain.paymentToken,
+          abi: ERC20_ABI,
+          functionName: "approve",
+          args: [CONTRACT_ADDRESS as Address, due],
+          chain: wallet.chain,
+          account: wallet.account!,
+        });
+        await publicClient.waitForTransactionReceipt({ hash: approveHash });
+      }
+
+      setPhase("confirming");
       const hash = await wallet.writeContract({
         address: CONTRACT_ADDRESS as `0x${string}`,
         abi: TREE_ABI,
         functionName: "mint",
         args: [BigInt(qty)],
-        value,
         chain: wallet.chain,
         account: wallet.account!,
       });
@@ -106,7 +134,7 @@ export default function MintPanel() {
     }
   }
 
-  const busy = phase === "confirming" || phase === "minting";
+  const busy = phase === "approving" || phase === "confirming" || phase === "minting";
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1.15fr_1fr]">
@@ -162,7 +190,7 @@ export default function MintPanel() {
                 </h3>
                 <p className="mt-2 max-w-[48ch] text-[13.5px] leading-relaxed text-ink-2">
                   {txHash
-                    ? `${toPartner} ETH reached One Tree Planted in that same transaction. Your trees grow as the collection's total donation crosses each threshold.`
+                    ? `${toPartner} ${PAYMENT.symbol} reached One Tree Planted in that same transaction. Your trees grow as the collection's total donation crosses each threshold.`
                     : "A token grows as the collection's total donation crosses each threshold, which is a value anyone can read from the contract."}
                 </p>
                 {txHash && (
@@ -253,9 +281,11 @@ export default function MintPanel() {
                   </div>
                   <div className="text-right">
                     <Eyebrow>Total</Eyebrow>
-                    <p className="num mt-3 text-[26px] leading-none text-ink">{total} ETH</p>
+                    <p className="num mt-3 text-[26px] leading-none text-ink">
+                      {total} {PAYMENT.symbol}
+                    </p>
                     <p className="mt-1.5 text-[12px] text-ink-3">
-                      ≈ ${(qty * MINT.priceUsdApprox).toLocaleString("en-US")}
+                      {priceLabel()} per tree
                     </p>
                   </div>
                 </div>
@@ -263,7 +293,9 @@ export default function MintPanel() {
                 <div className="mt-6 border-t border-line pt-4">
                   <div className="flex items-baseline justify-between gap-3">
                     <span className="text-[13px] text-ink-2">To One Tree Planted</span>
-                    <span className="num text-[13px] text-ink">{toPartner} ETH</span>
+                    <span className="num text-[13px] text-ink">
+                      {toPartner} {PAYMENT.symbol}
+                    </span>
                   </div>
                   <p className="mt-2 text-[11.5px] leading-relaxed text-ink-3">
                     60% of the mint, batched and sent to One Tree Planted&rsquo;s
@@ -294,11 +326,13 @@ export default function MintPanel() {
                       disabled={!ack || busy || (isDeployed && !live)}
                       onClick={run}
                     >
-                      {phase === "confirming"
-                        ? "Confirm in your wallet…"
-                        : phase === "minting"
-                          ? "Minting…"
-                          : `Mint ${qty} tree${qty > 1 ? "s" : ""}`}
+                      {phase === "approving"
+                        ? `Approve ${PAYMENT.symbol} in your wallet…`
+                        : phase === "confirming"
+                          ? "Confirm the mint in your wallet…"
+                          : phase === "minting"
+                            ? "Minting…"
+                            : `Mint ${qty} tree${qty > 1 ? "s" : ""}`}
                     </Button>
                   ) : (
                     <Button size="lg" className="w-full" onClick={() => setOpen(true)}>
@@ -326,7 +360,7 @@ export default function MintPanel() {
                       {!isDeployed
                         ? "Simulation only. No contract is deployed, so no transaction is sent and nothing is charged."
                         : live
-                          ? `${toPartner} ETH of this goes to One Tree Planted in the same transaction.`
+                          ? `${toPartner} ${PAYMENT.symbol} of this goes to One Tree Planted in the same transaction.`
                           : "The contract is deployed but the mint is not open yet."}
                     </p>
                   )}

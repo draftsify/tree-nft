@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import MintPanel from "./MintPanel";
 import { Eyebrow, Section } from "@/components/ui";
-import { MINT } from "@/lib/data";
+import { MINT, priceLabel } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Mint",
@@ -13,8 +13,9 @@ const SPEC: [string, string, string][] = [
   ["Blockchain", MINT.chain, "Fees low enough to write a metadata version at every milestone rather than batching them."],
   ["Standard", MINT.standard, "Read by every major marketplace and indexer, so tokens trade without a venue of ours."],
   ["Supply", MINT.supply.toLocaleString("en-US"), "A hard cap in the contract. No further mints into this collection."],
-  ["Price", `${MINT.priceEth} ETH`, `≈ $${MINT.priceUsdApprox} at the time of writing.`],
+  ["Price", priceLabel(), "Paid in the project's own token. Approve once, then mint."],
   ["Per wallet", String(MINT.perWallet), "Enforced by the contract rather than by the interface."],
+  ["Creator fee", `${MINT.royaltyPct}%`, "On secondary sales, declared through ERC-2981."],
   ["Metadata", "Arweave", MINT.metadata],
 ];
 

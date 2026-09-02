@@ -17,11 +17,12 @@ export const TREE_ABI = [
   {
     type: "function",
     name: "mint",
-    stateMutability: "payable",
+    stateMutability: "nonpayable",
     inputs: [{ name: "quantity", type: "uint256" }],
     outputs: [],
   },
   { type: "function", name: "mintPrice", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
+  { type: "function", name: "paymentToken", stateMutability: "view", inputs: [], outputs: [{ type: "address" }] },
   { type: "function", name: "mintOpen", stateMutability: "view", inputs: [], outputs: [{ type: "bool" }] },
   { type: "function", name: "totalSupply", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
   { type: "function", name: "remaining", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
@@ -59,6 +60,37 @@ export const TREE_ABI = [
   },
 ] as const;
 
+/** Only the two ERC-20 calls the mint flow needs. */
+export const ERC20_ABI = [
+  {
+    type: "function",
+    name: "allowance",
+    stateMutability: "view",
+    inputs: [
+      { name: "owner", type: "address" },
+      { name: "spender", type: "address" },
+    ],
+    outputs: [{ type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "approve",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "spender", type: "address" },
+      { name: "amount", type: "uint256" },
+    ],
+    outputs: [{ type: "bool" }],
+  },
+  {
+    type: "function",
+    name: "balanceOf",
+    stateMutability: "view",
+    inputs: [{ name: "account", type: "address" }],
+    outputs: [{ type: "uint256" }],
+  },
+] as const;
+
 export const publicClient = createPublicClient({
   chain: robinhoodChain,
   transport: http(),
@@ -71,8 +103,9 @@ export type ChainState = {
   remaining: number;
   perWallet: number;
   mintOpen: boolean;
-  /** wei */
+  /** In payment-token units. */
   mintPrice: bigint;
+  paymentToken: Address;
   /** wei */
   totalDonated: bigint;
   /** wei still needed to reach the next stage, 0 at stage 4 */
@@ -92,6 +125,7 @@ export async function readChainState(): Promise<ChainState | null> {
     perWallet,
     mintOpen,
     mintPrice,
+    paymentToken,
     totalDonated,
     toNextStage,
     stage,
@@ -104,6 +138,7 @@ export async function readChainState(): Promise<ChainState | null> {
       { ...contract, functionName: "MAX_PER_WALLET" },
       { ...contract, functionName: "mintOpen" },
       { ...contract, functionName: "mintPrice" },
+      { ...contract, functionName: "paymentToken" },
       { ...contract, functionName: "totalDonated" },
       { ...contract, functionName: "toNextStage" },
       { ...contract, functionName: "stage" },
@@ -117,6 +152,7 @@ export async function readChainState(): Promise<ChainState | null> {
     perWallet: Number(perWallet),
     mintOpen,
     mintPrice,
+    paymentToken: paymentToken as Address,
     totalDonated,
     toNextStage,
     stage: Number(stage),

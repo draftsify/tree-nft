@@ -7,7 +7,7 @@ import {
   Section,
   StatusDot,
 } from "@/components/ui";
-import { DONATIONS, IMPACT, MINT, PARTNER, PROJECTS } from "@/lib/data";
+import { DONATIONS, IMPACT, MINT, PARTNER, PAYMENT, PROJECTS } from "@/lib/data";
 import { robinhoodChain } from "@/lib/chain";
 import ChainImpact from "@/components/ChainImpact";
 
@@ -46,9 +46,9 @@ export default function ImpactPage() {
               s: `Counted from filed partner reports only.`,
             },
             {
-              v: `$${IMPACT.donatedUsd.toLocaleString("en-US")}`,
-              l: "sent to partners",
-              s: `${IMPACT.donatedEth} ETH across ${IMPACT.transactions} on-chain transactions.`,
+              v: IMPACT.donatedTokens.toLocaleString("en-US"),
+              l: `${PAYMENT.symbol} sent to One Tree Planted`,
+              s: `Across ${IMPACT.transactions} on-chain transactions.`,
             },
             {
               v: String(IMPACT.projects),

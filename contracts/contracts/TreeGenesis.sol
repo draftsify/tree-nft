@@ -5,6 +5,8 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC2981} from "@openzeppelin/contracts/token/common/ERC2981.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
@@ -22,6 +24,8 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
  * 2. The split happens in the mint call. There is no treasury holding funds and
  *    no later transfer to trust: one mint produces one transfer to the
  *    recipient, in the same transaction, visible to anyone reading the chain.
+ *    Minting is paid in an ERC-20, so that transfer is an ordinary Transfer
+ *    event any indexer already follows.
  *
  * 3. Stage is a pure function of how much the collection has donated. No owner
  *    call advances a token. Because the donations are anonymous, no partner can
@@ -30,6 +34,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
  */
 contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
     using Strings for uint256;
+    using SafeERC20 for IERC20;
 
     /* ── fixed at deployment ─────────────────────────── */
 
@@ -39,11 +44,15 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
     /// @notice Share of each mint forwarded to the recipient, in basis points.
     uint256 public constant DONATION_BPS = 6_000;
 
+    /// @notice The asset a mint is paid in. Immutable, so the price cannot be
+    ///         quietly redenominated into something else.
+    IERC20 public immutable paymentToken;
+
     /// @notice Where the reforestation share goes. Immutable by design.
-    address payable public immutable donationRecipient;
+    address public immutable donationRecipient;
 
     /// @notice Where the remainder goes. Immutable, so the split cannot drift.
-    address payable public immutable treasury;
+    address public immutable treasury;
 
     /// @notice keccak256 of the ordered metadata manifest, committed before any
     ///         mint so the artwork order cannot be rearranged afterwards.
@@ -96,7 +105,6 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
     error InvalidQuantity();
     error SupplyExhausted();
     error WalletLimitReached();
-    error WrongPayment(uint256 expected, uint256 sent);
     error DonationFailed();
     error TreasuryFailed();
     error MetadataIsFrozen();
@@ -105,8 +113,9 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
     error NothingToSweep();
 
     constructor(
-        address payable donationRecipient_,
-        address payable treasury_,
+        IERC20 paymentToken_,
+        address donationRecipient_,
+        address treasury_,
         uint256 mintPrice_,
         bytes32 provenanceHash_,
         uint256[3] memory stageThresholds_,
@@ -115,9 +124,14 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
         address royaltyReceiver_,
         uint96 royaltyBps_
     ) ERC721("Trees", "TREE") Ownable(msg.sender) {
-        if (donationRecipient_ == address(0) || treasury_ == address(0)) {
+        if (
+            donationRecipient_ == address(0) ||
+            treasury_ == address(0) ||
+            address(paymentToken_) == address(0)
+        ) {
             revert ZeroAddress();
         }
+        paymentToken = paymentToken_;
         donationRecipient = donationRecipient_;
         treasury = treasury_;
         mintPrice = mintPrice_;
@@ -136,11 +150,12 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
     /**
      * @notice Mint `quantity` tokens and forward the reforestation share in the
      *         same transaction.
-     * @dev Payment is exact. Sending more reverts rather than being kept, so a
-     *      mistyped value cannot silently become a donation the sender did not
-     *      intend.
+     * @dev The caller must first approve this contract for `mintPrice * quantity`
+     *      of the payment token. Nothing is ever pulled beyond that amount, and
+     *      the contract never holds it: both transfers go straight from the
+     *      minter to their destination.
      */
-    function mint(uint256 quantity) external payable nonReentrant {
+    function mint(uint256 quantity) external nonReentrant {
         if (!mintOpen) revert MintClosed();
         if (quantity == 0) revert InvalidQuantity();
         if (totalMinted + quantity > MAX_SUPPLY) revert SupplyExhausted();
@@ -149,8 +164,6 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
         }
 
         uint256 due = mintPrice * quantity;
-        if (msg.value != due) revert WrongPayment(due, msg.value);
-
         uint256 firstId = totalMinted + 1;
         totalMinted += quantity;
 
@@ -160,19 +173,16 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
             emit Minted(msg.sender, tokenId, mintPrice);
         }
 
-        // The split, in this transaction. Effects are already recorded above,
-        // and the reentrancy guard covers the external calls below.
+        // The split, in this transaction, straight from the minter. Effects are
+        // recorded above and the reentrancy guard covers the transfers below.
         uint256 donation = (due * DONATION_BPS) / 10_000;
         uint256 remainder = due - donation;
 
         totalDonated += donation;
         emit Donated(donationRecipient, donation, totalDonated);
 
-        (bool donationOk, ) = donationRecipient.call{value: donation}("");
-        if (!donationOk) revert DonationFailed();
-
-        (bool treasuryOk, ) = treasury.call{value: remainder}("");
-        if (!treasuryOk) revert TreasuryFailed();
+        paymentToken.safeTransferFrom(msg.sender, donationRecipient, donation);
+        paymentToken.safeTransferFrom(msg.sender, treasury, remainder);
     }
 
     /* ── stage, derived not decreed ──────────────────── */
@@ -296,20 +306,21 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Forward any ETH that reached this contract outside `mint`.
-     * @dev The mint path leaves no balance behind, so this only ever moves
-     *      stray transfers. It sends them to the donation recipient rather than
-     *      to the treasury, so there is no incentive to route funds here.
+     * @notice Forward any payment token that reached this contract outside
+     *         `mint`.
+     * @dev The mint path moves funds minter-to-destination and leaves no
+     *      balance here, so this only ever moves stray transfers. It sends them
+     *      to the donation recipient rather than the treasury, so there is no
+     *      incentive to route funds through the contract.
      */
     function sweepToDonation() external nonReentrant {
-        uint256 balance = address(this).balance;
+        uint256 balance = paymentToken.balanceOf(address(this));
         if (balance == 0) revert NothingToSweep();
 
         totalDonated += balance;
         emit Donated(donationRecipient, balance, totalDonated);
 
-        (bool ok, ) = donationRecipient.call{value: balance}("");
-        if (!ok) revert DonationFailed();
+        paymentToken.safeTransfer(donationRecipient, balance);
     }
 
     /* ── views used by the interface ─────────────────── */

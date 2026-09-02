@@ -17,6 +17,8 @@ import {
   IMPACT,
   JOURNAL,
   MINT,
+  PAYMENT,
+  priceLabel,
   RARITIES,
   SPECIES,
   STAGES,
@@ -123,8 +125,7 @@ export default function Home() {
                   <span className="text-ink-3"> / {IMPACT.supply.toLocaleString("en-US")}</span>
                 </p>
                 <p className="mt-2.5 text-[12.5px] text-ink-3">
-                  {MINT.priceEth} ETH ≈ ${MINT.priceUsdApprox} · {MINT.chain} ·{" "}
-                  {MINT.standard}
+                  {priceLabel()} · {MINT.chain} · {MINT.standard}
                 </p>
               </Reveal>
 
@@ -406,7 +407,7 @@ export default function Home() {
           <div className="mt-14 grid gap-8 border-t border-paper/10 pt-10 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { v: IMPACT.treesFunded.toLocaleString("en-US"), l: "trees reported planted", s: "Counted only from filed reports" },
-              { v: `$${IMPACT.donatedUsd.toLocaleString("en-US")}`, l: "donated", s: `${IMPACT.donatedEth} ETH across ${IMPACT.transactions} transactions` },
+              { v: `${IMPACT.donatedTokens.toLocaleString("en-US")}`, l: `${PAYMENT.symbol} donated`, s: `across ${IMPACT.transactions} transactions` },
               { v: String(IMPACT.projects), l: "projects", s: `${IMPACT.countries} countries` },
               { v: IMPACT.minted.toLocaleString("en-US"), l: "trees minted", s: `of ${IMPACT.supply.toLocaleString("en-US")} Genesis` },
             ].map((s, i) => (
@@ -579,9 +580,7 @@ export default function Home() {
                 <span>·</span>
                 <span>{MINT.chain}</span>
                 <span>·</span>
-                <span>
-                  {MINT.priceEth} ETH ≈ ${MINT.priceUsdApprox}
-                </span>
+                <span>{priceLabel()}</span>
                 <span>·</span>
                 <span>Max {MINT.perWallet} per wallet</span>
               </div>

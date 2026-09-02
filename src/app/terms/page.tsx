@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Eyebrow, Provisional, Section } from "@/components/ui";
-import { MINT, PARTNER } from "@/lib/data";
+import { MINT, PARTNER, priceLabel } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Terms",
@@ -43,7 +43,7 @@ const CLAUSES: Clause[] = [
     n: "04",
     title: "Minting",
     body: [
-      `The mint price is ${MINT.priceEth} ETH per token, approximately $${MINT.priceUsdApprox} at the time of writing, plus network fees. Supply is capped at ${MINT.supply.toLocaleString("en-US")} tokens and each wallet may mint at most ${MINT.perWallet}. Both caps are enforced by the contract.`,
+      `The mint price is ${priceLabel()} per token, plus network fees, paid in the project's own ERC-20. Supply is capped at ${MINT.supply.toLocaleString("en-US")} tokens and each wallet may mint at most ${MINT.perWallet}. Both caps are enforced by the contract.`,
       "Traits are assigned by the contract at mint and frozen in the same transaction. You cannot select a species, rarity or trait, and nothing can be rerolled or exchanged afterwards.",
       "Transactions on a blockchain are final. Once a mint confirms it cannot be reversed by us, and no refund is available. You are responsible for the accuracy of the address you mint to and for the security of your keys. We cannot recover a lost key, an unrecoverable wallet or a token sent to the wrong address.",
     ],
@@ -73,7 +73,7 @@ const CLAUSES: Clause[] = [
     title: "Resale and royalties",
     body: [
       "You may transfer or resell your token freely on any marketplace that supports the standard. We operate no marketplace and we are not party to any secondary sale.",
-      "A royalty is set on the contract under ERC-2981. Marketplaces choose whether to honour it; we do not enforce payment.",
+      `A creator fee of ${MINT.royaltyPct}% is declared on the contract under ERC-2981. Marketplaces choose whether to honour it; we cannot enforce payment.`,
       "Resale prices are set entirely by buyers and sellers. We make no representation about the price of a token at any time, and the price you receive may be less than you paid, or nothing.",
     ],
   },

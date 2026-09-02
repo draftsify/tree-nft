@@ -51,19 +51,19 @@ export const STAGES: {
     id: "sapling",
     label: "Sapling",
     blurb: "The collection has donated a tenth of what a full sell-out would give. Every token advances together.",
-    unlock: "0.036 ETH donated · about 100 mints",
+    unlock: "2,100,000 $TREE donated · about 100 mints",
   },
   {
     id: "young",
     label: "Young Tree",
     blurb: "Two fifths of the full donation is in. The canopy fills out for every holder at the same moment.",
-    unlock: "0.144 ETH donated · about 400 mints",
+    unlock: "8,400,000 $TREE donated · about 400 mints",
   },
   {
     id: "mature",
     label: "Mature Tree",
     blurb: "Four fifths of the full donation is in. The final form, reached only if the collection nearly sells out.",
-    unlock: "0.288 ETH donated · about 800 mints",
+    unlock: "16,800,000 $TREE donated · about 800 mints",
   },
 ];
 
@@ -153,7 +153,7 @@ export const TRAIT_GROUPS: { name: string; values: string[] }[] = [
 /* ── collection ───────────────────────────────────────── */
 
 /** Mint price, shared by the token rows and the MINT block below. */
-const MINT_PRICE_ETH = 0.0006;
+const MINT_PRICE = 35_000;
 
 export type Tree = {
   id: number;
@@ -175,7 +175,7 @@ export type Tree = {
   /** Null until the token is minted. */
   mintedAt: string | null;
   status: ImpactStatus;
-  priceEth: number;
+  price: number;
 };
 
 /**
@@ -221,7 +221,7 @@ function toTree(row: (typeof source.trees)[number]): Tree {
     owner: null,
     mintedAt: null,
     status: "pending",
-    priceEth: MINT_PRICE_ETH,
+    price: MINT_PRICE,
   };
 }
 
@@ -295,7 +295,7 @@ export const IMPACT = {
   minted: 0,
   supply: 1000,
   donatedUsd: DONATIONS.reduce((a, d) => a + d.amountUsd, 0),
-  donatedEth: 0,
+  donatedTokens: 0,
   treesFunded: DONATIONS.reduce((a, d) => a + (d.treesFunded ?? 0), 0),
   projects: PROJECTS.length,
   countries: new Set(PROJECTS.map((p) => p.country)).size,
@@ -323,11 +323,32 @@ export const PARTNER = {
   relationship: "Public donation address. No agreement, sponsorship or endorsement.",
 };
 
+/**
+ * What a mint is paid in.
+ *
+ * No dollar figure appears anywhere for it: $TREE has no market yet, and
+ * quoting one would be inventing the single number this project has spent its
+ * whole design refusing to invent.
+ */
+export const PAYMENT = {
+  symbol: "$TREE",
+  decimals: 18,
+  /** Filled in once the token is deployed. */
+  address: process.env.NEXT_PUBLIC_PAYMENT_TOKEN ?? "",
+};
+
+/** "35,000 $TREE" */
+export function priceLabel(quantity = 1) {
+  return `${(MINT.price * quantity).toLocaleString("en-US")} ${PAYMENT.symbol}`;
+}
+
 export const MINT = {
   chain: "Robinhood Chain",
   standard: "ERC-721",
-  priceEth: MINT_PRICE_ETH,
-  priceUsdApprox: 2,
+  /** Whole tokens, before decimals. */
+  price: MINT_PRICE,
+  /** Percent of a secondary sale paid to the creator, per ERC-2981. */
+  royaltyPct: 6.7,
   supply: 1000,
   perWallet: 5,
   /** Revenue split. Draft figures — set on-chain before launch. */

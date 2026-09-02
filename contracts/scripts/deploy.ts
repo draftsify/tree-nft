@@ -25,7 +25,9 @@ function address(name: string): `0x${string}` {
 
 async function main() {
   const donationRecipient = address("DONATION_RECIPIENT");
-  const price = parseEther(process.env.MINT_PRICE_ETH ?? "0.0006");
+  // The mint is paid in an ERC-20, so the price is in whole tokens.
+  const paymentToken = address("PAYMENT_TOKEN");
+  const price = parseEther(process.env.MINT_PRICE ?? "35000");
   const provenanceHash = required("PROVENANCE_HASH") as `0x${string}`;
   const unrevealedURI =
     process.env.UNREVEALED_URI ??
@@ -33,7 +35,7 @@ async function main() {
   const contractURI =
     process.env.CONTRACT_URI ?? "https://tree-nft-beta.vercel.app/api/collection";
 
-  const royaltyBps = BigInt(process.env.ROYALTY_BPS ?? "500");
+  const royaltyBps = BigInt(process.env.ROYALTY_BPS ?? "670");
 
   // Stages unlock at 10%, 40% and 80% of the donation a full sell-out produces.
   const MAX_SUPPLY = 1_000n;
@@ -62,18 +64,20 @@ async function main() {
   console.log("  deployer          ", deployer.account.address);
   console.log("  balance           ", formatEther(await publicClient.getBalance({ address: deployer.account.address })), "ETH");
   console.log("\n  IMMUTABLE — check these twice, they can never be changed:");
+  console.log("  payment token     ", paymentToken);
   console.log("  donation recipient", donationRecipient);
   console.log("  treasury          ", treasury);
   console.log("  provenance hash   ", provenanceHash);
-  console.log("\n  mint price        ", formatEther(price), "ETH");
-  console.log("  stage 2 at        ", formatEther(thresholds[0]), "ETH donated");
-  console.log("  stage 3 at        ", formatEther(thresholds[1]), "ETH donated");
-  console.log("  stage 4 at        ", formatEther(thresholds[2]), "ETH donated");
+  console.log("\n  mint price        ", formatEther(price), "tokens");
+  console.log("  stage 2 at        ", formatEther(thresholds[0]), "tokens donated");
+  console.log("  stage 3 at        ", formatEther(thresholds[1]), "tokens donated");
+  console.log("  stage 4 at        ", formatEther(thresholds[2]), "tokens donated");
   console.log("  royalty           ", `${Number(royaltyBps) / 100}% to ${royaltyReceiver}`);
   console.log("  collection        ", contractURI);
   console.log("");
 
   const tree = await viem.deployContract("TreeGenesis", [
+    paymentToken,
     donationRecipient,
     treasury,
     price,

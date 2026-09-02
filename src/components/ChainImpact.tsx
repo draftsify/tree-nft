@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatEther } from "viem";
+import { formatUnits } from "viem";
 import { Eyebrow, Provisional } from "@/components/ui";
 import { explorerToken } from "@/lib/chain";
 import {
@@ -10,7 +10,7 @@ import {
   readChainState,
   type ChainState,
 } from "@/lib/contract";
-import { PARTNER, STAGES } from "@/lib/data";
+import { PARTNER, PAYMENT, STAGES } from "@/lib/data";
 
 /**
  * The live figures, read from the contract rather than from a database.
@@ -79,7 +79,7 @@ export default function ChainImpact() {
               s: `of ${chain.maxSupply.toLocaleString("en-US")}`,
             },
             {
-              v: `${Number(formatEther(chain.totalDonated)).toFixed(4)} ETH`,
+              v: `${Math.round(Number(formatUnits(chain.totalDonated, PAYMENT.decimals))).toLocaleString("en-US")} ${PAYMENT.symbol}`,
               l: `forwarded to ${PARTNER.name}`,
               s: "Sent inside each minting transaction",
             },
@@ -92,7 +92,7 @@ export default function ChainImpact() {
               v:
                 chain.toNextStage === BigInt(0)
                   ? "—"
-                  : `${Number(formatEther(chain.toNextStage)).toFixed(4)} ETH`,
+                  : `${Math.round(Number(formatUnits(chain.toNextStage, PAYMENT.decimals))).toLocaleString("en-US")} ${PAYMENT.symbol}`,
               l: "to the next stage",
               s: chain.toNextStage === BigInt(0) ? "Final stage reached" : "Remaining",
             },
