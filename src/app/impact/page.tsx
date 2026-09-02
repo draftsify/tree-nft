@@ -11,6 +11,7 @@ import { DONATIONS, IMPACT, MINT, PARTNER, PAYMENT, PROJECTS } from "@/lib/data"
 import { robinhoodChain } from "@/lib/chain";
 import ChainImpact from "@/components/ChainImpact";
 import DonationRoute from "@/components/DonationRoute";
+import RouteLedger from "@/components/RouteLedger";
 
 export const metadata: Metadata = {
   title: "Impact",
@@ -87,6 +88,10 @@ export default function ImpactPage() {
       {/* ── the route ───────────────────────────────────── */}
       <Section className="pb-20">
         <DonationRoute />
+      </Section>
+
+      <Section className="pb-20">
+        <RouteLedger />
       </Section>
 
       {/* ── recipient ───────────────────────────────────── */}

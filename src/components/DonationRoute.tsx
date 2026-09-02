@@ -61,17 +61,23 @@ export default function DonationRoute() {
       </div>
 
       <p className="mt-6 max-w-[80ch] text-[12.5px] leading-relaxed text-ink-3">
-        <span className="text-ink-2">Be clear about what this costs.</span>{" "}
-        Steps 01 and 02 need no trust: one is enforced by the contract, the
-        other is a permissionless call whose destination is fixed and which pays
-        the caller nothing. Steps 03 to 05 are us moving money, and between the
-        reserve and {PARTNER.name} you are trusting that we do it. What replaces
-        that trust is not a promise but an audit trail: the reserve address is
-        fixed and public, its balance is readable by anyone, and every swap,
-        bridge and donation is published with its hash so the amount that left
-        can be reconciled against the amount that arrived. A batch stays open on
-        the ledger until its final hash exists. The bridge alone takes about a
-        week, so a batch sitting open is normal rather than a warning sign.
+        <span className="text-ink-2">Be clear about what this costs.</span> No
+        step on this list is a wallet of ours moving money. The split is
+        enforced by the mint contract; the other four are calls anyone can make,
+        that take no destination, and that pay the caller nothing. The
+        reforestation reserve is a contract with no owner, no withdraw and no
+        setter, so the money it holds has exactly one exit and it ends at{" "}
+        {PARTNER.name}.
+        <br />
+        <br />
+        What is left to trust is narrower, and worth stating rather than
+        burying. The reserve is deployed by us, so its code and its immutable
+        destination are what you are checking, once, before you mint — not our
+        conduct afterwards. A sale open to anyone can be sandwiched: the price
+        floor written into the contract bounds how badly, but does not reduce it
+        to zero. And a bridged amount is not a delivered one until the
+        withdrawal is completed on Ethereum, about a week later, so ETH sitting
+        in transit is normal rather than a warning sign.
       </p>
     </div>
   );

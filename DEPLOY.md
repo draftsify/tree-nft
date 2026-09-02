@@ -21,6 +21,30 @@ You need:
 
 Everything else is already recorded in `contracts/.env.example`.
 
+## 0. Deployment order
+
+Three contracts, and the order is forced by what each one needs to know.
+
+1. **Launch $TREE on Pons.** Until the launch graduates there is no pool, and
+   without the pool the reserve cannot be given a pool key.
+2. **Deploy `ReforestationReserve`**, with the pool key read from the launch,
+   the charity address, a price floor and a per-call cap. Everything it holds
+   can only leave through its own `swap()` and `bridge()`, both of which take
+   no destination, so this address is safe to make permanent.
+3. **Deploy `ReserveHarvester`** pointing at the reserve, and set the Pons fee
+   recipient to it. Creator fees then reach the reserve without a key.
+4. **Deploy `Tree`** with `DONATION_RECIPIENT` set to the reserve.
+
+Reversing 2 and 4 is the mistake that cannot be undone: the collection's
+recipient is immutable, so a collection deployed before the reserve exists can
+never be pointed at it.
+
+The route after that needs nobody in particular. `swap()` sells into the pool
+and refuses to trade below the floor; `bridge()` hands the ETH to the Arbitrum
+bridge already addressed to the charity; after the challenge period anyone can
+complete the withdrawal on Ethereum. None of the three takes a destination and
+none of them pays its caller, which is why all three are left open.
+
 ## 1. Confirm the immutable addresses
 
 Two values are written into immutable storage and can never be changed
@@ -28,7 +52,7 @@ afterwards. Check both against their sources now, not later.
 
 | | Value | Check it against |
 | --- | --- | --- |
-| Reforestation reserve | `DONATION_RECIPIENT` in `.env` | an address you control, ideally a multisig |
+| Reforestation reserve | `DONATION_RECIPIENT` in `.env` | the `ReforestationReserve` you deployed at step 2 |
 | Treasury | `0xe3fEd943483d4c5D544b234b8311A4D6A08613e3` | your own records |
 | Payment token | `PAYMENT_TOKEN` in `.env` | the deployed $TREE contract |
 | Deployer, who becomes owner | `0xBa7CF22443f68395564Cb17B5709c118c94E06f1` | `EXPECTED_DEPLOYER`, which aborts on a mismatch |
@@ -146,7 +170,27 @@ Mint exactly one token from a wallet you control. On the transaction, confirm:
 
 Only once that transaction looks right should the mint be announced.
 
-## 8. Wire the fee harvester
+## 8. Check the route end to end before opening the mint
+
+With the reserve deployed and holding a small amount of $TREE, in order:
+
+```
+pendingTokens()   # what is waiting
+swap()            # from any address, including one with no special role
+pendingEth()      # the proceeds, now held by the reserve
+bridge()          # starts the withdrawal, addressed to the charity
+```
+
+`swap()` reverting with `SwapReturnedNothing` means the pool would not trade
+above the floor. That is the floor doing its job, but check the floor is not
+simply set too high, because it cannot be changed afterwards.
+
+Then find the `Bridged` event on the explorer and confirm `destination` is the
+charity. Roughly a week later, complete the withdrawal on Ethereum through the
+Arbitrum bridge portal and confirm the ETH arrived. Only the last step needs
+waiting; everything before it can be checked the same day.
+
+## 9. Wire the fee harvester
 
 Once $TREE is launched on Pons, set the launch's fee recipient to a deployed
 `ReserveHarvester` rather than to a wallet. Its `harvest()` is callable by
@@ -157,7 +201,7 @@ sitting online on a schedule and without anyone having to remember.
 gas; `harvestAll(tokens)` skips whatever is empty rather than reverting, so it
 is safe to call on a fixed timer.
 
-## 9. OpenSea
+## 10. OpenSea
 
 OpenSea indexes Robinhood Chain natively and reads ERC-721 with no submission
 step, so there is nothing to file. After the first mint the collection appears

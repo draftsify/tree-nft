@@ -39,9 +39,10 @@ export default function ChainImpact() {
         </div>
         <p className="mt-4 max-w-[58ch] text-[14px] leading-relaxed text-ink-2">
           Once the collection is deployed this block reads the contract
-          directly: tokens minted, the total it has forwarded to{" "}
-          {PARTNER.name}, and the stage that total has unlocked. Nothing here
-          will come from a database, so there is nothing for us to overstate.
+          directly: tokens minted, the total it has forwarded to the
+          reforestation reserve on its way to {PARTNER.name}, and the stage that
+          total has unlocked. Nothing here will come from a database, so there
+          is nothing for us to overstate.
         </p>
       </div>
     );
@@ -80,8 +81,8 @@ export default function ChainImpact() {
             },
             {
               v: `${Math.round(Number(formatUnits(chain.totalDonated, PAYMENT.decimals))).toLocaleString("en-US")} ${PAYMENT.symbol}`,
-              l: `forwarded to ${PARTNER.name}`,
-              s: "Sent inside each minting transaction",
+              l: "forwarded to the reserve",
+              s: `Sent inside each minting transaction, bound for ${PARTNER.name}`,
             },
             {
               v: stage ? stage.label : "—",

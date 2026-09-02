@@ -12,6 +12,18 @@ export const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ??
 
 export const isDeployed = CONTRACT_ADDRESS !== "";
 
+/**
+ * The reforestation reserve, which is a contract rather than a wallet.
+ *
+ * Everything it does emits an event, so the route on the impact page is read
+ * from the chain rather than typed in by us. Absent the address the page says
+ * so instead of showing an empty ledger as if it meant nothing had happened.
+ */
+export const RESERVE_ADDRESS = (process.env.NEXT_PUBLIC_RESERVE_ADDRESS ??
+  "") as Address | "";
+
+export const hasReserve = RESERVE_ADDRESS !== "";
+
 /** Only what the interface actually calls, so the bundle carries no more. */
 export const TREE_ABI = [
   {
@@ -56,6 +68,34 @@ export const TREE_ABI = [
       { name: "recipient", type: "address", indexed: true },
       { name: "amount", type: "uint256", indexed: false },
       { name: "cumulative", type: "uint256", indexed: false },
+    ],
+  },
+] as const;
+
+/** The reserve's surface: two running totals and the two events. */
+export const RESERVE_ABI = [
+  { type: "function", name: "totalSwapped", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
+  { type: "function", name: "totalBridged", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
+  { type: "function", name: "pendingTokens", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
+  { type: "function", name: "pendingEth", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
+  { type: "function", name: "charity", stateMutability: "view", inputs: [], outputs: [{ type: "address" }] },
+  {
+    type: "event",
+    name: "Swapped",
+    inputs: [
+      { name: "caller", type: "address", indexed: true },
+      { name: "tokensSold", type: "uint256", indexed: false },
+      { name: "ethReceived", type: "uint256", indexed: false },
+    ],
+  },
+  {
+    type: "event",
+    name: "Bridged",
+    inputs: [
+      { name: "caller", type: "address", indexed: true },
+      { name: "amount", type: "uint256", indexed: false },
+      { name: "withdrawalId", type: "uint256", indexed: false },
+      { name: "destination", type: "address", indexed: false },
     ],
   },
 ] as const;
@@ -112,6 +152,80 @@ export type ChainState = {
   toNextStage: bigint;
   stage: number;
 };
+
+/** One step of the route, as the chain recorded it. */
+export type RouteEvent = {
+  kind: "swap" | "bridge";
+  hash: string;
+  block: bigint;
+  /** Tokens sold for a swap, ETH sent for a bridge. */
+  amountIn: bigint;
+  /** ETH received for a swap, undefined for a bridge. */
+  amountOut?: bigint;
+  destination?: Address;
+};
+
+/**
+ * The route, read from the reserve's logs.
+ *
+ * Nothing here is entered by hand. A swap or a bridge appears because it
+ * happened, with the hash of the transaction that did it, and cannot appear
+ * otherwise.
+ */
+export async function readRouteEvents(): Promise<RouteEvent[]> {
+  if (!hasReserve) return [];
+
+  const address = RESERVE_ADDRESS as Address;
+  const [swaps, bridges] = await Promise.all([
+    publicClient.getContractEvents({ address, abi: RESERVE_ABI, eventName: "Swapped", fromBlock: BigInt(0) }),
+    publicClient.getContractEvents({ address, abi: RESERVE_ABI, eventName: "Bridged", fromBlock: BigInt(0) }),
+  ]);
+
+  const rows: RouteEvent[] = [
+    ...swaps.map((l) => ({
+      kind: "swap" as const,
+      hash: l.transactionHash!,
+      block: l.blockNumber!,
+      amountIn: l.args.tokensSold!,
+      amountOut: l.args.ethReceived!,
+    })),
+    ...bridges.map((l) => ({
+      kind: "bridge" as const,
+      hash: l.transactionHash!,
+      block: l.blockNumber!,
+      amountIn: l.args.amount!,
+      destination: l.args.destination as Address,
+    })),
+  ];
+
+  // Newest first, which is how a ledger is read.
+  return rows.sort((a, b) => Number(b.block - a.block));
+}
+
+export type ReserveState = {
+  totalSwapped: bigint;
+  totalBridged: bigint;
+  pendingTokens: bigint;
+  pendingEth: bigint;
+};
+
+export async function readReserveState(): Promise<ReserveState | null> {
+  if (!hasReserve) return null;
+
+  const contract = { address: RESERVE_ADDRESS as Address, abi: RESERVE_ABI } as const;
+  const [totalSwapped, totalBridged, pendingTokens, pendingEth] =
+    await publicClient.multicall({
+      allowFailure: false,
+      contracts: [
+        { ...contract, functionName: "totalSwapped" },
+        { ...contract, functionName: "totalBridged" },
+        { ...contract, functionName: "pendingTokens" },
+        { ...contract, functionName: "pendingEth" },
+      ],
+    });
+
+  return { totalSwapped, totalBridged, pendingTokens, pendingEth };
+}
 
 export async function readChainState(): Promise<ChainState | null> {
   if (!isDeployed) return null;

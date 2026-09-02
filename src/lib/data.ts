@@ -357,20 +357,20 @@ export const DONATION_ROUTE: {
   {
     n: "03",
     title: "$TREE is swapped for ETH",
-    body: "A Pons launch graduates into a Uniswap v4 pool on Robinhood Chain, and that pool is where the reserve is converted. We execute this in batches and publish the swap hash with the amount actually received rather than a quoted value, because a swap of any size moves the price against itself.",
-    trust: "us",
+    body: "The reserve sells into the Uniswap v4 pool the launch graduates to. Anyone can call swap(): it takes no arguments, sells at most a fixed amount per call, and refuses to trade below a price floor written in at deployment. The proceeds stay in the reserve, so triggering it hands the caller nothing.",
+    trust: "permissionless",
   },
   {
     n: "04",
-    title: "ETH is bridged to mainnet",
-    body: "A charity donation address accepts assets it can realise, which means mainnet. Robinhood Chain settles to Ethereum, so a withdrawal goes through the canonical bridge and its challenge period, which takes about a week and needs a second transaction on mainnet to finish. Both hashes are published, and bridging costs are reported rather than absorbed quietly.",
-    trust: "us",
+    title: "ETH is bridged, addressed to the charity",
+    body: "Anyone can call bridge(), which hands the reserve's ETH to the Arbitrum bridge already addressed to the donation address. The destination is not a parameter and cannot be changed. Robinhood Chain settles to Ethereum, so the withdrawal waits out a challenge period of about a week before it can be completed.",
+    trust: "permissionless",
   },
   {
     n: "05",
-    title: "The donation is sent",
-    body: "The bridged ETH goes to the public donation address published by One Tree Planted. That hash closes the batch, and the ledger shows it beside the mint batch it came from so the amount that left can be reconciled against the amount that arrived.",
-    trust: "us",
+    title: "The withdrawal is completed on Ethereum",
+    body: "After the challenge period, anyone can execute the withdrawal on Ethereum and the ETH lands at One Tree Planted's published address. It was addressed there when the bridge call was made, so nobody holds it in between and no wallet of ours is ever on the receiving end.",
+    trust: "permissionless",
   },
 ];
 
