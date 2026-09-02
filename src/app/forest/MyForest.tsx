@@ -69,7 +69,9 @@ export default function MyForest() {
               <span className="num text-[12px] text-ink-3">{address}</span>
             </div>
             <h1 className="display mt-6 text-[clamp(2.4rem,6vw,4.4rem)]">
-              {trees.length} tokens held.
+              {trees.length === 0
+                ? "No tokens in this wallet."
+                : `${trees.length} tokens held.`}
             </h1>
           </div>
           <ButtonLink href="/mint" variant="outline">
@@ -137,11 +139,19 @@ export default function MyForest() {
       {/* ── holdings ────────────────────────────────────── */}
       <Section className="pb-16">
         <h2 className="display text-[clamp(1.6rem,3.4vw,2.4rem)]">Your trees</h2>
-        <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5">
-          {trees.map((t, i) => (
-            <TreeCard key={t.id} tree={t} priority={i < 3} />
-          ))}
-        </div>
+        {trees.length === 0 ? (
+          <p className="mt-4 max-w-[52ch] text-[14px] leading-relaxed text-ink-2">
+            The mint is not open, so no wallet holds a token yet. Once it is,
+            tokens held by the connected address appear here with their current
+            stage and funding record.
+          </p>
+        ) : (
+          <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5">
+            {trees.map((t, i) => (
+              <TreeCard key={t.id} tree={t} priority={i < 3} />
+            ))}
+          </div>
+        )}
       </Section>
 
       {/* ── activity ────────────────────────────────────── */}
@@ -153,6 +163,11 @@ export default function MyForest() {
           </h2>
 
           <div className="mt-8 border-t border-line">
+            {trees.length === 0 && (
+              <p className="py-6 text-[13.5px] text-ink-3">
+                No stage changes recorded.
+              </p>
+            )}
             {trees.map((t) => {
               const species = SPECIES.find((s) => s.id === t.species)!;
               const stage = STAGES.find((s) => s.id === t.stage)!;
@@ -168,7 +183,7 @@ export default function MyForest() {
                     {stage.unlock}.
                   </span>
                   <StatusDot status={t.status} />
-                  <span className="num text-[12px] text-ink-3">{t.mintedAt}</span>
+                  <span className="num text-[12px] text-ink-3">{t.mintedAt ?? "—"}</span>
                 </Link>
               );
             })}

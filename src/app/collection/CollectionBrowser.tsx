@@ -7,14 +7,13 @@ import { Section } from "@/components/ui";
 import {
   RARITIES,
   SPECIES,
-  STAGES,
   type Rarity,
   type SpeciesId,
   type StageId,
   type Tree,
 } from "@/lib/data";
 
-type Sort = "recent" | "id" | "rarity";
+type Sort = "id" | "rarity";
 
 const RARITY_ORDER: Rarity[] = ["Legendary", "Epic", "Rare", "Uncommon", "Common"];
 
@@ -22,7 +21,7 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
   const [species, setSpecies] = useState<SpeciesId | "all">("all");
   const [rarity, setRarity] = useState<Rarity | "all">("all");
   const [stage, setStage] = useState<StageId | "all">("all");
-  const [sort, setSort] = useState<Sort>("recent");
+  const [sort, setSort] = useState<Sort>("id");
 
   const filtered = useMemo(() => {
     const out = trees.filter(
@@ -31,12 +30,11 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
         (rarity === "all" || t.rarity === rarity) &&
         (stage === "all" || t.stage === stage),
     );
-    if (sort === "id") return [...out].sort((a, b) => a.id - b.id);
     if (sort === "rarity")
       return [...out].sort(
         (a, b) => RARITY_ORDER.indexOf(a.rarity) - RARITY_ORDER.indexOf(b.rarity),
       );
-    return [...out].sort((a, b) => b.mintedAt.localeCompare(a.mintedAt));
+    return [...out].sort((a, b) => a.id - b.id);
   }, [trees, species, rarity, stage, sort]);
 
   const active = [species, rarity, stage].filter((v) => v !== "all").length;
@@ -58,13 +56,6 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
             onChange={setRarity}
             options={RARITIES.map((r) => [r.id, r.id] as const)}
           />
-          <FilterRow
-            label="Stage"
-            value={stage}
-            onChange={setStage}
-            options={STAGES.map((s) => [s.id, s.label] as const)}
-          />
-
           <div className="ml-auto flex items-center gap-2">
             {active > 0 && (
               <button
@@ -87,7 +78,6 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
               onChange={(e) => setSort(e.target.value as Sort)}
               className="h-8 rounded-full border border-line bg-white px-3 text-[12.5px] text-ink outline-none"
             >
-              <option value="recent">Recently minted</option>
               <option value="id">Token number</option>
               <option value="rarity">Rarity</option>
             </select>
@@ -96,9 +86,9 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
       </div>
 
       <p className="mb-5 text-[13px] text-ink-3">
-        Showing{" "}
-        <span className="num text-ink">{filtered.length}</span> of{" "}
-        <span className="num">{trees.length}</span> sample tokens
+        Showing <span className="num text-ink">{filtered.length}</span> of{" "}
+        <span className="num">{trees.length}</span> preview compositions. No
+        tokens have been minted.
       </p>
 
       <motion.div layout className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5">

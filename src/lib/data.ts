@@ -1,11 +1,14 @@
 /**
- * Static demo data for the Tree UI.
+ * The application's data layer, currently unbacked.
  *
- * Nothing here touches a chain or a backend — every value is a placeholder so
- * the interface can be reviewed before the contract, the charity agreement and
- * the indexer exist. Anything that would become a public claim (trees funded,
- * donation totals, planting confirmations) is marked `provisional` so the UI
- * can label it honestly instead of stating it as fact.
+ * Nothing here reads a chain or a backend. The ledger is deliberately empty:
+ * no donation has been made, no partner agreement is signed and no token has
+ * been minted, so every figure the interface would otherwise assert is zero.
+ * The shapes are the ones an indexer will fill.
+ *
+ * `TREES` is the exception. It is a preview of the trait system rather than a
+ * record of anything, so every entry sits at the Seed stage: the artwork can be
+ * reviewed without the grid implying that tokens exist.
  */
 
 export type Rarity = "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary";
@@ -156,7 +159,6 @@ export type Tree = {
   species: SpeciesId;
   rarity: Rarity;
   stage: StageId;
-  mintedAt: string;
   forest: string;
   region: string;
   season: string;
@@ -164,9 +166,12 @@ export type Tree = {
   trunk: string;
   effect: string;
   genesis: boolean;
-  /** Trees the mint is expected to fund. Provisional until the partner confirms. */
-  treesFunded: number;
-  owner: string;
+  /** Set once a partner confirms cost per tree. Null until then. */
+  treesFunded: number | null;
+  /** Null until the token is minted. */
+  owner: string | null;
+  /** Null until the token is minted. */
+  mintedAt: string | null;
   status: ImpactStatus;
   priceEth: number;
 };
@@ -176,15 +181,6 @@ const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
 const CANOPIES = ["Dense", "Open", "Layered", "Windswept", "Twin Crown"];
 const TRUNKS = ["Straight", "Leaning", "Split", "Burl", "Hollow"];
 const EFFECTS = ["None", "None", "Morning Light", "Rain", "Frost", "Fireflies"];
-const STATUSES: ImpactStatus[] = ["pending", "funded", "allocated", "planted", "verified"];
-const STAGE_FOR_STATUS: Record<ImpactStatus, StageId> = {
-  pending: "seed",
-  funded: "sapling",
-  allocated: "young",
-  planted: "young",
-  verified: "mature",
-};
-
 /** Deterministic pseudo-random so server and client render the same grid. */
 function rng(seed: number) {
   let s = seed * 9301 + 49297;
@@ -217,15 +213,14 @@ function makeTree(id: number): Tree {
   const r = rng(id + 1000);
   const rarity = rarityFor(r());
   const species = speciesFor(rarity, r);
-  const status = STATUSES[Math.floor(r() * STATUSES.length)];
-  const month = 1 + Math.floor(r() * 9);
   return {
     id,
     tokenId: String(id).padStart(5, "0"),
     species,
     rarity,
-    stage: STAGE_FOR_STATUS[status],
-    mintedAt: `2026-${String(month).padStart(2, "0")}-${String(1 + Math.floor(r() * 27)).padStart(2, "0")}`,
+    // Nothing has been funded, so nothing has advanced past the first stage.
+    stage: "seed",
+    mintedAt: null,
     forest: pick(r, FORESTS),
     region: SPECIES.find((s) => s.id === species)!.region,
     season: pick(r, SEASONS),
@@ -233,17 +228,21 @@ function makeTree(id: number): Tree {
     trunk: pick(r, TRUNKS),
     effect: pick(r, EFFECTS),
     genesis: true,
-    treesFunded: 3,
-    owner: `0x${(id * 7919).toString(16).padStart(4, "0")}…${(id * 31).toString(16).padStart(4, "0")}`,
-    status,
+    treesFunded: null,
+    owner: null,
+    status: "pending",
     priceEth: MINT_PRICE_ETH,
   };
 }
 
+/**
+ * A preview of the trait system, not a list of minted tokens. Rendered wherever
+ * the artwork needs to be shown, always alongside a label saying so.
+ */
 export const TREES: Tree[] = Array.from({ length: 48 }, (_, i) => makeTree(i + 1));
 
-/** The wallet-connected demo user's holdings. */
-export const MY_TREE_IDS = [4, 12, 27];
+/** Sample ids used to lay out the holder screen. Nobody holds anything yet. */
+export const MY_TREE_IDS: number[] = [];
 
 export function treeById(id: number): Tree {
   return TREES.find((t) => t.id === id) ?? makeTree(id);
@@ -271,83 +270,7 @@ export type Donation = {
   verifiedAt: string | null;
 };
 
-export const DONATIONS: Donation[] = [
-  {
-    id: "D-0007",
-    date: "2026-08-18",
-    amountUsd: 1250,
-    asset: "ETH",
-    amountAsset: "0.391 ETH",
-    txHash: "0x7f2a91c4e8b3d5670a1f4e29c8b7d3a5610fe8c24b93d7a5e10c8f42b7d93a561",
-    chain: "Base",
-    partner: "Pending partner agreement",
-    projectId: "PRJ-04",
-    region: "Cascade Range, Oregon",
-    status: "allocated",
-    treesFunded: null,
-    verifiedAt: null,
-  },
-  {
-    id: "D-0006",
-    date: "2026-07-02",
-    amountUsd: 950,
-    asset: "ETH",
-    amountAsset: "0.297 ETH",
-    txHash: "0x3c8d15af92b7e4c60d8a3f57192bce4d7a06f38c15be92d7a4c60f8b3d15ae927",
-    chain: "Base",
-    partner: "Pending partner agreement",
-    projectId: "PRJ-03",
-    region: "Atlantic Forest, Brazil",
-    status: "planted",
-    treesFunded: 910,
-    verifiedAt: "2026-08-24",
-  },
-  {
-    id: "D-0005",
-    date: "2026-05-29",
-    amountUsd: 750,
-    asset: "ETH",
-    amountAsset: "0.234 ETH",
-    txHash: "0x91be47d3a08c5f26e94b17d3a6c085f27e14bd93a6c05f8e274bd13a96c05fe28",
-    chain: "Base",
-    partner: "Pending partner agreement",
-    projectId: "PRJ-02",
-    region: "Scottish Highlands",
-    status: "verified",
-    treesFunded: 720,
-    verifiedAt: "2026-07-11",
-  },
-  {
-    id: "D-0004",
-    date: "2026-04-14",
-    amountUsd: 550,
-    asset: "ETH",
-    amountAsset: "0.172 ETH",
-    txHash: "0x2d6f83b19ac47e50d2f68a3b91c47e60d5f2a89b31c470ed5f2a68b93c17e40d5",
-    chain: "Base",
-    partner: "Pending partner agreement",
-    projectId: "PRJ-01",
-    region: "Kenya Highlands",
-    status: "verified",
-    treesFunded: 535,
-    verifiedAt: "2026-06-02",
-  },
-  {
-    id: "D-0003",
-    date: "2026-03-06",
-    amountUsd: 352,
-    asset: "ETH",
-    amountAsset: "0.110 ETH",
-    txHash: "0x5a1c94e7d2b8036f5a1c94e7d2b8036f5a1c94e7d2b8036f5a1c94e7d2b8036f5",
-    chain: "Base",
-    partner: "Pending partner agreement",
-    projectId: "PRJ-01",
-    region: "Kenya Highlands",
-    status: "verified",
-    treesFunded: 340,
-    verifiedAt: "2026-04-28",
-  },
-];
+export const DONATIONS: Donation[] = [];
 
 export type Project = {
   id: string;
@@ -360,34 +283,29 @@ export type Project = {
   window: string;
 };
 
-export const PROJECTS: Project[] = [
-  { id: "PRJ-01", name: "Kijabe Watershed", country: "Kenya", region: "Kenya Highlands", status: "verified", hectares: 46, species: ["Cedar", "Podo"], window: "Mar–Jun 2026" },
-  { id: "PRJ-02", name: "Caledonian Regrowth", country: "Scotland", region: "Scottish Highlands", status: "verified", hectares: 31, species: ["Scots Pine", "Birch"], window: "Apr–Jul 2026" },
-  { id: "PRJ-03", name: "Serra do Mar Corridor", country: "Brazil", region: "Atlantic Forest", status: "planted", hectares: 58, species: ["Jequitibá", "Ipê"], window: "Jun–Aug 2026" },
-  { id: "PRJ-04", name: "Cascade Burn Recovery", country: "United States", region: "Cascade Range", status: "allocated", hectares: 72, species: ["Douglas Fir", "Ponderosa"], window: "Sep–Nov 2026" },
-  { id: "PRJ-05", name: "Mekong Delta Mangroves", country: "Vietnam", region: "Mekong Delta", status: "pending", hectares: 24, species: ["Rhizophora"], window: "Q4 2026" },
-  { id: "PRJ-06", name: "Sierra Norte Cloud Forest", country: "Mexico", region: "Oaxaca", status: "pending", hectares: 19, species: ["Oyamel", "Oak"], window: "Q1 2027" },
-  { id: "PRJ-07", name: "Białowieża Buffer", country: "Poland", region: "Podlaskie", status: "pending", hectares: 27, species: ["Hornbeam", "Spruce"], window: "Q1 2027" },
-  { id: "PRJ-08", name: "Tasman Gully Restoration", country: "New Zealand", region: "South Island", status: "pending", hectares: 15, species: ["Kahikatea", "Rimu"], window: "Q2 2027" },
-];
+export const PROJECTS: Project[] = [];
 
-/** Roll-ups the /impact page shows. Provisional until the ledger is live. */
+/**
+ * Roll-ups for the impact page. Every figure is derived from the ledger above,
+ * so the page reports zero for as long as the ledger is empty rather than
+ * carrying a number that has to be remembered and cleared later.
+ */
 export const IMPACT = {
-  minted: 1284,
+  minted: 0,
   supply: 10000,
   donatedUsd: DONATIONS.reduce((a, d) => a + d.amountUsd, 0),
-  donatedEth: 1.204,
+  donatedEth: 0,
   treesFunded: DONATIONS.reduce((a, d) => a + (d.treesFunded ?? 0), 0),
   projects: PROJECTS.length,
   countries: new Set(PROJECTS.map((p) => p.country)).size,
   transactions: DONATIONS.length,
-  holders: 611,
+  holders: 0,
 };
 
 /* ── mint economics (draft) ───────────────────────────── */
 
 export const MINT = {
-  chain: "Base",
+  chain: "Robinhood Chain",
   standard: "ERC-721",
   priceEth: 0.0016,
   priceUsdApprox: 5,
@@ -421,8 +339,8 @@ export const FAQ: { q: string; a: string }[] = [
     a: "It stays with the token. Ownership is a single field; the funding record is an append-only log keyed to the token id. The buyer inherits the full history, including the mint, every donation hash and every verification date.",
   },
   {
-    q: "Why Base and ERC-721?",
-    a: "ERC-721 is read by every major marketplace, so tokens can be traded without a venue of our own. Base keeps minting and metadata updates cheap enough to write a new version at each milestone rather than batching updates to reduce cost.",
+    q: "Which chain, and which standard?",
+    a: "The collection is deployed on Robinhood Chain as an ERC-721. The standard is chosen because it is read by every major marketplace and indexer, so tokens can be traded without a venue of our own. Fees on the chain are low enough to write a new metadata version at each milestone rather than batching updates to reduce cost.",
   },
   {
     q: "Can metadata change after minting?",

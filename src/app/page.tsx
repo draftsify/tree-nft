@@ -51,7 +51,7 @@ const STEPS = [
   {
     n: "Step 01",
     title: "Connect",
-    body: "Any EVM wallet on Base. Connecting is read-only and grants no permissions until you approve a transaction.",
+    body: "Any EVM wallet, on Robinhood Chain. Connecting is read-only and grants no permissions until you approve a transaction.",
   },
   {
     n: "Step 02",
@@ -83,11 +83,11 @@ export default function Home() {
         <div className="relative z-[2] flex min-h-[100svh] flex-col px-5 pb-10 pt-32 md:px-8 md:pt-36">
           <div className="mx-auto w-full max-w-[1240px]">
             <Reveal>
-              <Eyebrow>Genesis Forest · 10,000 trees</Eyebrow>
+              <Eyebrow>Digital trees that fund real forests</Eyebrow>
             </Reveal>
             <Reveal delay={0.06}>
-              <h1 className="display mt-6 max-w-[13ch] text-[clamp(2.5rem,6.1vw,5rem)] lg:max-w-[11ch]">
-                Digital trees that fund real forests.
+              <h1 className="display mt-6 max-w-[10ch] text-[clamp(2.7rem,6.6vw,5.4rem)] lg:max-w-[9ch]">
+                Mint a tree, plant a tree.
               </h1>
             </Reveal>
             <Reveal delay={0.14}>
@@ -115,8 +115,8 @@ export default function Home() {
             <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8 lg:w-[62%] lg:max-w-[720px]">
               <Reveal delay={0.3}>
                 <div className="flex items-center gap-2">
-                  <Eyebrow>Minted so far</Eyebrow>
-                  <Provisional />
+                  <Eyebrow>Genesis supply</Eyebrow>
+                  <Provisional>Not yet live</Provisional>
                 </div>
                 <p className="num mt-3 text-[28px] leading-none text-ink">
                   {IMPACT.minted.toLocaleString("en-US")}
@@ -363,13 +363,13 @@ export default function Home() {
       <Section className="py-28 md:py-36">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <Eyebrow>Latest tokens</Eyebrow>
+            <Eyebrow>Preview</Eyebrow>
             <h2 className="display mt-6 text-[clamp(2rem,5vw,3.6rem)]">
-              Recently minted.
+              Sample compositions.
             </h2>
           </div>
           <Link href="/collection" className="text-[13px] text-ink-2 underline-offset-4 hover:underline">
-            View all 10,000 →
+            Browse the preview →
           </Link>
         </div>
 
@@ -419,6 +419,12 @@ export default function Home() {
 
           <Reveal>
             <div className="mt-14 border-t border-paper/10">
+              {DONATIONS.length === 0 && (
+                <p className="py-8 text-[14px] text-paper/45">
+                  No donation has been made. The first batch will appear here
+                  with its transaction hash on the day it settles.
+                </p>
+              )}
               {DONATIONS.slice(0, 3).map((d) => (
                 <div
                   key={d.id}
@@ -438,8 +444,7 @@ export default function Home() {
           </Reveal>
 
           <p className="mt-6 text-[12px] text-paper/35">
-            Sample rows. The partner field reads as pending on every entry
-            because no agreement has been signed.
+            No partnership agreement is signed and no funds have been sent.
           </p>
         </div>
       </section>
@@ -459,7 +464,7 @@ export default function Home() {
               {[
                 {
                   h: "Standard token, any marketplace",
-                  p: "ERC-721 on Base, tradable on OpenSea, Blur, Rarible and any other venue that reads the standard. We operate no marketplace and take no share of resales beyond the on-chain royalty.",
+                  p: "An ERC-721 collection, tradable on any marketplace that indexes the chain. We operate no marketplace of our own and take no share of resales beyond the on-chain royalty.",
                 },
                 {
                   h: "Transfers change one field",

@@ -18,16 +18,16 @@ const NEXT_STATUS: Partial<Record<ImpactStatus, ImpactStatus>> = {
 };
 
 export default function AdminConsole() {
-  const [batch, setBatch] = useState(DONATIONS[0].id);
-  const [project, setProject] = useState(PROJECTS[0].id);
+  const [batch, setBatch] = useState(DONATIONS[0]?.id ?? "");
+  const [project, setProject] = useState(PROJECTS[0]?.id ?? "");
   const [trees, setTrees] = useState("");
   const [date, setDate] = useState("");
   const [evidence, setEvidence] = useState("");
   const [preview, setPreview] = useState(false);
 
-  const selected = DONATIONS.find((d) => d.id === batch)!;
-  const next = NEXT_STATUS[selected.status];
-  const affected = 180 + selected.amountUsd / 24;
+  const selected = DONATIONS.find((d) => d.id === batch);
+  const next = selected ? NEXT_STATUS[selected.status] : undefined;
+  const affected = selected ? Math.round(selected.amountUsd / 3) : 0;
 
   const complete = trees.trim() !== "" && date.trim() !== "" && evidence.trim() !== "";
 
@@ -64,6 +64,9 @@ export default function AdminConsole() {
                   }}
                   className="h-11 w-full rounded-[12px] border border-line bg-paper px-3 text-[14px] text-ink outline-none focus:border-line-2"
                 >
+                  {DONATIONS.length === 0 && (
+                    <option value="">No settled batches</option>
+                  )}
                   {DONATIONS.map((d) => (
                     <option key={d.id} value={d.id}>
                       {d.id} — {d.date} — ${d.amountUsd.toLocaleString("en-US")}
@@ -78,6 +81,9 @@ export default function AdminConsole() {
                   onChange={(e) => setProject(e.target.value)}
                   className="h-11 w-full rounded-[12px] border border-line bg-paper px-3 text-[14px] text-ink outline-none focus:border-line-2"
                 >
+                  {PROJECTS.length === 0 && (
+                    <option value="">No projects registered</option>
+                  )}
                   {PROJECTS.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.id} — {p.name}, {p.country}
@@ -120,18 +126,26 @@ export default function AdminConsole() {
 
               <div className="border-t border-line pt-4">
                 <p className="text-[12.5px] leading-relaxed text-ink-2">
-                  Filing this would advance{" "}
-                  <span className="num text-ink">{Math.round(affected)}</span> tokens
-                  from{" "}
-                  <span className="text-ink">
-                    {STAGES.find((s) => s.id === stageFor(selected.status))?.label}
-                  </span>{" "}
-                  to{" "}
-                  <span className="text-ink">
-                    {next ? STAGES.find((s) => s.id === stageFor(next))?.label : "—"}
-                  </span>
-                  , and write a new metadata version for each of them. The
-                  previous version stays readable.
+                  {selected ? (
+                    <>
+                      Filing this would advance{" "}
+                      <span className="num text-ink">{affected}</span> tokens from{" "}
+                      <span className="text-ink">
+                        {STAGES.find((s) => s.id === stageFor(selected.status))?.label}
+                      </span>{" "}
+                      to{" "}
+                      <span className="text-ink">
+                        {next ? STAGES.find((s) => s.id === stageFor(next))?.label : "—"}
+                      </span>
+                      , and write a new metadata version for each of them. The
+                      previous version stays readable.
+                    </>
+                  ) : (
+                    <>
+                      No donation has settled, so there is nothing to report
+                      against. Batches appear here once a transaction confirms.
+                    </>
+                  )}
                 </p>
               </div>
 
@@ -154,29 +168,37 @@ export default function AdminConsole() {
             <div className="border-t border-line pt-6">
               <div className="flex items-center justify-between gap-3">
                 <Eyebrow>Selected batch</Eyebrow>
-                <StatusDot status={selected.status} />
+                {selected && <StatusDot status={selected.status} />}
               </div>
-              <dl className="mt-5 flex flex-col gap-3 text-[13px]">
-                {[
-                  ["Batch", selected.id],
-                  ["Sent", selected.date],
-                  ["Amount", `$${selected.amountUsd.toLocaleString("en-US")} · ${selected.amountAsset}`],
-                  ["Chain", selected.chain],
-                  ["Region", selected.region],
-                  ["Partner", selected.partner],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between gap-4 border-b border-line pb-3 last:border-0">
-                    <dt className="text-ink-3">{k}</dt>
-                    <dd className="text-right text-ink">{v}</dd>
+              {selected ? (
+                <dl className="mt-5 flex flex-col gap-3 text-[13px]">
+                  {[
+                    ["Batch", selected.id],
+                    ["Sent", selected.date],
+                    ["Amount", `${selected.amountUsd.toLocaleString("en-US")} · ${selected.amountAsset}`],
+                    ["Chain", selected.chain],
+                    ["Region", selected.region],
+                    ["Partner", selected.partner],
+                  ].map(([k, v]) => (
+                    <div key={k} className="flex justify-between gap-4 border-b border-line pb-3 last:border-0">
+                      <dt className="text-ink-3">{k}</dt>
+                      <dd className="text-right text-ink">{v}</dd>
+                    </div>
+                  ))}
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-ink-3">Transaction</dt>
+                    <dd>
+                      <Hash value={selected.txHash} />
+                    </dd>
                   </div>
-                ))}
-                <div className="flex justify-between gap-4">
-                  <dt className="text-ink-3">Transaction</dt>
-                  <dd>
-                    <Hash value={selected.txHash} />
-                  </dd>
-                </div>
-              </dl>
+                </dl>
+              ) : (
+                <p className="mt-4 max-w-[40ch] text-[13px] leading-relaxed text-ink-3">
+                  The donation register is empty. Once the reforestation address
+                  has sent its first batch, it appears here with its transaction
+                  hash and awaits a partner report.
+                </p>
+              )}
             </div>
 
             <div className="flex-1 border-t border-line pt-6">
@@ -189,7 +211,7 @@ export default function AdminConsole() {
   "attributes": {
 `}<span className="text-paper/35">{`    "species": "Sakura",        // frozen
     "rarity": "Rare",           // frozen
-`}</span>{`-   "stage": "${STAGES.find((s) => s.id === stageFor(selected.status))?.label}",
+`}</span>{`-   "stage": "${selected ? STAGES.find((s) => s.id === stageFor(selected.status))?.label : "Seed"}",
 +   "stage": "${next ? STAGES.find((s) => s.id === stageFor(next))?.label : "—"}"
   },
   "impact": {

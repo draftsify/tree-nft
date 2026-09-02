@@ -7,18 +7,15 @@ import {
   Section,
   StatusDot,
 } from "@/components/ui";
-import { DONATIONS, IMPACT, PROJECTS } from "@/lib/data";
+import { DONATIONS, IMPACT, MINT, PROJECTS } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Impact ledger — Tree",
+  title: "Impact",
   description:
     "Every donation, its transaction hash, the project it funded and the date a planting report was filed.",
 };
 
 export default function ImpactPage() {
-  const reported = DONATIONS.filter((d) => d.treesFunded !== null);
-  const unreported = DONATIONS.length - reported.length;
-
   return (
     <>
       <Section className="pb-16 pt-36 md:pt-44">
@@ -44,7 +41,7 @@ export default function ImpactPage() {
             {
               v: IMPACT.treesFunded.toLocaleString("en-US"),
               l: "trees reported planted",
-              s: `From ${reported.length} filed reports. ${unreported} batch${unreported === 1 ? "" : "es"} still outstanding.`,
+              s: `Counted from filed partner reports only.`,
             },
             {
               v: `$${IMPACT.donatedUsd.toLocaleString("en-US")}`,
@@ -54,7 +51,7 @@ export default function ImpactPage() {
             {
               v: String(IMPACT.projects),
               l: "reforestation projects",
-              s: `${IMPACT.countries} countries. Four still awaiting allocation.`,
+              s: `Across ${IMPACT.countries} countries.`,
             },
             {
               v: IMPACT.minted.toLocaleString("en-US"),
@@ -73,8 +70,8 @@ export default function ImpactPage() {
         </div>
 
         <p className="mt-4 text-[12px] leading-relaxed text-ink-3">
-          Every figure on this page is placeholder data. Once the ledger is
-          live these values are read from the contract and the indexer rather
+          The ledger is empty because nothing has been sent yet. Once the mint
+          is live these values are read from the contract and the indexer rather
           than from a file maintained by hand.
         </p>
       </Section>
@@ -90,11 +87,19 @@ export default function ImpactPage() {
               </h2>
             </div>
             <span className="text-[12.5px] text-ink-3">
-              {DONATIONS.length} batches · Base
+              {DONATIONS.length} batches · {MINT.chain}
             </span>
           </div>
 
-          <div className="mt-10 overflow-x-auto">
+          {DONATIONS.length === 0 && (
+            <p className="mt-8 max-w-[56ch] text-[14px] leading-relaxed text-ink-2">
+              No donation has been made. The first batch will appear here with
+              its transaction hash, amount and destination project on the day it
+              settles.
+            </p>
+          )}
+
+          <div hidden={DONATIONS.length === 0} className="mt-10 overflow-x-auto">
             <table className="w-full min-w-[860px] border-collapse text-left">
               <thead>
                 <tr className="border-b border-line-2">
@@ -163,6 +168,13 @@ export default function ImpactPage() {
           </div>
           <span className="text-[12.5px] text-ink-3">{PROJECTS.length} sites</span>
         </div>
+
+        {PROJECTS.length === 0 && (
+          <p className="mt-8 max-w-[56ch] text-[14px] leading-relaxed text-ink-2">
+            No project is registered. Sites are added here once a partner has
+            confirmed the location, area and planting window in writing.
+          </p>
+        )}
 
         <div className="mt-10 grid gap-x-8 gap-y-8 md:grid-cols-2 lg:grid-cols-4">
           {PROJECTS.map((p, i) => (

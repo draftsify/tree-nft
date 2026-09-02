@@ -4,14 +4,14 @@ import { Eyebrow, Section } from "@/components/ui";
 import { MINT } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Mint — Tree",
+  title: "Mint",
   description:
     "Mint a Genesis tree. Traits frozen at mint, reforestation share routed on-chain, no promises about resale.",
 };
 
 const SPEC: [string, string, string][] = [
-  ["Blockchain", MINT.chain, "An Ethereum L2. Low enough in cost to write a metadata version at every milestone."],
-  ["Standard", MINT.standard, "Read by every major marketplace, so tokens trade without a venue of ours."],
+  ["Blockchain", MINT.chain, "Fees low enough to write a metadata version at every milestone rather than batching them."],
+  ["Standard", MINT.standard, "Read by every major marketplace and indexer, so tokens trade without a venue of ours."],
   ["Supply", MINT.supply.toLocaleString("en-US"), "A hard cap in the contract. No further mints into this collection."],
   ["Price", `${MINT.priceEth} ETH`, `≈ $${MINT.priceUsdApprox} at the time of writing.`],
   ["Per wallet", String(MINT.perWallet), "Enforced by the contract rather than by the interface."],

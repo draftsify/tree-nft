@@ -34,11 +34,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const tree = TREES.find((t) => t.id === Number(id));
-  if (!tree) return { title: "Tree not found" };
+  if (!tree) return { title: "Not found" };
   const species = SPECIES.find((s) => s.id === tree.species)!;
   return {
-    title: `Tree #${tree.tokenId} — ${species.name}, ${tree.rarity}`,
-    description: `A ${tree.rarity} ${species.name} from the Genesis Forest, minted ${tree.mintedAt}.`,
+    title: `#${tree.tokenId} · ${tree.rarity} ${species.name}`,
+    description: `A ${tree.rarity} ${species.name} from the Genesis Forest.`,
   };
 }
 
@@ -56,7 +56,8 @@ export default async function TreePage({
   const tree = treeById(n);
   const species = SPECIES.find((s) => s.id === tree.species)!;
   const stageIndex = STAGE_ORDER.indexOf(tree.stage);
-  const donation = DONATIONS[n % DONATIONS.length];
+  /** The batch this token was funded by, once one exists. */
+  const donation = DONATIONS.length ? DONATIONS[n % DONATIONS.length] : null;
 
   const attributes: [string, string][] = [
     ["Species", species.name],
@@ -72,31 +73,43 @@ export default async function TreePage({
   ];
 
   /* The permanent log. Entries are only shown up to the stage actually reached. */
-  const history = [
+  const history: {
+    title: string;
+    date: string | null;
+    body: string;
+    hash: string | null;
+    done: boolean;
+  }[] = [
     {
       title: "Minted",
       date: tree.mintedAt,
-      body: `Token #${tree.tokenId} issued to ${tree.owner}. Traits written and frozen in the same transaction.`,
-      hash: "0x9c41e7ab35d820f6c9a417e3b58d240f7c19ae63b425d80f7c19ae63b425d80f",
-      done: true,
+      body: tree.owner
+        ? `Token #${tree.tokenId} issued to ${tree.owner}. Traits written and frozen in the same transaction.`
+        : "Traits are written and frozen in the same transaction that issues the token.",
+      hash: null,
+      done: tree.mintedAt !== null,
     },
     {
       title: "Reforestation share sent",
-      date: donation.date,
-      body: `${donation.amountAsset} sent to the reforestation partner as part of batch ${donation.id}.`,
-      hash: donation.txHash,
+      date: donation?.date ?? null,
+      body: donation
+        ? `${donation.amountAsset} sent to the reforestation partner as part of batch ${donation.id}.`
+        : "The reforestation share is sent to a partner organisation in a batch, and the transaction hash is published.",
+      hash: donation?.txHash ?? null,
       done: stageIndex >= 1,
     },
     {
       title: "Allocated to a planting site",
-      date: donation.status === "pending" ? null : "2026-07-15",
-      body: `The partner assigned batch ${donation.id} to ${donation.region} and confirmed the planting window.`,
+      date: donation && donation.status !== "pending" ? "2026-07-15" : null,
+      body: donation
+        ? `The partner assigned batch ${donation.id} to ${donation.region} and confirmed the planting window.`
+        : "The partner assigns the batch to a named site and confirms the planting window in writing.",
       hash: null,
       done: stageIndex >= 2,
     },
     {
       title: "Planting report filed",
-      date: donation.verifiedAt,
+      date: donation?.verifiedAt ?? null,
       body: "A dated report with site photographs, attached to the batch and to every token it funded.",
       hash: null,
       done: stageIndex >= 3,
@@ -110,7 +123,7 @@ export default async function TreePage({
           href="/collection"
           className="text-[13px] text-ink-3 underline-offset-4 hover:text-ink hover:underline"
         >
-          ← Genesis Forest
+          ← Collection
         </Link>
       </Section>
 
@@ -173,7 +186,7 @@ export default async function TreePage({
               <h1 className="display text-[clamp(2.4rem,5.4vw,3.8rem)]">
                 Tree #{tree.tokenId}
               </h1>
-              <Provisional />
+              <Provisional>Preview</Provisional>
             </div>
             <p className="mt-3 text-[15px] text-ink-2">
               {tree.rarity} {species.name} · <span className="italic">{species.latin}</span>
@@ -197,7 +210,7 @@ export default async function TreePage({
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <div>
                   <div className="display text-[28px]">
-                    {donation.treesFunded === null ? "—" : "3"}
+                    {tree.treesFunded ?? "—"}
                   </div>
                   <p className="mt-1 text-[12.5px] leading-relaxed text-ink-3">
                     trees attributed to this token. Left blank until a partner
@@ -205,9 +218,13 @@ export default async function TreePage({
                   </p>
                 </div>
                 <div>
-                  <div className="display text-[28px]">{donation.region.split(",")[0]}</div>
+                  <div className="display text-[28px]">
+                    {donation ? donation.region.split(",")[0] : "—"}
+                  </div>
                   <p className="mt-1 text-[12.5px] leading-relaxed text-ink-3">
-                    planting region for batch {donation.id}.
+                    {donation
+                      ? `planting region for batch ${donation.id}.`
+                      : "planting region, assigned once the funding batch is allocated."}
                   </p>
                 </div>
               </div>
@@ -218,7 +235,9 @@ export default async function TreePage({
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <Eyebrow>Current owner</Eyebrow>
-                  <p className="num mt-1.5 text-[14px] text-ink">{tree.owner}</p>
+                  <p className="num mt-1.5 text-[14px] text-ink">
+                    {tree.owner ?? "Unminted"}
+                  </p>
                 </div>
                 <div className="text-right">
                   <Eyebrow>Last sale</Eyebrow>
