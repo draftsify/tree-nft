@@ -11,23 +11,14 @@ export const metadata: Metadata = {
 
 const UPDATED = "2 September 2026";
 
-/**
- * The operating entity is not incorporated yet, so anything that has to name a
- * company or a jurisdiction is left as a marked placeholder rather than filled
- * with something plausible. A reader can see exactly which clauses are unsettled.
- */
-const ENTITY = "[Operating entity, to be incorporated]";
-const JURISDICTION = "[Jurisdiction, to be confirmed]";
-const CONTACT = "[Contact address, to be published]";
-
 type Clause = { n: string; title: string; body: string[] };
 
 const CLAUSES: Clause[] = [
   {
     n: "01",
-    title: "Who these terms are between",
+    title: "Scope",
     body: [
-      `These terms govern your use of this website and, once the mint is live, the minting and holding of a Tree token. They are between you and ${ENTITY}, referred to below as "we" or "us".`,
+      "These terms govern your use of this website and, once the mint is live, the minting and holding of a Tree token. The project is run pseudonymously; the contract and the addresses it pays out to are the accountable record, not a company name.",
       "By connecting a wallet or minting a token you accept these terms. If you do not accept them, do not mint.",
     ],
   },
@@ -70,10 +61,11 @@ const CLAUSES: Clause[] = [
     n: "06",
     title: "Reforestation donations",
     body: [
-      `We intend to send ${MINT.split[0].pct}% of gross mint revenue to the public crypto donation address published by ${PARTNER.name} (${PARTNER.url}), a reforestation non-profit. Donations are batched and each transaction hash is published on the impact page.`,
-      `${PARTNER.name} is not a partner, sponsor or affiliate of this project. It has not reviewed, approved or endorsed us, and it receives nothing from us other than the donation. Accepting a public donation does not create any relationship between the organisation and you, and it gives you no rights against the organisation.`,
-      "We do not state how many trees a mint funds, and we do not warrant that any specific number of trees will be planted, will survive, or will sequester any amount of carbon. A tree count appears against a token only where the recipient organisation has confirmed it in writing.",
-      "If the recipient organisation ceases to accept donations, changes its address, or we are otherwise unable to donate as described, we will publish the change and name the replacement recipient before sending further funds.",
+      `We send ${MINT.split[0].pct}% of gross mint revenue to the public crypto donation address published by ${PARTNER.name} (${PARTNER.url}), a reforestation non-profit. Donations are batched, and each transaction hash is published on the impact page on the day it settles.`,
+      "These are anonymous donations to a public address, which anyone may make. There is no agreement, and none is required for a donation to be valid. Nothing needs to be taken on trust: the sending address, the receiving address, the amount and the timestamp are all on-chain and can be checked by anyone, at any time, without our involvement.",
+      `${PARTNER.name} is not a partner, sponsor or affiliate of this project. It has not reviewed, approved or endorsed us, and it receives nothing from us other than the donation itself. Its acceptance of public donations creates no relationship between the organisation and you, and gives you no rights against it.`,
+      "We do not state how many trees a mint funds, and we do not warrant that any number of trees will be planted, will survive, or will sequester any amount of carbon. Because the donations are anonymous, no report attributing planting to them should be expected, and a tree count will appear against a token only if one is ever confirmed.",
+      "If the recipient stops accepting donations or changes its address, we will publish the change and name the replacement before sending further funds.",
     ],
   },
   {
@@ -132,15 +124,11 @@ const CLAUSES: Clause[] = [
   },
   {
     n: "13",
-    title: "Governing law",
+    title: "How to verify any of this",
     body: [
-      `These terms are governed by the laws of ${JURISDICTION}, and the courts of that jurisdiction have exclusive jurisdiction over any dispute, subject to any mandatory consumer protection that applies where you live.`,
+      "Every claim on this site that concerns money is settled on-chain and can be checked without asking us. The contract address, the address holding the reforestation share, and the recipient address are all published on the impact page, and the block explorer will show you every transfer between them.",
+      "Where a statement cannot be verified that way, this site does not make it. That is why no tree count is printed and why the impact figures read zero until the corresponding transaction exists.",
     ],
-  },
-  {
-    n: "14",
-    title: "Contact",
-    body: [`Questions about these terms: ${CONTACT}.`],
   },
 ];
 
@@ -150,16 +138,16 @@ export default function TermsPage() {
       <Section className="pb-14 pt-36 md:pt-44">
         <div className="flex flex-wrap items-center gap-3">
           <Eyebrow>Terms and conditions</Eyebrow>
-          <Provisional>Draft, not yet reviewed</Provisional>
+          <Provisional>Draft</Provisional>
         </div>
         <h1 className="display mt-6 max-w-[16ch] text-[clamp(2.4rem,6vw,4.4rem)]">
           What you get, and what you do not.
         </h1>
         <p className="mt-6 max-w-[60ch] text-[15px] leading-relaxed text-ink-2">
-          Last updated {UPDATED}. These terms are published in draft ahead of the
-          mint so that the position is legible before anything is deployed. They
-          have not been reviewed by a lawyer, and the clauses that need an
-          incorporated entity are marked as placeholders rather than filled in.
+          Last updated {UPDATED}. Published ahead of the mint so the position is
+          legible before anything is deployed. The project is run pseudonymously
+          and settles in public: where a clause makes a claim about money, the
+          transaction backing it is on-chain and can be checked without us.
         </p>
       </Section>
 
