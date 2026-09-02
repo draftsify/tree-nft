@@ -304,6 +304,22 @@ export const IMPACT = {
 
 /* ── mint economics (draft) ───────────────────────────── */
 
+/**
+ * Where the reforestation share goes.
+ *
+ * One Tree Planted publishes a crypto donation address and accepts donations
+ * from anyone. That is the relationship: we send to a public address. It is not
+ * a partnership, a sponsorship or an endorsement, and nothing here should be
+ * read as One Tree Planted having reviewed or approved this project.
+ */
+export const PARTNER = {
+  name: "One Tree Planted",
+  url: "https://onetreeplanted.org",
+  /** Verify against onetreeplanted.org before any transfer. */
+  address: "0x62233D5483515A79ac06CEcEbac7D399fDF8a99b",
+  relationship: "Public donation address. No agreement, sponsorship or endorsement.",
+};
+
 export const MINT = {
   chain: "Robinhood Chain",
   standard: "ERC-721",
@@ -313,7 +329,7 @@ export const MINT = {
   perWallet: 5,
   /** Revenue split. Draft figures — set on-chain before launch. */
   split: [
-    { label: "Reforestation partner", pct: 60, note: "Sent to partner organisations in batches. Each transaction hash is published." },
+    { label: "Reforestation", pct: 60, note: "Sent in batches to One Tree Planted's public donation address. Each transaction hash is published." },
     { label: "Artwork & metadata", pct: 18, note: "Artwork production, trait generation and permanent metadata storage." },
     { label: "Operations", pct: 14, note: "Contract audit, gas, hosting and the verification process." },
     { label: "Treasury", pct: 8, note: "Multisig reserve held against future collections." },
@@ -324,7 +340,7 @@ export const MINT = {
 export const FAQ: { q: string; a: string }[] = [
   {
     q: "How many trees does one mint fund?",
-    a: "We have not set that figure. It will be published once a partner organisation confirms cost per tree in writing, and it will then be recorded in each token's metadata. What is already fixed is the mechanism: 60% of every mint is sent to reforestation partners, and each donation transaction hash is published on the impact page.",
+    a: "We have not set that figure. One Tree Planted publishes a cost per tree for its own programmes, but we will not attribute a number to a token until the organisation confirms in writing what our donations funded. What is already fixed is the mechanism: 60% of every mint is sent to One Tree Planted's public donation address, and each transaction hash is published on the impact page.",
   },
   {
     q: "Is a Tree token an investment?",
@@ -347,12 +363,16 @@ export const FAQ: { q: string; a: string }[] = [
     a: "Stage and impact fields are updatable by design, since that is how the evolution system works. Species, rarity and traits are frozen at mint, and the freeze is enforced by the contract rather than by policy. Every update is versioned, so the state of a token at any earlier point can be read back.",
   },
   {
+    q: "Is One Tree Planted a partner in this project?",
+    a: "No. One Tree Planted publishes a crypto donation address that anyone can send to, and that is what we do with the reforestation share. The organisation has not reviewed, approved or endorsed this project, and receives nothing from us beyond the donation itself. If that changes, it will be stated here with the agreement dated.",
+  },
+  {
     q: "What is the Genesis Forest?",
     a: "The first collection: 10,000 numbered tokens, each carrying a Genesis marker. It funds the first planting seasons and establishes the standard later collections will follow. The marker records that a token came from the first collection and carries no entitlement.",
   },
   {
     q: "What is the current status of the project?",
-    a: "The interface is complete and is what you are looking at. No contract is deployed, no mint is live, no donation has been made and no partnership agreement is signed. Every figure shown on this site is placeholder data.",
+    a: "The interface is complete and is what you are looking at. No contract is deployed, no mint is live and no donation has been made. Donations will go to One Tree Planted's public donation address; no agreement with the organisation exists, and none is needed to donate to it.",
   },
 ];
 

@@ -169,13 +169,14 @@ export default function MintPanel() {
 
                 <div className="mt-6 border-t border-line pt-4">
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-[13px] text-ink-2">To the reforestation partner</span>
+                    <span className="text-[13px] text-ink-2">To One Tree Planted</span>
                     <span className="num text-[13px] text-ink">{toPartner} ETH</span>
                   </div>
                   <p className="mt-2 text-[11.5px] leading-relaxed text-ink-3">
-                    60% of the mint, batched and sent as a single transaction
-                    whose hash is published on the impact page. The number of
-                    trees this funds is not yet established.
+                    60% of the mint, batched and sent to One Tree Planted&rsquo;s
+                    public donation address. The transaction hash is published on
+                    the impact page. The number of trees this funds is not yet
+                    established.
                   </p>
                 </div>
 

@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "Tree — %s",
   },
   description:
-    "Collectible digital trees. A fixed share of every mint is sent to reforestation partners, and each donation is published with its transaction hash.",
+    "Collectible digital trees. 60% of every mint is sent to One Tree Planted, and each donation is published with its transaction hash.",
   openGraph: {
     title: "Tree — collectible trees that fund reforestation",
     description:

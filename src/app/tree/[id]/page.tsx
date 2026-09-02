@@ -93,8 +93,8 @@ export default async function TreePage({
       title: "Reforestation share sent",
       date: donation?.date ?? null,
       body: donation
-        ? `${donation.amountAsset} sent to the reforestation partner as part of batch ${donation.id}.`
-        : "The reforestation share is sent to a partner organisation in a batch, and the transaction hash is published.",
+        ? `${donation.amountAsset} sent to One Tree Planted as part of batch ${donation.id}.`
+        : "The reforestation share is sent to One Tree Planted in a batch, and the transaction hash is published.",
       hash: donation?.txHash ?? null,
       done: stageIndex >= 1,
     },

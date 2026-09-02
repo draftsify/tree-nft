@@ -7,7 +7,8 @@ import {
   Section,
   StatusDot,
 } from "@/components/ui";
-import { DONATIONS, IMPACT, MINT, PROJECTS } from "@/lib/data";
+import { DONATIONS, IMPACT, MINT, PARTNER, PROJECTS } from "@/lib/data";
+import { robinhoodChain } from "@/lib/chain";
 
 export const metadata: Metadata = {
   title: "Impact",
@@ -74,6 +75,72 @@ export default function ImpactPage() {
           is live these values are read from the contract and the indexer rather
           than from a file maintained by hand.
         </p>
+      </Section>
+
+      {/* ── recipient ───────────────────────────────────── */}
+      <Section className="pb-20">
+        <div className="grid gap-10 border-t border-line pt-10 md:grid-cols-[1fr_1.4fr]">
+          <div>
+            <Eyebrow>Recipient</Eyebrow>
+            <h2 className="display mt-5 max-w-[14ch] text-[clamp(1.6rem,3.4vw,2.4rem)]">
+              Every donation goes to one address.
+            </h2>
+          </div>
+          <div>
+            <p className="max-w-[58ch] text-[14.5px] leading-relaxed text-ink-2">
+              The reforestation share is sent to the public crypto donation
+              address published by{" "}
+              <a
+                href={PARTNER.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ink underline underline-offset-4 hover:text-moss"
+              >
+                One Tree Planted
+              </a>
+              , a US 501(c)(3) reforestation non-profit. Sending to a public
+              donation address is the whole of the relationship: the
+              organisation has not reviewed, approved or endorsed this project,
+              and receives nothing from us other than the donation.
+            </p>
+
+            <dl className="mt-8 border-t border-line">
+              {[
+                ["Organisation", PARTNER.name],
+                ["Website", PARTNER.url.replace("https://", "")],
+                ["Relationship", PARTNER.relationship],
+              ].map(([k, v]) => (
+                <div
+                  key={k}
+                  className="flex flex-wrap justify-between gap-x-6 gap-y-1 border-b border-line py-3.5 text-[13px]"
+                >
+                  <dt className="text-ink-3">{k}</dt>
+                  <dd className="text-right text-ink">{v}</dd>
+                </div>
+              ))}
+              <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-line py-3.5 text-[13px]">
+                <dt className="text-ink-3">Donation address</dt>
+                <dd>
+                  <a
+                    href={`${robinhoodChain.blockExplorers!.default.url}/address/${PARTNER.address}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mono break-all text-[12px] text-ink underline underline-offset-4 hover:text-moss"
+                  >
+                    {PARTNER.address}
+                  </a>
+                </dd>
+              </div>
+            </dl>
+
+            <p className="mt-4 max-w-[62ch] text-[12px] leading-relaxed text-ink-3">
+              Check this address against onetreeplanted.org before relying on
+              it. Transfers on-chain cannot be reversed, and an address printed
+              on a website is not a substitute for the organisation&rsquo;s own
+              published one.
+            </p>
+          </div>
+        </div>
       </Section>
 
       {/* ── donations ───────────────────────────────────── */}

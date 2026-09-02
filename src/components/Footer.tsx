@@ -26,7 +26,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
     links: [
       { label: "What this is", href: "/#thesis" },
       { label: "Questions", href: "/#faq" },
-      { label: "Journal", href: "/#journal" },
+      { label: "Terms", href: "/terms" },
     ],
   },
 ];
@@ -109,8 +109,10 @@ export default function Footer() {
           <p className="max-w-[92ch] text-[12px] leading-relaxed text-paper/40">
             <span className="text-paper/70">Important.</span> Tree is an
             interface prototype. No smart contract is deployed, no mint is live,
-            no donation has been made and no reforestation partnership is
-            signed. Every figure shown on this site, including trees funded,
+            and no donation has been made. One Tree Planted is the intended
+            recipient of the reforestation share and publishes the address we
+            would send to; it has not reviewed or endorsed this project. Every
+            figure shown on this site, including trees funded,
             amounts donated, transaction hashes and holder counts, is
             placeholder data. A Tree token is a collectible. It is not a
             security, a share or an investment: it pays no yield, confers no

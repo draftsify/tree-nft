@@ -68,7 +68,7 @@ export default function MintPage() {
             <div>
               <h3 className="text-[15px] font-medium text-ink">Still open</h3>
               <ul className="mt-3 flex flex-col gap-2.5 text-[13.5px] leading-relaxed text-ink-2">
-                <li>— No partnership agreement is signed, so cost per tree is not yet known.</li>
+                <li>— One Tree Planted has not confirmed what our donations funded, so cost per tree is not yet attributed.</li>
                 <li>— Jurisdiction and disclosure requirements for the donation flow are under review.</li>
                 <li>— The royalty rate on secondary sales is not fixed.</li>
                 <li>— The verification process requires a second, independent reader of planting reports.</li>

@@ -33,7 +33,7 @@ const PRINCIPLES = [
   {
     n: "02",
     title: "Published donations",
-    body: "The reforestation share of each mint is sent to partner organisations in batches. Every donation transaction hash is published on the impact page on the day it settles, alongside the project it was allocated to.",
+    body: "The reforestation share of each mint is sent in batches to One Tree Planted's public donation address. Every transaction hash is published on the impact page on the day it settles.",
   },
   {
     n: "03",
@@ -92,9 +92,9 @@ export default function Home() {
             </Reveal>
             <Reveal delay={0.14}>
               <p className="mt-6 max-w-[42ch] text-[15px] leading-relaxed text-ink-2 md:text-[16px]">
-                Each token is a unique digital tree. A fixed share of every
-                mint is sent to reforestation partners, and every donation is
-                published with its transaction hash.
+                Each token is a unique digital tree. 60% of every mint is sent
+                to One Tree Planted, and every donation is published with its
+                transaction hash.
               </p>
             </Reveal>
             <Reveal delay={0.22}>
@@ -444,7 +444,7 @@ export default function Home() {
           </Reveal>
 
           <p className="mt-6 text-[12px] text-paper/35">
-            No partnership agreement is signed and no funds have been sent.
+            No funds have been sent yet.
           </p>
         </div>
       </section>
