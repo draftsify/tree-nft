@@ -28,7 +28,7 @@ const PRINCIPLES = [
   {
     n: "01",
     title: "Generative artwork",
-    body: "Every token is composed from one photographed glass sculpture: species, canopy, trunk, season and light are drawn from a fixed trait system at mint. Because the artwork is generated rather than hand-assigned, each token's traits can be checked against the contract.",
+    body: "Every token is composed from photographed specimen trees, each shot the same way against the same white ground: species, canopy, trunk, season and light are drawn from a fixed trait system at mint. Because the artwork is generated rather than hand-assigned, each token's traits can be checked against the contract.",
   },
   {
     n: "02",

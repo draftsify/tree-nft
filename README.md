@@ -25,15 +25,15 @@ as such rather than relegating the disclosure to this file.
 
 ## Artwork
 
-The source is a photograph of a cast-glass oak. It is separated from its studio
-background by script: a flood fill from the frame removes the backdrop and its
-cast shadow, then alpha is derived from how much the sculpture darkens or tints
-what sits behind it.
+Six specimen trees, each photographed the same way: isolated, straight on,
+against a seamless white studio ground. Oak, Pine, Sakura, Maple, Redwood and
+Baobab are genuinely different trees rather than one silhouette recoloured.
 
-Because the subject is glass, the alpha is deliberately partial. Highlights stay
-translucent instead of being rendered as opaque white, so the page shows through
-the leaves and the gaps in the canopy resolve correctly. Each species is the
-same file under a hue rotation; see `public/species/`.
+Each is separated from its background by script: a flood fill from the frame
+removes the backdrop and its cast shadow, then alpha is derived from how much
+the subject darkens or tints what sits behind it, with the edge colour
+unmultiplied so no white fringe survives on a dark ground. See
+`public/species/`.
 
 The hero and the evolution section divide the cutout into 16 vertical strips and
 drift them independently on scroll (`src/components/ScrollTree.tsx`). Strip

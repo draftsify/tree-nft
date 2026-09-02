@@ -94,7 +94,7 @@ export const SPECIES: {
     latin: "Quercus robur",
     supply: 320,
     region: "Temperate Europe",
-    note: "The base form, in clear green glass. Broad canopy and the largest supply in the collection.",
+    note: "The base form. A broad low crown on a short gnarled trunk, and the largest supply in the collection.",
   },
   {
     id: "pine",
@@ -102,7 +102,7 @@ export const SPECIES: {
     latin: "Pinus sylvestris",
     supply: 240,
     region: "Boreal North",
-    note: "Teal glass, narrower crown. Associated with the boreal planting sites.",
+    note: "A tall bare trunk with the crown held high. Drawn for the boreal sites.",
   },
   {
     id: "maple",
@@ -110,7 +110,7 @@ export const SPECIES: {
     latin: "Acer saccharum",
     supply: 190,
     region: "North America",
-    note: "Rose glass. The only species whose canopy colour varies with the Season trait.",
+    note: "Autumn colour. The only species whose canopy shifts with the Season trait.",
   },
   {
     id: "sakura",
@@ -118,7 +118,7 @@ export const SPECIES: {
     latin: "Prunus serrulata",
     supply: 140,
     region: "East Asia",
-    note: "Pink blossom glass. Supply is set below Maple to reflect the shorter flowering window.",
+    note: "Blossom rather than leaf. Supply sits below Maple to reflect the short flowering window.",
   },
   {
     id: "redwood",
@@ -126,7 +126,7 @@ export const SPECIES: {
     latin: "Sequoia sempervirens",
     supply: 80,
     region: "Pacific Coast",
-    note: "Copper glass, dense crown. Issued only at Rare and above.",
+    note: "A monumental columnar trunk that fills the frame. Issued only at Rare and above.",
   },
   {
     id: "baobab",
@@ -134,7 +134,7 @@ export const SPECIES: {
     latin: "Adansonia digitata",
     supply: 30,
     region: "Sub-Saharan Africa",
-    note: "Amber glass, and the smallest supply in the collection. Issued only at Epic and Legendary.",
+    note: "A swollen barrel trunk and bare root-like branches. The smallest supply, Epic and Legendary only.",
   },
 ];
 
