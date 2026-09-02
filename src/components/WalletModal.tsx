@@ -2,16 +2,22 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
-import { useWallet, WALLETS } from "./WalletProvider";
+import { useWallet } from "./WalletProvider";
 
+/**
+ * Only rendered when the app is running without Privy credentials. With them,
+ * Privy owns the connect modal and this component never opens.
+ */
 export default function WalletModal() {
-  const { open, setOpen, connect, connecting } = useWallet();
+  const { open, setOpen, connect, connecting, simulated } = useWallet();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [setOpen]);
+
+  if (!simulated) return null;
 
   return (
     <AnimatePresence>
@@ -31,53 +37,36 @@ export default function WalletModal() {
             role="dialog"
             aria-modal="true"
             aria-label="Connect a wallet"
-            className="relative w-full max-w-[420px] rounded-[24px] border border-line bg-paper p-2"
+            className="relative w-full max-w-[400px] rounded-[24px] bg-paper p-6"
             initial={{ y: 24, scale: 0.985 }}
             animate={{ y: 0, scale: 1 }}
             exit={{ y: 16, scale: 0.99 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex items-center justify-between px-3 pb-1 pt-3">
+            <div className="flex items-start justify-between gap-4">
               <h2 className="display text-[20px]">Connect a wallet</h2>
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Close"
-                className="grid size-8 place-items-center rounded-full text-ink-3 transition-colors hover:bg-paper-3 hover:text-ink"
+                className="text-[13px] text-ink-3 transition-colors hover:text-ink"
               >
-                ✕
+                Close
               </button>
             </div>
 
-            <div className="mt-2 flex flex-col gap-1.5">
-              {WALLETS.map((w) => (
-                <button
-                  key={w.id}
-                  onClick={() => connect(w.id)}
-                  disabled={connecting !== null}
-                  className="group flex items-center gap-3 rounded-[16px] border border-line bg-white px-3.5 py-3 text-left transition-colors hover:border-line-2 disabled:opacity-50"
-                >
-                  <span
-                    className="grid size-9 place-items-center rounded-full bg-paper-2 text-[13px] font-medium text-ink-2"
-                    aria-hidden
-                  >
-                    {w.name[0]}
-                  </span>
-                  <span className="flex-1">
-                    <span className="block text-[14px] font-medium text-ink">{w.name}</span>
-                    <span className="block text-[12px] text-ink-3">{w.hint}</span>
-                  </span>
-                  <span className="text-[12px] text-ink-3">
-                    {connecting === w.id ? "Connecting…" : "→"}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            <p className="px-3.5 py-3.5 text-[11.5px] leading-relaxed text-ink-3">
-              Demonstration only. No wallet is contacted, no signature is
-              requested and no transaction is sent. Selecting a provider loads
-              the holder screens with sample data.
+            <p className="mt-3 max-w-[40ch] text-[13px] leading-relaxed text-ink-2">
+              This deployment has no wallet credentials configured, so no wallet
+              is contacted and no signature is requested. Continuing loads the
+              holder screens with sample data.
             </p>
+
+            <button
+              onClick={connect}
+              disabled={connecting}
+              className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-full bg-ink px-5 text-[13px] font-medium text-paper transition-colors hover:bg-moss disabled:opacity-50"
+            >
+              {connecting ? "Connecting…" : "Continue"}
+            </button>
           </motion.div>
         </motion.div>
       )}

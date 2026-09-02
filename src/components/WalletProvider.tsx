@@ -1,5 +1,6 @@
 "use client";
 
+import { PrivyProvider, usePrivy, useWallets } from "@privy-io/react-auth";
 import {
   createContext,
   useCallback,
@@ -8,77 +9,146 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { robinhoodChain } from "@/lib/chain";
 
 /**
- * A stand-in for the wallet layer.
+ * The wallet layer, backed by Privy.
  *
- * There is no provider detection, no signing and no RPC here — connecting sets
- * a demo address in React state so the holder-only screens can be reviewed.
- * Swapping this file for wagmi/RainbowKit later shouldn't touch any consumer,
- * which is the point of keeping the surface this small.
+ * Privy is used rather than a raw connector list because a $5 mint is aimed at
+ * people who do not already hold a wallet: email and social logins get an
+ * embedded wallet created for them, while anyone who does hold one connects it
+ * as usual. Consumers see the same small surface either way.
+ *
+ * Without NEXT_PUBLIC_PRIVY_APP_ID the provider falls back to a local
+ * simulation, so the interface still runs in a preview deploy that has no
+ * credentials.
  */
 
-export type WalletId = "metamask" | "walletconnect" | "phantom" | "coinbase";
-
-export const WALLETS: { id: WalletId; name: string; hint: string }[] = [
-  { id: "metamask", name: "MetaMask", hint: "Browser extension" },
-  { id: "walletconnect", name: "WalletConnect", hint: "Scan with any mobile wallet" },
-  { id: "coinbase", name: "Coinbase Wallet", hint: "Extension or mobile" },
-  { id: "phantom", name: "Phantom", hint: "For a future Solana collection" },
-];
+const APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
 type WalletState = {
+  /** Shortened for display; null when disconnected. */
   address: string | null;
-  wallet: WalletId | null;
+  /** Full checksum address, for contract calls. */
+  fullAddress: string | null;
   connected: boolean;
-  connecting: WalletId | null;
+  /** False until Privy has restored any existing session. */
+  ready: boolean;
+  connecting: boolean;
+  /** True when running the local simulation instead of Privy. */
+  simulated: boolean;
+  /** Demo modal state. Unused when Privy is configured. */
   open: boolean;
   setOpen: (v: boolean) => void;
-  connect: (id: WalletId) => void;
+  connect: () => void;
   disconnect: () => void;
 };
 
 const Ctx = createContext<WalletState | null>(null);
 
-const DEMO_ADDRESS = "0x8Ae4…31f7";
+function shorten(address: string) {
+  return `${address.slice(0, 6)}…${address.slice(-4)}`;
+}
 
-export function WalletProvider({ children }: { children: ReactNode }) {
+/* ── Privy-backed ─────────────────────────────────────── */
+
+function PrivyBridge({ children }: { children: ReactNode }) {
+  const { ready, authenticated, login, logout } = usePrivy();
+  const { wallets } = useWallets();
+  const [connecting, setConnecting] = useState(false);
+
+  const wallet = wallets[0];
+  const fullAddress = authenticated && wallet ? wallet.address : null;
+
+  const connect = useCallback(() => {
+    setConnecting(true);
+    login();
+    // Privy owns the modal, so there is no completion callback to await here;
+    // `authenticated` flipping is what actually ends the pending state.
+    window.setTimeout(() => setConnecting(false), 1200);
+  }, [login]);
+
+  const value = useMemo<WalletState>(
+    () => ({
+      address: fullAddress ? shorten(fullAddress) : null,
+      fullAddress,
+      connected: fullAddress !== null,
+      ready,
+      connecting,
+      simulated: false,
+      open: false,
+      setOpen: (v) => {
+        if (v) connect();
+      },
+      connect,
+      disconnect: () => void logout(),
+    }),
+    [fullAddress, ready, connecting, connect, logout],
+  );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+}
+
+/* ── local simulation, used when no app id is set ─────── */
+
+const DEMO_ADDRESS = "0x8Ae4C1f0B7D3a25e91Cb4f0aE7d2c5B18e6031f7";
+
+function SimulatedBridge({ children }: { children: ReactNode }) {
   const [address, setAddress] = useState<string | null>(null);
-  const [wallet, setWallet] = useState<WalletId | null>(null);
-  const [connecting, setConnecting] = useState<WalletId | null>(null);
+  const [connecting, setConnecting] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const connect = useCallback((id: WalletId) => {
-    setConnecting(id);
-    // Fake the handshake latency so the pending state is visible in review.
+  const connect = useCallback(() => {
+    setConnecting(true);
     window.setTimeout(() => {
-      setWallet(id);
       setAddress(DEMO_ADDRESS);
-      setConnecting(null);
+      setConnecting(false);
       setOpen(false);
     }, 700);
   }, []);
 
-  const disconnect = useCallback(() => {
-    setAddress(null);
-    setWallet(null);
-  }, []);
-
-  const value = useMemo(
+  const value = useMemo<WalletState>(
     () => ({
-      address,
-      wallet,
+      address: address ? shorten(address) : null,
+      fullAddress: address,
       connected: address !== null,
+      ready: true,
       connecting,
+      simulated: true,
       open,
       setOpen,
       connect,
-      disconnect,
+      disconnect: () => setAddress(null),
     }),
-    [address, wallet, connecting, open, connect, disconnect],
+    [address, connecting, open, connect],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+}
+
+export function WalletProvider({ children }: { children: ReactNode }) {
+  if (!APP_ID) return <SimulatedBridge>{children}</SimulatedBridge>;
+
+  return (
+    <PrivyProvider
+      appId={APP_ID}
+      config={{
+        appearance: {
+          theme: "light",
+          accentColor: "#5b7150",
+          walletChainType: "ethereum-only",
+        },
+        loginMethods: ["email", "wallet", "google", "apple"],
+        embeddedWallets: {
+          ethereum: { createOnLogin: "users-without-wallets" },
+        },
+        defaultChain: robinhoodChain,
+        supportedChains: [robinhoodChain],
+      }}
+    >
+      <PrivyBridge>{children}</PrivyBridge>
+    </PrivyProvider>
+  );
 }
 
 export function useWallet() {
