@@ -6,7 +6,7 @@ import { IMPACT, TREES } from "@/lib/data";
 export const metadata: Metadata = {
   title: "Collection",
   description:
-    "10,000 numbered trees. Six species, five rarity tiers, supply enforced in the contract.",
+    "1,000 numbered trees. Six species, five rarity tiers, supply enforced in the contract.",
 };
 
 export default function CollectionPage() {

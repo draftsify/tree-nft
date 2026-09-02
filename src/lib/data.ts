@@ -49,35 +49,35 @@ export const STAGES: {
     id: "sapling",
     label: "Sapling",
     blurb: "The collection has donated a tenth of what a full sell-out would give. Every token advances together.",
-    unlock: "0.96 ETH donated · about 1,000 mints",
+    unlock: "0.036 ETH donated · about 100 mints",
   },
   {
     id: "young",
     label: "Young Tree",
     blurb: "Two fifths of the full donation is in. The canopy fills out for every holder at the same moment.",
-    unlock: "3.84 ETH donated · about 4,000 mints",
+    unlock: "0.144 ETH donated · about 400 mints",
   },
   {
     id: "mature",
     label: "Mature Tree",
     blurb: "Four fifths of the full donation is in. The final form, reached only if the collection nearly sells out.",
-    unlock: "7.68 ETH donated · about 8,000 mints",
+    unlock: "0.288 ETH donated · about 800 mints",
   },
 ];
 
 export const RARITIES: {
   id: Rarity;
-  /** Share of the 10,000-token Genesis supply. */
+  /** Share of the 1,000-token Genesis supply. */
   share: number;
   supply: number;
   tint: string;
   text: string;
 }[] = [
-  { id: "Common", share: 0.6, supply: 6000, tint: "#eceadf", text: "#4a4f46" },
-  { id: "Uncommon", share: 0.25, supply: 2500, tint: "#dfe6d9", text: "#3f5138" },
-  { id: "Rare", share: 0.1, supply: 1000, tint: "#cfdfe6", text: "#2f4c58" },
-  { id: "Epic", share: 0.04, supply: 400, tint: "#e2d8ea", text: "#4c3a5c" },
-  { id: "Legendary", share: 0.01, supply: 100, tint: "#efe0c8", text: "#6b4f1f" },
+  { id: "Common", share: 0.6, supply: 600, tint: "#eceadf", text: "#4a4f46" },
+  { id: "Uncommon", share: 0.25, supply: 250, tint: "#dfe6d9", text: "#3f5138" },
+  { id: "Rare", share: 0.1, supply: 100, tint: "#cfdfe6", text: "#2f4c58" },
+  { id: "Epic", share: 0.04, supply: 40, tint: "#e2d8ea", text: "#4c3a5c" },
+  { id: "Legendary", share: 0.01, supply: 10, tint: "#efe0c8", text: "#6b4f1f" },
 ];
 
 export const SPECIES: {
@@ -92,7 +92,7 @@ export const SPECIES: {
     id: "oak",
     name: "Oak",
     latin: "Quercus robur",
-    supply: 3200,
+    supply: 320,
     region: "Temperate Europe",
     note: "The base form, in clear green glass. Broad canopy and the largest supply in the collection.",
   },
@@ -100,7 +100,7 @@ export const SPECIES: {
     id: "pine",
     name: "Pine",
     latin: "Pinus sylvestris",
-    supply: 2400,
+    supply: 240,
     region: "Boreal North",
     note: "Teal glass, narrower crown. Associated with the boreal planting sites.",
   },
@@ -108,7 +108,7 @@ export const SPECIES: {
     id: "maple",
     name: "Maple",
     latin: "Acer saccharum",
-    supply: 1900,
+    supply: 190,
     region: "North America",
     note: "Rose glass. The only species whose canopy colour varies with the Season trait.",
   },
@@ -116,7 +116,7 @@ export const SPECIES: {
     id: "sakura",
     name: "Sakura",
     latin: "Prunus serrulata",
-    supply: 1400,
+    supply: 140,
     region: "East Asia",
     note: "Pink blossom glass. Supply is set below Maple to reflect the shorter flowering window.",
   },
@@ -124,7 +124,7 @@ export const SPECIES: {
     id: "redwood",
     name: "Redwood",
     latin: "Sequoia sempervirens",
-    supply: 800,
+    supply: 80,
     region: "Pacific Coast",
     note: "Copper glass, dense crown. Issued only at Rare and above.",
   },
@@ -132,7 +132,7 @@ export const SPECIES: {
     id: "baobab",
     name: "Baobab",
     latin: "Adansonia digitata",
-    supply: 300,
+    supply: 30,
     region: "Sub-Saharan Africa",
     note: "Amber glass, and the smallest supply in the collection. Issued only at Epic and Legendary.",
   },
@@ -151,7 +151,7 @@ export const TRAIT_GROUPS: { name: string; values: string[] }[] = [
 /* ── collection ───────────────────────────────────────── */
 
 /** Mint price, shared by the token rows and the MINT block below. */
-const MINT_PRICE_ETH = 0.0016;
+const MINT_PRICE_ETH = 0.0006;
 
 export type Tree = {
   id: number;
@@ -292,7 +292,7 @@ export const PROJECTS: Project[] = [];
  */
 export const IMPACT = {
   minted: 0,
-  supply: 10000,
+  supply: 1000,
   donatedUsd: DONATIONS.reduce((a, d) => a + d.amountUsd, 0),
   donatedEth: 0,
   treesFunded: DONATIONS.reduce((a, d) => a + (d.treesFunded ?? 0), 0),
@@ -325,9 +325,9 @@ export const PARTNER = {
 export const MINT = {
   chain: "Robinhood Chain",
   standard: "ERC-721",
-  priceEth: 0.0016,
-  priceUsdApprox: 5,
-  supply: 10000,
+  priceEth: MINT_PRICE_ETH,
+  priceUsdApprox: 2,
+  supply: 1000,
   perWallet: 5,
   /** Revenue split. Draft figures — set on-chain before launch. */
   split: [
@@ -370,7 +370,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "What is the Genesis Forest?",
-    a: "The first collection: 10,000 numbered tokens, each carrying a Genesis marker. It funds the first planting seasons and establishes the standard later collections will follow. The marker records that a token came from the first collection and carries no entitlement.",
+    a: "The first collection: 1,000 numbered tokens, each carrying a Genesis marker. It establishes the standard later collections will follow. The marker records that a token came from the first collection and carries no entitlement.",
   },
   {
     q: "What is the current status of the project?",

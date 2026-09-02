@@ -35,7 +35,8 @@ async function main() {
   const royaltyBps = BigInt(process.env.ROYALTY_BPS ?? "500");
 
   // Stages unlock at 10%, 40% and 80% of the donation a full sell-out produces.
-  const fullDonation = (price * 10_000n * 6_000n) / 10_000n;
+  const MAX_SUPPLY = 1_000n;
+  const fullDonation = (price * MAX_SUPPLY * 6_000n) / 10_000n;
   const thresholds: [bigint, bigint, bigint] = [
     (fullDonation * 10n) / 100n,
     (fullDonation * 40n) / 100n,

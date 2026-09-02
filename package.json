@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "traits": "node scripts/generate-traits.mjs",
+    "artwork:check": "node scripts/validate-artwork.mjs",
+    "metadata": "node scripts/validate-artwork.mjs && node scripts/build-metadata.mjs"
   },
   "dependencies": {
     "@privy-io/react-auth": "^3.39.0",

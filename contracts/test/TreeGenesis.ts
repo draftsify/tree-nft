@@ -191,7 +191,7 @@ describe("TreeGenesis", () => {
 
   it("stops at max supply", async () => {
     const { tree } = ctx;
-    assert.equal(await tree.read.MAX_SUPPLY(), 10000n);
-    assert.equal(await tree.read.remaining(), 10000n);
+    assert.equal(await tree.read.MAX_SUPPLY(), 1000n);
+    assert.equal(await tree.read.remaining(), 1000n);
   });
 });

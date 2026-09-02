@@ -33,7 +33,7 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
 
     /* ── fixed at deployment ─────────────────────────── */
 
-    uint256 public constant MAX_SUPPLY = 10_000;
+    uint256 public constant MAX_SUPPLY = 1_000;
     uint256 public constant MAX_PER_WALLET = 5;
 
     /// @notice Share of each mint forwarded to the recipient, in basis points.

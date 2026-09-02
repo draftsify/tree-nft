@@ -330,7 +330,7 @@ export default function Home() {
           <Reveal>
             <div className="mt-16 border-t border-line pt-8">
               <div className="flex flex-wrap items-baseline justify-between gap-3">
-                <Eyebrow>Rarity distribution — 10,000 Genesis tokens</Eyebrow>
+                <Eyebrow>Rarity distribution — 1,000 Genesis tokens</Eyebrow>
                 <Provisional>Draft supply</Provisional>
               </div>
               <div className="mt-5 flex h-3 overflow-hidden rounded-full">
@@ -559,7 +559,7 @@ export default function Home() {
             />
             <div className="relative">
               <h2 className="display mx-auto max-w-[16ch] text-[clamp(2rem,5.4vw,4.2rem)]">
-                The Genesis Forest opens with 10,000 trees.
+                The Genesis Forest opens with 1,000 trees.
               </h2>
               <p className="mx-auto mt-6 max-w-[50ch] text-[15px] leading-relaxed text-ink-2">
                 Nothing is live yet. This interface is published ahead of the
