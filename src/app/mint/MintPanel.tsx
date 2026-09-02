@@ -23,14 +23,15 @@ type Phase = "idle" | "approving" | "confirming" | "minting" | "done";
 
 export default function MintPanel() {
   const { connected, fullAddress, setOpen, getWalletClient } = useWallet();
-  const [qty, setQty] = useState(1);
+  const [wanted, setWanted] = useState(1);
   const [phase, setPhase] = useState<Phase>("idle");
   const [minted, setMinted] = useState<number[]>([]);
   const [ack, setAck] = useState(false);
   const [chain, setChain] = useState<ChainState | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [holdings, setHoldings] = useState<{
+  const [read, setRead] = useState<{
+    account: string;
     tokens: bigint;
     nfts: number;
   } | null>(null);
@@ -52,10 +53,10 @@ export default function MintPanel() {
    * what turns that into a disabled button and a sentence instead.
    */
   const readHoldings = useCallback(() => {
-    if (!isDeployed || !chain || !fullAddress) {
-      setHoldings(null);
-      return;
-    }
+    // Returning without touching state matters: a synchronous setState here
+    // would re-render before the effect settles. Whether the reading belongs
+    // to the connected wallet is decided below instead.
+    if (!isDeployed || !chain || !fullAddress) return;
     const account = fullAddress as Address;
     publicClient
       .multicall({
@@ -76,11 +77,11 @@ export default function MintPanel() {
         ],
       })
       .then(([tokens, nfts]) =>
-        setHoldings({ tokens: tokens as bigint, nfts: Number(nfts) }),
+        setRead({ account, tokens: tokens as bigint, nfts: Number(nfts) }),
       )
       // A failed read must not masquerade as an empty wallet, so this leaves
       // holdings unknown and the mint enabled; the contract still refuses.
-      .catch(() => setHoldings(null));
+      .catch(() => setRead(null));
   }, [chain, fullAddress]);
   useEffect(readHoldings, [readHoldings]);
 
@@ -90,21 +91,28 @@ export default function MintPanel() {
   const supply = chain?.maxSupply ?? MINT.supply;
   const mintedCount = chain?.totalSupply ?? IMPACT.minted;
   const perWallet = chain?.perWallet ?? MINT.perWallet;
+  const live = chain !== null && chain.mintOpen;
+
+  // A reading is only about this wallet if it was taken for this wallet.
+  // Switching accounts therefore shows nothing rather than the last one's
+  // balance, without an effect having to clear it.
+  const holdings =
+    read && fullAddress && read.account.toLowerCase() === fullAddress.toLowerCase()
+      ? read
+      : null;
+
+  const slotsLeft = holdings ? Math.max(0, perWallet - holdings.nfts) : perWallet;
+  const maxQty = Math.max(1, Math.min(perWallet, slotsLeft));
+
+  // Holding four already means five cannot be minted, so the quantity is
+  // clamped as it is read rather than corrected afterwards.
+  const qty = Math.min(wanted, maxQty);
   const total = (qty * price).toLocaleString("en-US");
   const toPartner = Math.round(qty * price * 0.6).toLocaleString("en-US");
-  const live = chain !== null && chain.mintOpen;
 
   const due = chain ? chain.mintPrice * BigInt(qty) : BigInt(0);
   const held = holdings?.tokens ?? null;
   const shortfall = held !== null && held < due ? due - held : null;
-  const slotsLeft = holdings ? Math.max(0, perWallet - holdings.nfts) : perWallet;
-  const maxQty = Math.max(1, Math.min(perWallet, slotsLeft));
-
-  // Holding four already means the stepper should not offer five.
-  useEffect(() => {
-    setQty((q) => Math.min(q, maxQty));
-  }, [maxQty]);
-
   const blocked = shortfall !== null || slotsLeft === 0;
 
   async function run() {
@@ -336,13 +344,13 @@ export default function MintPanel() {
                     <Eyebrow>Quantity</Eyebrow>
                     <div className="mt-3 flex items-center gap-3">
                       <Stepper
-                        onClick={() => setQty((q) => Math.max(1, q - 1))}
+                        onClick={() => setWanted(Math.max(1, qty - 1))}
                         disabled={busy || qty <= 1}
                         label="−"
                       />
                       <span className="num w-10 text-center text-[26px] text-ink">{qty}</span>
                       <Stepper
-                        onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
+                        onClick={() => setWanted(Math.min(maxQty, qty + 1))}
                         disabled={busy || qty >= maxQty}
                         label="+"
                       />
