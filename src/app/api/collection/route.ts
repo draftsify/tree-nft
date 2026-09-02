@@ -29,9 +29,11 @@ export async function GET(request: Request) {
       name: "Trees",
       description:
         `${MINT.supply.toLocaleString("en-US")} collectible trees on Robinhood Chain. ` +
-        `60% of every mint is sent to ${PARTNER.name}'s public donation address ` +
-        `inside the minting transaction itself, so the token and the donation ` +
-        `share one transaction hash and neither has to be taken on trust.\n\n` +
+        `60% of every mint leaves the buyer for a fixed reforestation address ` +
+        `inside the minting transaction, enforced by the contract. That balance ` +
+        `is then swapped to ETH, bridged to mainnet and donated to ${PARTNER.name}, ` +
+        `because a charity address cannot receive the mint token directly. Every ` +
+        `step is published with its transaction hash.\n\n` +
         `A token's stage is a pure function of how much the collection has ` +
         `donated in total, read from the contract. There is no setter: no key, ` +
         `including the deployer's, can advance a token.\n\n` +

@@ -28,13 +28,23 @@ afterwards. Check both against their sources now, not later.
 
 | | Value | Check it against |
 | --- | --- | --- |
-| Donation recipient | `0x62233D5483515A79ac06CEcEbac7D399fDF8a99b` | https://onetreeplanted.org/pages/donate-crypto |
+| Reforestation reserve | `DONATION_RECIPIENT` in `.env` | an address you control, ideally a multisig |
 | Treasury | `0x8E301F169637a79E12Ce67f5f1dA1A1Fb4BE7C87` | your own records |
 | Payment token | `PAYMENT_TOKEN` in `.env` | the deployed $TREE contract |
 
-If the donation address on One Tree Planted's page differs by a single
-character, stop. A transfer to the wrong address cannot be undone, and the
-contract would keep sending there forever.
+**The contract does not pay One Tree Planted directly, and must not be told
+to.** The mint settles in $TREE on Robinhood Chain; a charity donation address
+accepts what it can realise, which means mainnet ETH. Sending $TREE to
+`0x62233D5483515A79ac06CEcEbac7D399fDF8a99b` would be an irreversible transfer
+of an asset they cannot use, and the immutable field means it would keep
+happening on every mint.
+
+So `DONATION_RECIPIENT` is your own reforestation reserve. One Tree Planted's
+address is the end of the route, not the contract's recipient. Verify it at
+https://onetreeplanted.org/pages/donate-crypto when you send step 05, not now.
+
+Whatever you set is permanent. If the reserve key is lost, every future mint
+pays an address nobody can empty.
 
 ## 2. Confirm the provenance hash
 
@@ -119,7 +129,18 @@ Mint exactly one token from a wallet you control. On the transaction, confirm:
 
 Only once that transaction looks right should the mint be announced.
 
-## 8. OpenSea
+## 8. Wire the fee harvester
+
+Once $TREE is launched on Pons, set the launch's fee recipient to a deployed
+`ReserveHarvester` rather than to a wallet. Its `harvest()` is callable by
+anyone and can only pay the reserve, so fees are collected without a key
+sitting online on a schedule and without anyone having to remember.
+
+`pendingNative()` and `pendingToken(address)` let a keeper check before paying
+gas; `harvestAll(tokens)` skips whatever is empty rather than reverting, so it
+is safe to call on a fixed timer.
+
+## 9. OpenSea
 
 OpenSea indexes Robinhood Chain natively and reads ERC-721 with no submission
 step, so there is nothing to file. After the first mint the collection appears

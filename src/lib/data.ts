@@ -44,7 +44,7 @@ export const STAGES: {
   {
     id: "seed",
     label: "Seed",
-    blurb: "The collection has begun. Every mint has already sent its reforestation share, but the total is still under the first threshold.",
+    blurb: "The collection has begun. Every mint has already sent its share to the reforestation reserve, but the total is still under the first threshold.",
     unlock: "From the first mint",
   },
   {
@@ -306,13 +306,77 @@ export const IMPACT = {
 /* ── mint economics (draft) ───────────────────────────── */
 
 /**
- * Where the reforestation share goes.
+ * Where the reforestation share ends up, at the end of the route above.
  *
  * One Tree Planted publishes a crypto donation address and accepts donations
- * from anyone. That is the relationship: we send to a public address. It is not
- * a partnership, a sponsorship or an endorsement, and nothing here should be
- * read as One Tree Planted having reviewed or approved this project.
+ * from anyone. That is the whole relationship. It is not a partnership, a
+ * sponsorship or an endorsement, and nothing here should be read as One Tree
+ * Planted having reviewed or approved this project.
  */
+/**
+ * The reforestation address the contract pays into.
+ *
+ * It is not One Tree Planted's. It cannot be: the mint settles in $TREE on
+ * Robinhood Chain, and a charity donation page accepts assets it can actually
+ * realise, which for most of them means mainnet. So the contract pays an
+ * address we control, and that balance is then converted and forwarded along
+ * the route below.
+ *
+ * Immutable in the contract, so nobody can redirect it, but it is still an
+ * address we hold. That is a weaker guarantee than paying the charity directly
+ * and the site says so rather than glossing it.
+ */
+export const RESERVE = {
+  /** Set at deployment. Should be a multisig. */
+  address: process.env.NEXT_PUBLIC_RESERVE_ADDRESS ?? "",
+  chain: "Robinhood Chain",
+};
+
+/**
+ * How a mint reaches the charity, step by step.
+ *
+ * Published because the middle of this route is the part a reader has to take
+ * on trust, and the least we can do is name exactly which part that is and
+ * put a transaction hash against each step.
+ */
+export const DONATION_ROUTE: {
+  n: string;
+  title: string;
+  body: string;
+  trust: "contract" | "permissionless" | "us";
+}[] = [
+  {
+    n: "01",
+    title: "The mint splits itself",
+    body: "60% of every mint leaves the buyer for the reforestation reserve inside the minting transaction. The contract enforces it: the share cannot be skipped, delayed or reduced, and it never passes through the contract's own balance.",
+    trust: "contract",
+  },
+  {
+    n: "02",
+    title: "Creator fees are harvested",
+    body: "$TREE launches on Pons, which accrues creator fees in an escrow rather than pushing them to a wallet. Our fee recipient is a contract whose only ability is to claim that balance and send it to the reserve. Anyone can trigger it, and it can pay nowhere else, so nobody has to be trusted to remember and no key sits online waiting to.",
+    trust: "permissionless",
+  },
+  {
+    n: "03",
+    title: "$TREE is swapped for ETH",
+    body: "A Pons launch graduates into a Uniswap v4 pool on Robinhood Chain, and that pool is where the reserve is converted. We execute this in batches and publish the swap hash with the amount actually received rather than a quoted value, because a swap of any size moves the price against itself.",
+    trust: "us",
+  },
+  {
+    n: "04",
+    title: "ETH is bridged to mainnet",
+    body: "A charity donation address accepts assets it can realise, which means mainnet. Robinhood Chain settles to Ethereum, so a withdrawal goes through the canonical bridge and its challenge period, which takes about a week and needs a second transaction on mainnet to finish. Both hashes are published, and bridging costs are reported rather than absorbed quietly.",
+    trust: "us",
+  },
+  {
+    n: "05",
+    title: "The donation is sent",
+    body: "The bridged ETH goes to the public donation address published by One Tree Planted. That hash closes the batch, and the ledger shows it beside the mint batch it came from so the amount that left can be reconciled against the amount that arrived.",
+    trust: "us",
+  },
+];
+
 export const PARTNER = {
   name: "One Tree Planted",
   url: "https://onetreeplanted.org",
@@ -353,7 +417,7 @@ export const MINT = {
   perWallet: 5,
   /** Revenue split. Draft figures — set on-chain before launch. */
   split: [
-    { label: "Reforestation", pct: 60, note: "Leaves for One Tree Planted's donation address inside the minting transaction." },
+    { label: "Reforestation", pct: 60, note: "Leaves for the reforestation reserve inside the minting transaction, then follows the published route." },
     { label: "Artwork & metadata", pct: 18, note: "Artwork production, trait generation and permanent metadata storage." },
     { label: "Operations", pct: 14, note: "Contract audit, gas, hosting and the verification process." },
     { label: "Treasury", pct: 8, note: "Multisig reserve held against future collections." },
@@ -364,7 +428,7 @@ export const MINT = {
 export const FAQ: { q: string; a: string }[] = [
   {
     q: "How many trees does one mint fund?",
-    a: "We do not state a number. The donations are anonymous, so One Tree Planted has no way to attribute planting back to us and we would only be repeating its published averages as though they were our own result. What is fixed and checkable is the mechanism: 60% of every mint leaves for its donation address inside the minting transaction, and the contract's totalDonated is the running total.",
+    a: "We do not state a number. The donations are anonymous, so One Tree Planted has no way to attribute planting back to us and we would only be repeating its published averages as though they were our own result. What is fixed and checkable is the first step: 60% of every mint leaves the buyer for the reforestation reserve inside the minting transaction, and the contract's totalDonated is the running total. The swap, bridge and donation that follow are published with a hash each on the impact page.",
   },
   {
     q: "Is a Tree token an investment?",

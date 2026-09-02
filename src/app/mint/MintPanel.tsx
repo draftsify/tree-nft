@@ -179,7 +179,7 @@ export default function MintPanel() {
                   <span className="size-2 rounded-full bg-moss" />
                   <p className="text-[13px] text-ink-2">
                     {txHash
-                      ? "Minted. The donation went out in the same transaction."
+                      ? "Minted. The reforestation share left in the same transaction."
                       : "Simulation complete. No transaction was sent."}
                   </p>
                 </div>
@@ -190,7 +190,7 @@ export default function MintPanel() {
                 </h3>
                 <p className="mt-2 max-w-[48ch] text-[13.5px] leading-relaxed text-ink-2">
                   {txHash
-                    ? `${toPartner} ${PAYMENT.symbol} reached One Tree Planted in that same transaction. Your trees grow as the collection's total donation crosses each threshold.`
+                    ? `${toPartner} ${PAYMENT.symbol} left for the reforestation reserve in that same transaction, on its way to One Tree Planted. Your trees grow as the collection's total donation crosses each threshold.`
                     : "A token grows as the collection's total donation crosses each threshold, which is a value anyone can read from the contract."}
                 </p>
                 {txHash && (
@@ -292,16 +292,19 @@ export default function MintPanel() {
 
                 <div className="mt-6 border-t border-line pt-4">
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-[13px] text-ink-2">To One Tree Planted</span>
+                    <span className="text-[13px] text-ink-2">
+                      To the reforestation reserve
+                    </span>
                     <span className="num text-[13px] text-ink">
                       {toPartner} {PAYMENT.symbol}
                     </span>
                   </div>
                   <p className="mt-2 text-[11.5px] leading-relaxed text-ink-3">
-                    60% of the mint, batched and sent to One Tree Planted&rsquo;s
-                    public donation address. The transaction hash is published on
-                    the impact page. The number of trees this funds is not yet
-                    established.
+                    60% of the mint, sent in this same transaction. It is then
+                    swapped to ETH, bridged to mainnet and donated to One Tree
+                    Planted, because a charity address cannot receive{" "}
+                    {PAYMENT.symbol}. Every step of that route is published with
+                    its hash on the impact page.
                   </p>
                 </div>
 
@@ -360,7 +363,7 @@ export default function MintPanel() {
                       {!isDeployed
                         ? "Simulation only. No contract is deployed, so no transaction is sent and nothing is charged."
                         : live
-                          ? `${toPartner} ${PAYMENT.symbol} of this goes to One Tree Planted in the same transaction.`
+                          ? `${toPartner} ${PAYMENT.symbol} of this leaves for the reforestation reserve in the same transaction.`
                           : "The contract is deployed but the mint is not open yet."}
                     </p>
                   )}

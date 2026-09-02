@@ -35,7 +35,7 @@ const PRINCIPLES = [
   {
     n: "02",
     title: "Published donations",
-    body: "The mint splits itself. 60% leaves for One Tree Planted's donation address inside the same transaction that issues your token, so the donation and the mint are one record rather than two you have to reconcile.",
+    body: "The mint splits itself. 60% leaves the buyer for the reforestation reserve inside the same transaction that issues the token, enforced by the contract. Converting that to what a charity can actually receive takes three more steps, and each one is published with its hash rather than summarised.",
   },
   {
     n: "03",
@@ -94,9 +94,9 @@ export default function Home() {
             </Reveal>
             <Reveal delay={0.14}>
               <p className="mt-6 max-w-[42ch] text-[15px] leading-relaxed text-ink-2 md:text-[16px]">
-                Each token is a unique digital tree. 60% of every mint is sent
-                to One Tree Planted, and every donation is published with its
-                transaction hash.
+                Each token is a unique digital tree. 60% of every mint leaves
+                for the reforestation reserve in the minting transaction, then
+                goes to One Tree Planted along a route published step by step.
               </p>
             </Reveal>
             <Reveal delay={0.22}>
@@ -391,7 +391,7 @@ export default function Home() {
             <div>
               <p className="eyebrow text-paper/40">Impact ledger</p>
               <h2 className="display mt-6 max-w-[16ch] text-[clamp(2rem,5vw,3.8rem)] text-paper">
-                The donation record.
+The donation route.
               </h2>
             </div>
             <ButtonLink

@@ -10,6 +10,7 @@ import {
 import { DONATIONS, IMPACT, MINT, PARTNER, PAYMENT, PROJECTS } from "@/lib/data";
 import { robinhoodChain } from "@/lib/chain";
 import ChainImpact from "@/components/ChainImpact";
+import DonationRoute from "@/components/DonationRoute";
 
 export const metadata: Metadata = {
   title: "Impact",
@@ -83,18 +84,23 @@ export default function ImpactPage() {
         <ChainImpact />
       </Section>
 
+      {/* ── the route ───────────────────────────────────── */}
+      <Section className="pb-20">
+        <DonationRoute />
+      </Section>
+
       {/* ── recipient ───────────────────────────────────── */}
       <Section className="pb-20">
         <div className="grid gap-10 border-t border-line pt-10 md:grid-cols-[1fr_1.4fr]">
           <div>
             <Eyebrow>Recipient</Eyebrow>
-            <h2 className="display mt-5 max-w-[14ch] text-[clamp(1.6rem,3.4vw,2.4rem)]">
-              Every donation goes to one address.
+            <h2 className="display mt-5 max-w-[16ch] text-[clamp(1.6rem,3.4vw,2.4rem)]">
+              Where the route ends.
             </h2>
           </div>
           <div>
             <p className="max-w-[58ch] text-[14.5px] leading-relaxed text-ink-2">
-              The reforestation share is sent to the public crypto donation
+              Step 04 of the route above sends to the public crypto donation
               address published by{" "}
               <a
                 href={PARTNER.url}
