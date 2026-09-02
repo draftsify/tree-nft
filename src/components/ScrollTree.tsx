@@ -23,7 +23,7 @@ import { preload } from "react-dom";
  */
 
 const STRIPS = 16;
-const ASPECT = 1696 / 1666;
+const ASPECT = 1696 / 1669;
 const DRIFT_PX = 14;
 
 export function SlicedTree({

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { LeafMark } from "./Nav";
+import Mark from "./Mark";
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -41,7 +41,7 @@ export default function Footer() {
         <div className="grid gap-12 pb-16 md:grid-cols-[1.3fr_2fr]">
           <div>
             <div className="flex items-center gap-2">
-              <LeafMark className="text-sage" />
+              <Mark className="size-[26px] text-sage" />
               <span className="display text-[22px] tracking-[-0.04em]">Tree</span>
             </div>
             <p className="mt-5 max-w-[36ch] text-[14px] leading-relaxed text-paper/55">

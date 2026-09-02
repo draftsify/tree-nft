@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useWallet } from "./WalletProvider";
 import WalletModal from "./WalletModal";
+import Mark from "./Mark";
 
 const LINKS = [
   { href: "/collection", label: "Collection" },
@@ -44,7 +45,7 @@ export default function Nav() {
           }`}
         >
           <Link href="/" className="flex items-center gap-2 pr-2" aria-label="Tree — home">
-            <LeafMark />
+            <Mark className="size-[22px] text-ink" />
             <span className="display text-[19px] tracking-[-0.04em]">Tree</span>
           </Link>
 
@@ -126,22 +127,3 @@ export default function Nav() {
   );
 }
 
-export function LeafMark({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={`size-[18px] ${className}`}
-      fill="none"
-      aria-hidden
-    >
-      <path
-        d="M12 22V13.2M12 13.2C12 13.2 5 12.6 5 7.2C5 3.8 8 2 12 2C16 2 19 3.8 19 7.2C19 12.6 12 13.2 12 13.2Z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M12 13.2V7.6M12 10.4L9.4 8M12 9.6L14.4 7.4" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-    </svg>
-  );
-}

@@ -25,10 +25,12 @@ interface rather than only in this file.
 
 ## The artwork
 
-One photographed oak, cut out of its studio background with a script (local
-background estimation, flood-fill for the cast shadow, alpha unmultiply to kill
-the white fringe), then recoloured per species with a hue rotation. Everything
-in `public/species/` is that same tree.
+One photographed cast-glass oak, cut out of its studio background with a script
+(`flood fill from the frame to take the backdrop and its cast shadow, then alpha
+from how much the sculpture darkens or tints what is behind it`). Because the
+subject is glass, the alpha is deliberately partial: highlights stay translucent
+rather than being punched out as white, so the page shows through the leaves.
+Each species is that same file under a hue rotation — see `public/species/`.
 
 The hero and the evolution section slice the cut-out into 16 vertical strips
 and drift them independently as you scroll — see `src/components/ScrollTree.tsx`.

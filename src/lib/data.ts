@@ -96,7 +96,7 @@ export const SPECIES: {
     latin: "Quercus robur",
     supply: 3200,
     region: "Temperate Europe",
-    note: "The base form. Broad canopy, slow growth, the longest-lived silhouette in the set.",
+    note: "The base form, in clear green glass. Broad canopy, and the longest-lived silhouette in the set.",
   },
   {
     id: "pine",
@@ -104,7 +104,7 @@ export const SPECIES: {
     latin: "Pinus sylvestris",
     supply: 2400,
     region: "Boreal North",
-    note: "Cold-tone needles. Drawn for the northern restoration sites.",
+    note: "Cold teal glass. Cast for the northern restoration sites.",
   },
   {
     id: "maple",
@@ -112,7 +112,7 @@ export const SPECIES: {
     latin: "Acer saccharum",
     supply: 1900,
     region: "North America",
-    note: "Autumn palette. The only species whose canopy shifts hue with the Season trait.",
+    note: "Rose glass. The only species whose canopy shifts hue with the Season trait.",
   },
   {
     id: "sakura",
@@ -120,7 +120,7 @@ export const SPECIES: {
     latin: "Prunus serrulata",
     supply: 1400,
     region: "East Asia",
-    note: "Blossom canopy. Short bloom window, which is why the supply is cut below Maple.",
+    note: "Pink blossom glass. Short bloom window, which is why the supply is cut below Maple.",
   },
   {
     id: "redwood",
@@ -128,7 +128,7 @@ export const SPECIES: {
     latin: "Sequoia sempervirens",
     supply: 800,
     region: "Pacific Coast",
-    note: "Rust bark, dense crown. Restricted to Rare and above.",
+    note: "Copper glass, dense crown. Restricted to Rare and above.",
   },
   {
     id: "baobab",
@@ -136,7 +136,7 @@ export const SPECIES: {
     latin: "Adansonia digitata",
     supply: 300,
     region: "Sub-Saharan Africa",
-    note: "The scarcest form in Genesis. Golden canopy, never issued below Epic.",
+    note: "The scarcest form in Genesis. Amber glass, never issued below Epic.",
   },
 ];
 

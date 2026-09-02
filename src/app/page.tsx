@@ -28,7 +28,7 @@ const PRINCIPLES = [
   {
     n: "01",
     title: "One tree, drawn six thousand ways.",
-    body: "Every token is the same photographed oak, recomposed: species, canopy, trunk, season, light. The art is a system, not a folder of six thousand exports — which is why the traits can be verified against the contract rather than taken on faith.",
+    body: "Every token is the same cast-glass oak, recomposed: species, canopy, trunk, season, light. The art is a system, not a folder of six thousand exports — which is why the traits can be verified against the contract rather than taken on faith.",
   },
   {
     n: "02",
