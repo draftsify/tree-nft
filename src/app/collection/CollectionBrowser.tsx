@@ -39,6 +39,9 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
 
   const active = [species, rarity, stage].filter((v) => v !== "all").length;
 
+  /** Changing this remounts the grid, which is what drives the crossfade. */
+  const resultKey = `${species}-${rarity}-${stage}-${sort}`;
+
   return (
     <Section className="pb-28">
       {/* filter rail */}
@@ -76,7 +79,7 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
               id="sort"
               value={sort}
               onChange={(e) => setSort(e.target.value as Sort)}
-              className="h-8 rounded-full border border-line bg-white px-3 text-[12.5px] text-ink outline-none"
+              className="h-8 rounded-full bg-paper-3 px-3 text-[12.5px] text-ink outline-none"
             >
               <option value="id">Token number</option>
               <option value="rarity">Rarity</option>
@@ -91,32 +94,40 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
         tokens have been minted.
       </p>
 
-      <motion.div layout className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((t, i) => (
-            <motion.div
-              key={t.id}
-              layout
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <TreeCard tree={t} priority={i < 5} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </motion.div>
-
-      {filtered.length === 0 && (
-        <div className="rounded-[20px] border border-dashed border-line-2 py-20 text-center">
-          <p className="display text-[22px]">No tokens match this combination.</p>
-          <p className="mt-2 text-[13.5px] text-ink-3">
-            Some combinations do not exist by design. Baobab, for example, is
-            never issued below Epic.
-          </p>
-        </div>
-      )}
+      {/*
+        The whole result set crossfades as one. Per-card layout animation was
+        the wrong tool here: with a five-column grid, a card that survives a
+        filter change slides across the page to its new slot while others are
+        still fading out, which reads as the grid coming apart. Swapping the
+        set wholesale is both calmer and cheaper.
+      */}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={resultKey}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {filtered.length === 0 ? (
+            <div className="border-t border-line py-20 text-center">
+              <p className="display text-[22px]">
+                No tokens match this combination.
+              </p>
+              <p className="mx-auto mt-2 max-w-[46ch] text-[13.5px] leading-relaxed text-ink-3">
+                Some combinations do not exist by design. Baobab, for example,
+                is never issued below Epic.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5">
+              {filtered.map((t, i) => (
+                <TreeCard key={t.id} tree={t} priority={i < 5} />
+              ))}
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
     </Section>
   );
 }
@@ -164,7 +175,7 @@ function Chip({
       className={`h-8 rounded-full px-3 text-[12.5px] transition-colors ${
         active
           ? "bg-ink text-paper"
-          : "border border-line bg-white text-ink-2 hover:border-line-2 hover:text-ink"
+          : "text-ink-3 hover:bg-paper-3 hover:text-ink"
       }`}
     >
       {children}
