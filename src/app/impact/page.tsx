@@ -9,6 +9,7 @@ import {
 } from "@/components/ui";
 import { DONATIONS, IMPACT, MINT, PARTNER, PROJECTS } from "@/lib/data";
 import { robinhoodChain } from "@/lib/chain";
+import ChainImpact from "@/components/ChainImpact";
 
 export const metadata: Metadata = {
   title: "Impact",
@@ -75,6 +76,11 @@ export default function ImpactPage() {
           is live these values are read from the contract and the indexer rather
           than from a file maintained by hand.
         </p>
+      </Section>
+
+      {/* ── live contract state ─────────────────────────── */}
+      <Section className="pb-20">
+        <ChainImpact />
       </Section>
 
       {/* ── recipient ───────────────────────────────────── */}
