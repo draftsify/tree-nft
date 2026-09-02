@@ -267,9 +267,14 @@ function StageWord({
     [from - span * 0.3, from + span * 0.12],
     [14, 0],
   );
+  const filter = useTransform(
+    progress,
+    [from - span * 0.3, from + span * 0.12, to - span * 0.12, to + span * 0.3],
+    ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"],
+  );
   return (
     <motion.span
-      style={{ opacity, y }}
+      style={{ opacity, y, filter }}
       className="display absolute inset-x-0 top-0 text-[clamp(2.2rem,5.4vw,4.2rem)]"
     >
       {children}
