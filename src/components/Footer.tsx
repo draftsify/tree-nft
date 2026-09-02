@@ -105,29 +105,16 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-paper/10 py-6">
-          <p className="max-w-[92ch] text-[12px] leading-relaxed text-paper/40">
-            <span className="text-paper/70">Important.</span> Tree is an
-            interface prototype. No smart contract is deployed, no mint is live,
-            and no donation has been made. One Tree Planted is the intended
-            recipient of the reforestation share and publishes the address we
-            would send to; it has not reviewed or endorsed this project. Every
-            figure shown on this site, including trees funded,
-            amounts donated, transaction hashes and holder counts, is
-            placeholder data. A Tree token is a collectible. It is not a
-            security, a share or an investment: it pays no yield, confers no
-            rights, and its resale value is determined solely by the secondary
-            market.
-          </p>
-        </div>
-
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-paper/10 py-6 text-[12px] text-paper/40">
-          <span>© 2026 Tree. Interface prototype.</span>
-          <div className="flex items-center gap-5">
-            <span className="cursor-not-allowed">X</span>
-            <span className="cursor-not-allowed">Discord</span>
-            <span className="cursor-not-allowed">Mirror</span>
-          </div>
+          <span>© 2026 Tree.</span>
+          <a
+            href="https://x.com/treedotfamily"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-paper/70"
+          >
+            @treedotfamily
+          </a>
         </div>
       </div>
 
