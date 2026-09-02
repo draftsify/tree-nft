@@ -27,6 +27,14 @@ import { robinhoodChain } from "@/lib/chain";
 
 const APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
+/**
+ * Local testing only. Set NEXT_PUBLIC_LOCAL_WALLET=1 to talk to an injected
+ * wallet (MetaMask) against a local node, which is the only way to walk the
+ * real approve -> mint path without Privy credentials: the simulation below
+ * hands back no wallet client, so no transaction can ever leave it.
+ */
+const LOCAL_WALLET = process.env.NEXT_PUBLIC_LOCAL_WALLET === "1";
+
 type WalletState = {
   /** Shortened for display; null when disconnected. */
   address: string | null;
@@ -109,6 +117,96 @@ function PrivyBridge({ children }: { children: ReactNode }) {
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
+/* ── injected wallet, local testing only ──────────────── */
+
+type Injected = {
+  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+};
+
+function injected(): Injected | null {
+  if (typeof window === "undefined") return null;
+  return (window as unknown as { ethereum?: Injected }).ethereum ?? null;
+}
+
+const CHAIN_HEX = `0x${robinhoodChain.id.toString(16)}`;
+
+/** Move the wallet onto the chain, adding it first if it has never seen it. */
+async function ensureChain(provider: Injected) {
+  try {
+    await provider.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: CHAIN_HEX }],
+    });
+  } catch (e) {
+    if ((e as { code?: number }).code !== 4902) throw e;
+    await provider.request({
+      method: "wallet_addEthereumChain",
+      params: [
+        {
+          chainId: CHAIN_HEX,
+          chainName: robinhoodChain.name,
+          nativeCurrency: robinhoodChain.nativeCurrency,
+          rpcUrls: [robinhoodChain.rpcUrls.default.http[0]],
+        },
+      ],
+    });
+  }
+}
+
+function InjectedBridge({ children }: { children: ReactNode }) {
+  const [address, setAddress] = useState<string | null>(null);
+  const [connecting, setConnecting] = useState(false);
+
+  const connect = useCallback(() => {
+    const provider = injected();
+    if (!provider) return;
+    setConnecting(true);
+    void (async () => {
+      try {
+        const accounts = (await provider.request({
+          method: "eth_requestAccounts",
+        })) as string[];
+        await ensureChain(provider);
+        setAddress(accounts[0] ?? null);
+      } finally {
+        setConnecting(false);
+      }
+    })();
+  }, []);
+
+  const getWalletClient = useCallback(async () => {
+    const provider = injected();
+    if (!provider || !address) return null;
+    await ensureChain(provider);
+    return createWalletClient({
+      account: address as `0x${string}`,
+      chain: robinhoodChain,
+      transport: custom(provider as Parameters<typeof custom>[0]),
+    });
+  }, [address]);
+
+  const value = useMemo<WalletState>(
+    () => ({
+      address: address ? shorten(address) : null,
+      fullAddress: address,
+      connected: address !== null,
+      ready: true,
+      connecting,
+      simulated: false,
+      open: false,
+      setOpen: (v) => {
+        if (v) connect();
+      },
+      connect,
+      disconnect: () => setAddress(null),
+      getWalletClient,
+    }),
+    [address, connecting, connect, getWalletClient],
+  );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+}
+
 /* ── local simulation, used when no app id is set ─────── */
 
 const DEMO_ADDRESS = "0x8Ae4C1f0B7D3a25e91Cb4f0aE7d2c5B18e6031f7";
@@ -148,6 +246,7 @@ function SimulatedBridge({ children }: { children: ReactNode }) {
 }
 
 export function WalletProvider({ children }: { children: ReactNode }) {
+  if (LOCAL_WALLET) return <InjectedBridge>{children}</InjectedBridge>;
   if (!APP_ID) return <SimulatedBridge>{children}</SimulatedBridge>;
 
   return (

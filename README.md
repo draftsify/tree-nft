@@ -9,10 +9,15 @@ has been made and no partnership agreement exists. Every impact figure on the
 site is zero because zero has happened, and the site says so on the page rather
 than relegating the disclosure to this file.
 
-What is here: the full interface, the ERC-721 (`contracts/contracts/Tree.sol`),
-the fee harvester (`contracts/contracts/ReserveHarvester.sol`) and 22 tests
-covering both. What is missing before a mint can happen is in **Where this
-stands** below.
+What is here: the full interface and three contracts, with 32 tests over them.
+
+| Contract | What it does |
+| --- | --- |
+| `Tree.sol` | The ERC-721. Splits every mint inside the mint call. |
+| `ReforestationReserve.sol` | Holds the reforestation share. Sells it and bridges it to the charity, both callable by anyone, neither taking a destination. |
+| `ReserveHarvester.sol` | Claims Pons creator fees into the reserve, callable by anyone. |
+
+What is missing before a mint can happen is in **Where this stands** below.
 
 ---
 
@@ -69,7 +74,12 @@ React re-render.
 Trait and copy data comes from `src/lib/data.ts`, which reads `data/trees.json`.
 Chain state does not: `src/components/ChainImpact.tsx` reads `totalSupply`,
 `totalDonated` and `stage()` from the contract through viem, and reports an RPC
-failure as an RPC failure rather than as a zero.
+failure as an RPC failure rather than as a zero. `RouteLedger.tsx` reads the
+reserve's `Swapped` and `Bridged` logs, so each row on the impact page exists
+because a transaction happened and carries its hash.
+
+Those reads go through Multicall3, which `src/lib/chain.ts` has to name
+explicitly or viem throws `ChainDoesNotSupportContract`.
 
 Wallets are Privy (`src/components/WalletProvider.tsx`), so an email or Google
 sign-in produces an embedded wallet and a dev with nothing installed can still
@@ -90,8 +100,16 @@ npm run provenance  # the hash the contract commits at deployment
 Contract work lives in `contracts/`:
 
 ```bash
-cd contracts && npx hardhat test    # 22 tests, Tree.sol and ReserveHarvester.sol
+cd contracts && npm install
+npx hardhat test    # 32 tests over the three contracts
 ```
+
+`scripts/local-*` stand up a local node with a stand-in $TREE and walk one
+wallet through approve then mint, which is the only way to exercise that path
+before the real token exists. `local-open.ts` refuses to run against anything
+but localhost. Setting `NEXT_PUBLIC_LOCAL_WALLET=1` points the front end at an
+injected wallet instead of Privy for the same purpose; it is a local flag and
+must not be set in production.
 
 The tests are worth reading before the contracts. Several assert absences rather
 than behaviour — that no function exists to move the donation recipient, to set
@@ -106,14 +124,21 @@ Settled: Robinhood Chain, ERC-721, 1,000 tokens, 7,777 $TREE per mint, five per
 wallet, 60% to reforestation, 6.7% creator fee. All of it is in the contract and
 covered by the tests.
 
+The route from a mint to the charity is five steps, and none of them is a wallet
+of ours moving money: the split is enforced by `Tree.sol`, and the fee claim,
+the sale, the bridge and the final withdrawal are each callable by anyone, take
+no destination, and pay their caller nothing. `/impact` sets out the whole
+route with what has to be trusted at each step.
+
 Missing before anyone can mint:
 
 - **$TREE is not launched.** `PAYMENT_TOKEN` has no address, so the approve step
-  has nothing to approve. This is the first blocker.
-- **The contract is not deployed.** `DEPLOY.md` is the runbook. It needs a funded
-  deployer wallet and `DONATION_RECIPIENT`, which is the project's own
-  reforestation reserve and **not** the charity's address — the file explains
-  why at length, and the field is immutable, so read it before filling it in.
+  has nothing to approve. This is the first blocker, and two values that can
+  never be changed afterwards — the pool key and the reserve's price floor —
+  can only be chosen once the launch has graduated to a pool.
+- **Nothing is deployed.** `DEPLOY.md` is the runbook, and its section 0 gives
+  the order, which is forced: the collection's donation recipient is immutable,
+  so the reserve has to exist before the collection is deployed at it.
 - **Cost per tree is unknown**, as no partner has confirmed a figure. The site
   shows a dash rather than an estimate, and no "N trees planted" claim is made
   anywhere.

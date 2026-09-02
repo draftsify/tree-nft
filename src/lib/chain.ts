@@ -29,6 +29,15 @@ export const robinhoodChain: Chain = {
       url: "https://robinhoodchain.blockscout.com",
     },
   },
+  /**
+   * Canonical Multicall3, confirmed deployed on this chain at the address it
+   * uses everywhere else. viem needs it named here: without it `multicall`
+   * throws ChainDoesNotSupportContract, and `readChainState` is built on
+   * multicall, so every live figure on the site depends on this entry.
+   */
+  contracts: {
+    multicall3: { address: "0xcA11bde05977b3631167028862bE2a173976CA11" },
+  },
 };
 
 export function explorerTx(hash: string) {
