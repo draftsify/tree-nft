@@ -33,13 +33,21 @@ If the donation address on One Tree Planted's page differs by a single
 character, stop. A transfer to the wrong address cannot be undone, and the
 contract would keep sending there forever.
 
-## 2. Get the provenance hash
+## 2. Confirm the provenance hash
 
 ```bash
-npm run metadata
+npm run provenance
 ```
 
-Prints a `0x…` hash committing the order of the collection. Copy it.
+Should print:
+
+```
+PROVENANCE_HASH=0x7a93a2fe60dae87b8f6240214ab4b479486a67bf6aa51536a317ef8659c8be2a
+```
+
+It covers `data/trees.json` and all eighteen masters by content. If it differs,
+something in the collection changed since this was written; find out what before
+deploying. The value is already filled into `contracts/.env.example`.
 
 ## 3. Deploy
 

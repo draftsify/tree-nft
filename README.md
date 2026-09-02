@@ -25,15 +25,27 @@ as such rather than relegating the disclosure to this file.
 
 ## Artwork
 
-Six specimen trees, each photographed the same way: isolated, straight on,
-against a seamless white studio ground. Oak, Pine, Sakura, Maple, Redwood and
-Baobab are genuinely different trees rather than one silhouette recoloured.
+Eighteen photographed specimen trees: six species with three silhouettes each,
+all shot the same way, isolated and straight on against a seamless white studio
+ground. A young oak and an ancient burled one, a dense young pine and a
+windswept old one, a weeping cherry and a columnar white one, and so on. They
+live in `public/masters/` and are the only source material in the collection.
 
-Each is separated from its background by script: a flood fill from the frame
+Each was separated from its background by script: a flood fill from the frame
 removes the backdrop and its cast shadow, then alpha is derived from how much
 the subject darkens or tints what sits behind it, with the edge colour
-unmultiplied so no white fringe survives on a dark ground. See
-`public/species/`.
+unmultiplied so no white fringe survives on a dark ground.
+
+The thousand tokens are composed from those eighteen. `data/trees.json` decides
+every token's traits first — the supply table on the site is asserted by
+`npm run validate`, not approximated — and the picture follows: season regrades
+the foliage, forest sets the ground, effect washes the frame, canopy and trunk
+nudge the framing, and stage sets how much of the frame the tree fills.
+
+Artwork is composed on request at `/api/nft/[index]/[stage].png`, with metadata
+at `/api/metadata/[index]/[stage].json` in the shape the contract's `tokenURI`
+resolves. Both are deterministic and served immutable, so an image is built
+once and then cached rather than stored as four thousand committed files.
 
 The hero and the evolution section divide the cutout into 16 vertical strips and
 drift them independently on scroll (`src/components/ScrollTree.tsx`). Strip
@@ -59,9 +71,21 @@ replace the file without changes to any consumer.
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
+npm run dev         # http://localhost:3000
 npm run build
+
+npm run traits      # regenerate data/trees.json
+npm run validate    # masters present, traits known, distribution exact
+npm run provenance  # the hash the contract commits at deployment
 ```
+
+Contract work lives in `contracts/`:
+
+```bash
+cd contracts && npx hardhat test
+```
+
+Deployment is written out step by step in `DEPLOY.md`.
 
 ## Open decisions
 

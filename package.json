@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "traits": "node scripts/generate-traits.mjs",
-    "artwork:check": "node scripts/validate-artwork.mjs",
-    "metadata": "node scripts/validate-artwork.mjs && node scripts/build-metadata.mjs"
+    "validate": "node scripts/validate-collection.mjs",
+    "provenance": "node scripts/validate-collection.mjs && node scripts/provenance.mjs"
   },
   "dependencies": {
     "@privy-io/react-auth": "^3.39.0",
