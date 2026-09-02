@@ -140,11 +140,15 @@ export function Stat({
 
 /**
  * Used anywhere the page shows a figure that isn't yet backed by a signed
- * agreement or a live indexer. Better a visible label than a quiet lie.
+ * agreement or a live indexer. Better a visible label than a quiet lie — it
+ * just doesn't need a chip around it to be read.
  */
 export function Provisional({ children = "Placeholder data" }: { children?: ReactNode }) {
   return (
-    <span className="inline-flex h-5 items-center rounded-full border border-line-2 bg-paper-2 px-2 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
+    <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.12em] text-ink-3">
+      <span aria-hidden className="text-line-2">
+        ·
+      </span>
       {children}
     </span>
   );
@@ -152,7 +156,7 @@ export function Provisional({ children = "Placeholder data" }: { children?: Reac
 
 export function Hash({ value }: { value: string }) {
   return (
-    <span className="num text-[12px] text-ink-3" title={value}>
+    <span className="mono text-[12px] text-ink-3" title={value}>
       {value.slice(0, 10)}…{value.slice(-8)}
     </span>
   );

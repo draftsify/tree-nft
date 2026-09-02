@@ -109,29 +109,31 @@ export default function Home() {
             </Reveal>
           </div>
 
-          <div className="mx-auto mt-auto flex w-full max-w-[1240px] flex-wrap items-end justify-between gap-6 pt-16">
-            <Reveal delay={0.3}>
-              <div className="rounded-[18px] border border-line bg-paper/70 p-4 backdrop-blur-md">
+          <div className="mx-auto mt-auto w-full max-w-[1240px] pt-16">
+            {/* held to the left column on wide screens so the scroll note
+                never lands on the canopy */}
+            <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8 lg:w-[62%] lg:max-w-[720px]">
+              <Reveal delay={0.3}>
                 <div className="flex items-center gap-2">
                   <Eyebrow>Minted so far</Eyebrow>
                   <Provisional />
                 </div>
-                <p className="num mt-2 text-[26px] leading-none text-ink">
+                <p className="num mt-3 text-[28px] leading-none text-ink">
                   {IMPACT.minted.toLocaleString("en-US")}
                   <span className="text-ink-3"> / {IMPACT.supply.toLocaleString("en-US")}</span>
                 </p>
-                <p className="mt-1.5 text-[12.5px] text-ink-3">
+                <p className="mt-2.5 text-[12.5px] text-ink-3">
                   {MINT.priceEth} ETH · {MINT.chain} · {MINT.standard}
                 </p>
-              </div>
-            </Reveal>
+              </Reveal>
 
-            <Reveal delay={0.36} className="hidden md:block">
-              <p className="max-w-[24ch] text-right text-[12.5px] leading-relaxed text-ink-3">
-                Scroll. The tree grows the way the token does — one verified
-                milestone at a time.
-              </p>
-            </Reveal>
+              <Reveal delay={0.36} className="hidden md:block">
+                <p className="max-w-[24ch] text-right text-[12.5px] leading-relaxed text-ink-3">
+                  Scroll. The tree grows the way the token does — one verified
+                  milestone at a time.
+                </p>
+              </Reveal>
+            </div>
           </div>
         </div>
       </section>
@@ -444,7 +446,7 @@ export default function Home() {
                 >
                   <span className="num text-[12px] text-paper/40">{d.date}</span>
                   <span className="text-[14px] text-paper/85">{d.region}</span>
-                  <span className="num text-[12px] text-paper/40">
+                  <span className="mono text-[12px] text-paper/40">
                     {d.txHash.slice(0, 10)}…{d.txHash.slice(-8)}
                   </span>
                   <span className="num text-[14px] text-paper">

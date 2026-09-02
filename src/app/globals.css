@@ -91,7 +91,16 @@ html.lenis body {
   color: var(--color-ink-3);
 }
 
+/* Figures stay in the text face and only borrow its tabular set, so counts and
+   ids line up in a column without switching to a typewriter. */
 .num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.01em;
+}
+
+/* Reserved for things that really are machine strings: transaction hashes. */
+.mono {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;

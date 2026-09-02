@@ -182,7 +182,7 @@ export default function AdminConsole() {
             <div className="flex-1 rounded-[24px] border border-line bg-white p-6">
               <Eyebrow>Metadata diff</Eyebrow>
               {preview && complete ? (
-                <pre className="mt-4 overflow-x-auto rounded-[14px] bg-deep p-4 text-[11.5px] leading-relaxed text-paper/80">
+                <pre className="mono mt-4 overflow-x-auto rounded-[14px] bg-deep p-4 text-[11.5px] leading-relaxed text-paper/80">
 {`{
   "tokenId": "00421",
   "version": 3,
