@@ -20,7 +20,7 @@ export default function CollectionPage() {
               <Provisional />
             </div>
             <h1 className="display mt-6 max-w-[14ch] text-[clamp(2.4rem,6vw,4.6rem)]">
-              The Genesis Forest.
+              The forest.
             </h1>
             <p className="mt-5 max-w-[58ch] text-[15px] leading-relaxed text-ink-2">
               A preview of the trait system ahead of launch. Species, rarity and

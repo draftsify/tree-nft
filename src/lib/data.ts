@@ -36,32 +36,32 @@ export const STAGES: {
   id: StageId;
   label: string;
   blurb: string;
-  /** Milestone that unlocks this stage. Nothing unlocks on a timer. */
+  /** What unlocks this stage. Read from the contract, never granted. */
   unlock: string;
 }[] = [
   {
     id: "seed",
     label: "Seed",
-    blurb: "The token has been issued. Its share of the mint is held in the reforestation address and has not been sent.",
-    unlock: "Mint confirmed",
+    blurb: "The collection has begun. Every mint has already sent its reforestation share, but the total is still under the first threshold.",
+    unlock: "From the first mint",
   },
   {
     id: "sapling",
     label: "Sapling",
-    blurb: "The reforestation share has been sent to a partner organisation. The transaction hash is published on the impact page.",
-    unlock: "Donation transaction settled",
+    blurb: "The collection has donated a tenth of what a full sell-out would give. Every token advances together.",
+    unlock: "0.96 ETH donated · about 1,000 mints",
   },
   {
     id: "young",
     label: "Young Tree",
-    blurb: "The partner has assigned the batch to a named planting site and confirmed the season in writing.",
-    unlock: "Allocation confirmed",
+    blurb: "Two fifths of the full donation is in. The canopy fills out for every holder at the same moment.",
+    unlock: "3.84 ETH donated · about 4,000 mints",
   },
   {
     id: "mature",
     label: "Mature Tree",
-    blurb: "The partner has filed a dated planting report. It is attached to the batch and to every token it covers.",
-    unlock: "Planting report verified",
+    blurb: "Four fifths of the full donation is in. The final form, reached only if the collection nearly sells out.",
+    unlock: "7.68 ETH donated · about 8,000 mints",
   },
 ];
 
@@ -315,7 +315,9 @@ export const IMPACT = {
 export const PARTNER = {
   name: "One Tree Planted",
   url: "https://onetreeplanted.org",
-  /** Verify against onetreeplanted.org before any transfer. */
+  /** Where the organisation publishes the address below. */
+  donateUrl: "https://onetreeplanted.org/pages/donate-crypto",
+  /** Check against donateUrl before deploying: the contract bakes it in. */
   address: "0x62233D5483515A79ac06CEcEbac7D399fDF8a99b",
   relationship: "Public donation address. No agreement, sponsorship or endorsement.",
 };
@@ -329,7 +331,7 @@ export const MINT = {
   perWallet: 5,
   /** Revenue split. Draft figures — set on-chain before launch. */
   split: [
-    { label: "Reforestation", pct: 60, note: "Sent in batches to One Tree Planted's public donation address. Each transaction hash is published." },
+    { label: "Reforestation", pct: 60, note: "Leaves for One Tree Planted's donation address inside the minting transaction." },
     { label: "Artwork & metadata", pct: 18, note: "Artwork production, trait generation and permanent metadata storage." },
     { label: "Operations", pct: 14, note: "Contract audit, gas, hosting and the verification process." },
     { label: "Treasury", pct: 8, note: "Multisig reserve held against future collections." },
@@ -340,7 +342,7 @@ export const MINT = {
 export const FAQ: { q: string; a: string }[] = [
   {
     q: "How many trees does one mint fund?",
-    a: "We have not set that figure. One Tree Planted publishes a cost per tree for its own programmes, but we will not attribute a number to a token until the organisation confirms in writing what our donations funded. What is already fixed is the mechanism: 60% of every mint is sent to One Tree Planted's public donation address, and each transaction hash is published on the impact page.",
+    a: "We do not state a number. The donations are anonymous, so One Tree Planted has no way to attribute planting back to us and we would only be repeating its published averages as though they were our own result. What is fixed and checkable is the mechanism: 60% of every mint leaves for its donation address inside the minting transaction, and the contract's totalDonated is the running total.",
   },
   {
     q: "Is a Tree token an investment?",
@@ -348,7 +350,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "What causes a token to change stage?",
-    a: "A verified milestone, not elapsed time. A token is issued as a Seed. It becomes a Sapling when the donation covering it settles on-chain, a Young Tree when the partner assigns that batch to a named site, and a Mature Tree when a dated planting report is filed. Each transition writes a new metadata version and the previous version remains readable.",
+    a: "The amount the collection has donated, and nothing else. stage() on the contract compares cumulative donations against three thresholds fixed at deployment and returns a number from 1 to 4. There is no setter: no key, including ours, can advance a token, and no report from anyone is required. Every token shares the collection's stage, so the forest grows together rather than token by token.",
   },
   {
     q: "What happens to the funding record if the token is sold?",
@@ -360,11 +362,11 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Can metadata change after minting?",
-    a: "Stage and impact fields are updatable by design, since that is how the evolution system works. Species, rarity and traits are frozen at mint, and the freeze is enforced by the contract rather than by policy. Every update is versioned, so the state of a token at any earlier point can be read back.",
+    a: "The stage segment of a token's URI follows stage(), so the artwork changes as the collection donates more. Species, rarity and traits are frozen at mint and enforced by the contract. The metadata pointer itself can be frozen permanently by calling freezeMetadata(), after which not even the owner can repoint it.",
   },
   {
     q: "Is One Tree Planted a partner in this project?",
-    a: "No. One Tree Planted publishes a crypto donation address that anyone can send to, and that is what we do with the reforestation share. The organisation has not reviewed, approved or endorsed this project, and receives nothing from us beyond the donation itself. If that changes, it will be stated here with the agreement dated.",
+    a: "No. One Tree Planted publishes a crypto donation address at onetreeplanted.org/pages/donate-crypto that anyone can send to, and that is what the contract does with the reforestation share. The organisation has not reviewed, approved or endorsed this project, and receives nothing from us beyond the donation itself. If that ever changes it will be stated here, dated.",
   },
   {
     q: "What is the Genesis Forest?",

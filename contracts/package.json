@@ -1,0 +1,10 @@
+{
+  "name": "tree-contracts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.ts --network robinhood"
+  }
+}

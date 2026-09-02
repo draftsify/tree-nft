@@ -33,12 +33,12 @@ const PRINCIPLES = [
   {
     n: "02",
     title: "Published donations",
-    body: "The reforestation share of each mint is sent in batches to One Tree Planted's public donation address. Every transaction hash is published on the impact page on the day it settles.",
+    body: "The mint splits itself. 60% leaves for One Tree Planted's donation address inside the same transaction that issues your token, so the donation and the mint are one record rather than two you have to reconcile.",
   },
   {
     n: "03",
     title: "Milestone-based evolution",
-    body: "A token advances when its donation settles, when a partner assigns the batch to a site, and when a planting report is filed. Stages are never released on a schedule.",
+    body: "A token's stage is a pure function of how much the collection has donated. There is no setter on the contract, so no key can advance a token and no schedule releases one.",
   },
   {
     n: "04",
@@ -195,12 +195,13 @@ export default function Home() {
           <div className="mx-auto w-full max-w-[1240px]">
             <Eyebrow>Evolution</Eyebrow>
             <h2 className="display mt-6 max-w-[18ch] text-[clamp(2rem,5.4vw,4.2rem)]">
-              Four stages, each tied to a verified milestone.
+              Four stages, each one a number on the contract.
             </h2>
-            <p className="mt-5 max-w-[54ch] text-[15px] leading-relaxed text-ink-2">
-              Each transition writes a new metadata version against the token id
-              and leaves the previous version readable, so the full history of a
-              token can be audited after the fact.
+            <p className="mt-5 max-w-[56ch] text-[15px] leading-relaxed text-ink-2">
+              Stage is derived from cumulative donations, so it can be checked
+              by calling the contract rather than taken from us. Every token
+              shares it: the forest grows together, and it grows only when more
+              has actually been given.
             </p>
           </div>
         </div>

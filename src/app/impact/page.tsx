@@ -108,6 +108,7 @@ export default function ImpactPage() {
               {[
                 ["Organisation", PARTNER.name],
                 ["Website", PARTNER.url.replace("https://", "")],
+                ["Address published at", PARTNER.donateUrl.replace("https://", "")],
                 ["Relationship", PARTNER.relationship],
               ].map(([k, v]) => (
                 <div
@@ -133,11 +134,18 @@ export default function ImpactPage() {
               </div>
             </dl>
 
-            <p className="mt-4 max-w-[62ch] text-[12px] leading-relaxed text-ink-3">
-              Check this address against onetreeplanted.org before relying on
-              it. Transfers on-chain cannot be reversed, and an address printed
-              on a website is not a substitute for the organisation&rsquo;s own
-              published one.
+            <p className="mt-4 max-w-[64ch] text-[12px] leading-relaxed text-ink-3">
+              The address is the one published on{" "}
+              <a
+                href={PARTNER.donateUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ink-2 underline underline-offset-4 hover:text-moss"
+              >
+                One Tree Planted&rsquo;s crypto donation page
+              </a>
+              . Check it there yourself before relying on it: transfers cannot
+              be reversed, and the contract bakes the recipient in permanently.
             </p>
           </div>
         </div>

@@ -2,33 +2,108 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { formatEther, parseEventLogs } from "viem";
 import { useWallet } from "@/components/WalletProvider";
 import { Button, Eyebrow, Provisional, RarityBadge } from "@/components/ui";
 import { IMPACT, MINT, SPECIES, TREES, speciesImage } from "@/lib/data";
+import { explorerTx } from "@/lib/chain";
+import {
+  CONTRACT_ADDRESS,
+  TREE_ABI,
+  isDeployed,
+  publicClient,
+  readChainState,
+  type ChainState,
+} from "@/lib/contract";
 
 type Phase = "idle" | "confirming" | "minting" | "done";
 
 export default function MintPanel() {
-  const { connected, setOpen } = useWallet();
+  const { connected, setOpen, getWalletClient } = useWallet();
   const [qty, setQty] = useState(1);
   const [phase, setPhase] = useState<Phase>("idle");
   const [minted, setMinted] = useState<number[]>([]);
   const [ack, setAck] = useState(false);
+  const [chain, setChain] = useState<ChainState | null>(null);
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const total = (qty * MINT.priceEth).toFixed(4);
-  const toPartner = (qty * MINT.priceEth * 0.6).toFixed(4);
+  // Live collection state. Absent a deployment this stays null and the panel
+  // shows its pre-launch figures instead.
+  const refresh = useCallback(() => {
+    readChainState()
+      .then(setChain)
+      .catch(() => setChain(null));
+  }, []);
+  useEffect(refresh, [refresh]);
 
-  function run() {
-    setPhase("confirming");
-    // Two fake stages so the wallet-confirm and on-chain waits both show up.
-    window.setTimeout(() => setPhase("minting"), 900);
-    window.setTimeout(() => {
-      const ids = Array.from({ length: qty }, (_, i) => ((IMPACT.minted + i) % TREES.length) + 1);
-      setMinted(ids);
+  const priceEth = chain ? Number(formatEther(chain.mintPrice)) : MINT.priceEth;
+  const supply = chain?.maxSupply ?? MINT.supply;
+  const mintedCount = chain?.totalSupply ?? IMPACT.minted;
+  const perWallet = chain?.perWallet ?? MINT.perWallet;
+  const total = (qty * priceEth).toFixed(4);
+  const toPartner = (qty * priceEth * 0.6).toFixed(4);
+  const live = chain !== null && chain.mintOpen;
+
+  async function run() {
+    setError(null);
+    setTxHash(null);
+
+    // No contract yet: keep the walkthrough, and keep saying it is one.
+    if (!isDeployed) {
+      setPhase("confirming");
+      window.setTimeout(() => setPhase("minting"), 900);
+      window.setTimeout(() => {
+        const ids = Array.from({ length: qty }, (_, i) => (i % TREES.length) + 1);
+        setMinted(ids);
+        setPhase("done");
+      }, 2600);
+      return;
+    }
+
+    try {
+      setPhase("confirming");
+      const wallet = await getWalletClient();
+      if (!wallet) throw new Error("No wallet connected.");
+
+      const value = (chain?.mintPrice ?? BigInt(0)) * BigInt(qty);
+      const hash = await wallet.writeContract({
+        address: CONTRACT_ADDRESS as `0x${string}`,
+        abi: TREE_ABI,
+        functionName: "mint",
+        args: [BigInt(qty)],
+        value,
+        chain: wallet.chain,
+        account: wallet.account!,
+      });
+
+      setTxHash(hash);
+      setPhase("minting");
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      if (receipt.status !== "success") throw new Error("The transaction reverted.");
+
+      // Token ids come from the receipt rather than from a counter, so a
+      // concurrent mint cannot make us show somebody else's token.
+      const logs = parseEventLogs({
+        abi: TREE_ABI,
+        eventName: "Minted",
+        logs: receipt.logs,
+      });
+      setMinted(logs.map((l) => Number(l.args.tokenId)));
       setPhase("done");
-    }, 2600);
+      refresh();
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      setError(
+        /user rejected|denied/i.test(message)
+          ? "You cancelled the transaction."
+          : message.split("\n")[0],
+      );
+      setPhase("idle");
+    }
   }
 
   const busy = phase === "confirming" || phase === "minting";
@@ -50,13 +125,14 @@ export default function MintPanel() {
             <div>
               <Eyebrow>Genesis Forest</Eyebrow>
               <p className="num mt-1.5 text-[15px] text-ink">
-                {IMPACT.minted.toLocaleString("en-US")} / {MINT.supply.toLocaleString("en-US")} minted
+                {mintedCount.toLocaleString("en-US")} /{" "}
+                {supply.toLocaleString("en-US")} minted
               </p>
             </div>
             <div className="h-1.5 w-40 overflow-hidden rounded-full bg-paper-3">
               <div
                 className="h-full rounded-full bg-moss"
-                style={{ width: `${(IMPACT.minted / MINT.supply) * 100}%` }}
+                style={{ width: `${(mintedCount / supply) * 100}%` }}
               />
             </div>
           </div>
@@ -74,16 +150,33 @@ export default function MintPanel() {
                 <div className="flex items-center gap-2">
                   <span className="size-2 rounded-full bg-moss" />
                   <p className="text-[13px] text-ink-2">
-                    Simulation complete. No transaction was sent.
+                    {txHash
+                      ? "Minted. The donation went out in the same transaction."
+                      : "Simulation complete. No transaction was sent."}
                   </p>
                 </div>
                 <h3 className="display mt-4 text-[26px]">
-                  {qty === 1 ? "Your tree is a Seed." : `${qty} trees, all Seeds.`}
+                  {minted.length === 1
+                    ? `Token #${String(minted[0]).padStart(5, "0")} is yours.`
+                    : `${minted.length} tokens are yours.`}
                 </h3>
-                <p className="mt-2 max-w-[46ch] text-[13.5px] leading-relaxed text-ink-2">
-                  A token remains a Seed until the reforestation share covering
-                  its batch settles on-chain.
+                <p className="mt-2 max-w-[48ch] text-[13.5px] leading-relaxed text-ink-2">
+                  {txHash
+                    ? `${toPartner} ETH reached One Tree Planted in that same transaction. Your trees grow as the collection's total donation crosses each threshold.`
+                    : "A token grows as the collection's total donation crosses each threshold, which is a value anyone can read from the contract."}
                 </p>
+                {txHash && (
+                  <p className="mt-3">
+                    <a
+                      href={explorerTx(txHash)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mono text-[12px] text-ink underline underline-offset-4 hover:text-moss"
+                    >
+                      {txHash.slice(0, 12)}…{txHash.slice(-10)}
+                    </a>
+                  </p>
+                )}
 
                 <div className="mt-6 grid grid-cols-3 gap-2">
                   {minted.map((id) => {
@@ -150,11 +243,11 @@ export default function MintPanel() {
                       <span className="num w-10 text-center text-[26px] text-ink">{qty}</span>
                       <Stepper
                         onClick={() => setQty((q) => Math.min(MINT.perWallet, q + 1))}
-                        disabled={busy || qty >= MINT.perWallet}
+                        disabled={busy || qty >= perWallet}
                         label="+"
                       />
                       <span className="ml-1 text-[12px] text-ink-3">
-                        max {MINT.perWallet}
+                        max {perWallet}
                       </span>
                     </div>
                   </div>
@@ -198,7 +291,7 @@ export default function MintPanel() {
                     <Button
                       size="lg"
                       className="w-full"
-                      disabled={!ack || busy}
+                      disabled={!ack || busy || (isDeployed && !live)}
                       onClick={run}
                     >
                       {phase === "confirming"
@@ -212,9 +305,31 @@ export default function MintPanel() {
                       Connect wallet to mint
                     </Button>
                   )}
-                  <p className="mt-3 text-center text-[11.5px] text-ink-3">
-                    Simulation only. No contract, transaction or charge.
-                  </p>
+                  {error && (
+                    <p className="mt-3 text-center text-[12px] text-bark">{error}</p>
+                  )}
+                  {txHash && phase === "minting" && (
+                    <p className="mt-3 text-center text-[11.5px] text-ink-3">
+                      Waiting for confirmation —{" "}
+                      <a
+                        href={explorerTx(txHash)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mono underline underline-offset-4"
+                      >
+                        view on Blockscout
+                      </a>
+                    </p>
+                  )}
+                  {!error && !txHash && (
+                    <p className="mt-3 text-center text-[11.5px] text-ink-3">
+                      {!isDeployed
+                        ? "Simulation only. No contract is deployed, so no transaction is sent and nothing is charged."
+                        : live
+                          ? `${toPartner} ETH of this goes to One Tree Planted in the same transaction.`
+                          : "The contract is deployed but the mint is not open yet."}
+                    </p>
+                  )}
                 </div>
               </motion.div>
             )}

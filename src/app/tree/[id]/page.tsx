@@ -94,7 +94,7 @@ export default async function TreePage({
       date: donation?.date ?? null,
       body: donation
         ? `${donation.amountAsset} sent to One Tree Planted as part of batch ${donation.id}.`
-        : "The reforestation share is sent to One Tree Planted in a batch, and the transaction hash is published.",
+        : "60% of the mint leaves for One Tree Planted inside the minting transaction itself.",
       hash: donation?.txHash ?? null,
       done: stageIndex >= 1,
     },

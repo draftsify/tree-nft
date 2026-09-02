@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { createWalletClient, custom, type WalletClient } from "viem";
 import { robinhoodChain } from "@/lib/chain";
 
 /**
@@ -42,6 +43,11 @@ type WalletState = {
   setOpen: (v: boolean) => void;
   connect: () => void;
   disconnect: () => void;
+  /**
+   * A viem client bound to the connected wallet, already switched to Robinhood
+   * Chain. Null when disconnected, or when running the simulation.
+   */
+  getWalletClient: () => Promise<WalletClient | null>;
 };
 
 const Ctx = createContext<WalletState | null>(null);
@@ -59,6 +65,19 @@ function PrivyBridge({ children }: { children: ReactNode }) {
 
   const wallet = wallets[0];
   const fullAddress = authenticated && wallet ? wallet.address : null;
+
+  const getWalletClient = useCallback(async () => {
+    if (!wallet) return null;
+    // Privy will not switch silently: an external wallet prompts the user, and
+    // an embedded one moves without asking.
+    await wallet.switchChain(robinhoodChain.id);
+    const provider = await wallet.getEthereumProvider();
+    return createWalletClient({
+      account: wallet.address as `0x${string}`,
+      chain: robinhoodChain,
+      transport: custom(provider),
+    });
+  }, [wallet]);
 
   const connect = useCallback(() => {
     setConnecting(true);
@@ -82,8 +101,9 @@ function PrivyBridge({ children }: { children: ReactNode }) {
       },
       connect,
       disconnect: () => void logout(),
+      getWalletClient,
     }),
-    [fullAddress, ready, connecting, connect, logout],
+    [fullAddress, ready, connecting, connect, logout, getWalletClient],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
@@ -119,6 +139,7 @@ function SimulatedBridge({ children }: { children: ReactNode }) {
       setOpen,
       connect,
       disconnect: () => setAddress(null),
+      getWalletClient: async () => null,
     }),
     [address, connecting, open, connect],
   );

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Solidity workspace and its build output are not app code.
+    "contracts/**",
   ]),
 ]);
 
