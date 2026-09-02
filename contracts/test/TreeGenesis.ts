@@ -30,6 +30,7 @@ async function setup() {
     PROVENANCE,
     THRESHOLDS,
     "ar://unrevealed.json",
+    "https://tree-nft-beta.vercel.app/api/collection",
     owner.account.address,
     500n,
   ]);
@@ -193,5 +194,31 @@ describe("TreeGenesis", () => {
     const { tree } = ctx;
     assert.equal(await tree.read.MAX_SUPPLY(), 1000n);
     assert.equal(await tree.read.remaining(), 1000n);
+  });
+
+  it("exposes the collection name and contract-level metadata", async () => {
+    const { tree } = ctx;
+    assert.equal(await tree.read.name(), "Trees");
+    assert.equal(await tree.read.symbol(), "TREE");
+    assert.equal(
+      await tree.read.contractURI(),
+      "https://tree-nft-beta.vercel.app/api/collection",
+    );
+  });
+
+  it("lets collection copy change but keeps it out of the artwork freeze", async () => {
+    const { tree } = ctx;
+    await tree.write.setBaseURI(["https://example.test/meta/"]);
+    await tree.write.freezeMetadata();
+
+    // The artwork pointer is sealed…
+    await assert.rejects(
+      tree.write.setBaseURI(["https://elsewhere.test/"]),
+      /MetadataIsFrozen/,
+    );
+    // …while the collection description remains editable, which is honest:
+    // a banner is not the artwork.
+    await tree.write.setContractURI(["https://example.test/collection"]);
+    assert.equal(await tree.read.contractURI(), "https://example.test/collection");
   });
 });

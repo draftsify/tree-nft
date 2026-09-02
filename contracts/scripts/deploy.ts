@@ -27,7 +27,11 @@ async function main() {
   const donationRecipient = address("DONATION_RECIPIENT");
   const price = parseEther(process.env.MINT_PRICE_ETH ?? "0.0006");
   const provenanceHash = required("PROVENANCE_HASH") as `0x${string}`;
-  const unrevealedURI = process.env.UNREVEALED_URI ?? "ar://unrevealed.json";
+  const unrevealedURI =
+    process.env.UNREVEALED_URI ??
+    "https://tree-nft-beta.vercel.app/api/metadata/unrevealed.json";
+  const contractURI =
+    process.env.CONTRACT_URI ?? "https://tree-nft-beta.vercel.app/api/collection";
 
   const royaltyBps = BigInt(process.env.ROYALTY_BPS ?? "500");
 
@@ -66,6 +70,7 @@ async function main() {
   console.log("  stage 3 at        ", formatEther(thresholds[1]), "ETH donated");
   console.log("  stage 4 at        ", formatEther(thresholds[2]), "ETH donated");
   console.log("  royalty           ", `${Number(royaltyBps) / 100}% to ${royaltyReceiver}`);
+  console.log("  collection        ", contractURI);
   console.log("");
 
   const tree = await viem.deployContract("TreeGenesis", [
@@ -75,6 +80,7 @@ async function main() {
     provenanceHash,
     thresholds,
     unrevealedURI,
+    contractURI,
     royaltyReceiver,
     royaltyBps,
   ]);

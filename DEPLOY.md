@@ -119,9 +119,21 @@ Only once that transaction looks right should the mint be announced.
 ## 8. OpenSea
 
 OpenSea indexes Robinhood Chain natively and reads ERC-721 with no submission
-step. After the first mint the collection should appear on its own; give it a
-few minutes. Editing the collection name, banner and description requires
-signing in with the deployer wallet and claiming the collection in OpenSea's
-own interface.
+step, so there is nothing to file. After the first mint the collection appears
+on its own; give it a few minutes.
+
+The name, logo, banner and description come from `contractURI()`, which the
+contract already points at `/api/collection` on this site. That means the
+listing arrives dressed rather than blank, and no manual claim-and-edit is
+needed to get the banner up.
+
+To change the collection copy later, either edit `src/app/api/collection/route.ts`
+and redeploy the site, or call `setContractURI` with a different URL. This is
+deliberately outside `freezeMetadata`: a banner is not the artwork, and
+freezing the artwork should not also freeze a typo in the description.
+
+Claiming the collection in OpenSea's own interface — which does require signing
+in with the deployer wallet — is only needed for things `contractURI` cannot
+express, such as category, links and payout settings.
 
 Do not trust a collection URL until you have opened it yourself.

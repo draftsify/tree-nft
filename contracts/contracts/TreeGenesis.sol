@@ -73,6 +73,12 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
     string private _unrevealedURI;
     bool public metadataFrozen;
 
+    /// @notice Contract-level metadata: the collection's name, logo and banner
+    ///         as marketplaces read them. Separate from token metadata, and
+    ///         not covered by the freeze, because collection copy can honestly
+    ///         change while the artwork cannot.
+    string private _contractURI;
+
     /* ── events ──────────────────────────────────────── */
 
     event Minted(address indexed to, uint256 indexed tokenId, uint256 pricePaid);
@@ -81,6 +87,7 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
     event MintOpenSet(bool open);
     event StartingIndexSet(uint256 index);
     event BaseURISet(string uri);
+    event ContractURISet(string uri);
     event MetadataFrozen();
 
     /* ── errors ──────────────────────────────────────── */
@@ -104,9 +111,10 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
         bytes32 provenanceHash_,
         uint256[3] memory stageThresholds_,
         string memory unrevealedURI_,
+        string memory contractURI_,
         address royaltyReceiver_,
         uint96 royaltyBps_
-    ) ERC721("Tree Genesis Forest", "TREE") Ownable(msg.sender) {
+    ) ERC721("Trees", "TREE") Ownable(msg.sender) {
         if (donationRecipient_ == address(0) || treasury_ == address(0)) {
             revert ZeroAddress();
         }
@@ -118,6 +126,7 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
         stage3Threshold = stageThresholds_[1];
         stage4Threshold = stageThresholds_[2];
         _unrevealedURI = unrevealedURI_;
+        _contractURI = contractURI_;
         _setDefaultRoyalty(royaltyReceiver_, royaltyBps_);
         emit MintPriceSet(mintPrice_);
     }
@@ -216,6 +225,16 @@ contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
                 uint256(stage()).toString(),
                 ".json"
             );
+    }
+
+    /// @notice Where marketplaces read the collection's name, logo and banner.
+    function contractURI() external view returns (string memory) {
+        return _contractURI;
+    }
+
+    function setContractURI(string calldata uri) external onlyOwner {
+        _contractURI = uri;
+        emit ContractURISet(uri);
     }
 
     function setBaseURI(string calldata uri) external onlyOwner {
