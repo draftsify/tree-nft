@@ -59,7 +59,7 @@ export default function ImpactPage() {
             {
               v: IMPACT.minted.toLocaleString("en-US"),
               l: "trees minted",
-              s: `${((IMPACT.minted / IMPACT.supply) * 100).toFixed(1)}% of Genesis supply, held by ${IMPACT.holders} wallets.`,
+              s: `${((IMPACT.minted / IMPACT.supply) * 100).toFixed(1)}% of supply, held by ${IMPACT.holders} wallets.`,
             },
           ].map((s, i) => (
             <Reveal key={s.l} delay={i * 0.06}>

@@ -3,8 +3,8 @@ import { describe, it, beforeEach } from "node:test";
 import { network } from "hardhat";
 import { parseEther, getAddress } from "viem";
 
-/** 35,000 $TREE, eighteen decimals. */
-const PRICE = parseEther("35000");
+/** 7,777 $TREE, eighteen decimals. */
+const PRICE = parseEther("7777");
 const PROVENANCE = "0x" + "ab".repeat(32);
 const COLLECTION_URI = "https://tree-nft-beta.vercel.app/api/collection";
 const UNREVEALED = "https://tree-nft-beta.vercel.app/api/metadata/unrevealed.json";
@@ -25,7 +25,7 @@ async function setup() {
   const treasury = getAddress("0x8E301F169637a79E12Ce67f5f1dA1A1Fb4BE7C87");
 
   const token = await viem.deployContract("MockTree", []);
-  const tree = await viem.deployContract("TreeGenesis", [
+  const tree = await viem.deployContract("Tree", [
     token.address,
     donation,
     treasury,
@@ -48,7 +48,7 @@ async function setup() {
   return { viem, owner, buyer, other, stranger, tree, token, donation, treasury };
 }
 
-describe("TreeGenesis", () => {
+describe("Tree", () => {
   let ctx: Awaited<ReturnType<typeof setup>>;
 
   beforeEach(async () => {

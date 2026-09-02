@@ -6,7 +6,7 @@ import { MINT, priceLabel } from "@/lib/data";
 export const metadata: Metadata = {
   title: "Mint",
   description:
-    "Mint a Genesis tree. Traits frozen at mint, reforestation share routed on-chain, no promises about resale.",
+    "Mint a tree. Traits frozen at mint, reforestation share routed on-chain, no promises about resale.",
 };
 
 const SPEC: [string, string, string][] = [
@@ -16,16 +16,16 @@ const SPEC: [string, string, string][] = [
   ["Price", priceLabel(), "Paid in the project's own token. Approve once, then mint."],
   ["Per wallet", String(MINT.perWallet), "Enforced by the contract rather than by the interface."],
   ["Creator fee", `${MINT.royaltyPct}%`, "On secondary sales, declared through ERC-2981."],
-  ["Metadata", "Arweave", MINT.metadata],
+  ["Metadata", "Served here", MINT.metadata],
 ];
 
 export default function MintPage() {
   return (
     <>
       <Section className="pb-14 pt-36 md:pt-44">
-        <Eyebrow>Genesis Forest</Eyebrow>
+        <Eyebrow>The Forest</Eyebrow>
         <h1 className="display mt-6 max-w-[14ch] text-[clamp(2.4rem,6.2vw,4.8rem)]">
-          Mint a token from the Genesis Forest.
+          Mint a token from the Forest.
         </h1>
         <p className="mt-6 max-w-[58ch] text-[15px] leading-relaxed text-ink-2">
           A mint buys a collectible token and the funding record attached to it.

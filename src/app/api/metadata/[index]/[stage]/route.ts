@@ -47,9 +47,10 @@ export async function GET(
     {
       name: `${tree.name} — ${label}`,
       description:
-        `A collectible tree from the Tree Genesis Forest. ` +
-        `60% of the mint that issued this token was sent to ${PARTNER.name} in ` +
-        `the same transaction. The stage follows the collection's cumulative ` +
+        `A collectible tree from the Tree collection. ` +
+        `60% of the mint that issued this token left for the reforestation ` +
+        `reserve in the same transaction, on its way to ${PARTNER.name} via a ` +
+        `published route. The stage follows the collection's cumulative ` +
         `donation, read from the contract, and no key can advance it.`,
       image: `${base}/api/nft/${index}/${stage}.png`,
       external_url: `${base}/tree/${tree.number}`,
@@ -62,7 +63,6 @@ export async function GET(
         { trait_type: "Canopy", value: tree.canopy },
         { trait_type: "Trunk", value: tree.trunk },
         { trait_type: "Effect", value: tree.effect },
-        { trait_type: "Collection", value: tree.genesis ? "Genesis" : "—" },
         { trait_type: "Stage", value: label },
         { display_type: "number", trait_type: "Stage number", value: stage },
         { display_type: "number", trait_type: "Mint number", value: tree.number },

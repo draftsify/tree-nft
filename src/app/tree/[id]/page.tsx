@@ -43,7 +43,7 @@ export async function generateMetadata({
   const species = SPECIES.find((s) => s.id === tree.species)!;
   return {
     title: `#${tree.tokenId} · ${tree.rarity} ${species.name}`,
-    description: `A ${tree.rarity} ${species.name} from the Genesis Forest.`,
+    description: `A ${tree.rarity} ${species.name} from the Forest.`,
   };
 }
 
@@ -72,7 +72,6 @@ export default async function TreePage({
     ["Canopy", tree.canopy],
     ["Trunk", tree.trunk],
     ["Effect", tree.effect],
-    ["Collection", "Genesis"],
     ["Mint number", `#${tree.tokenId}`],
   ];
 

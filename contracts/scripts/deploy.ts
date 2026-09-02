@@ -27,7 +27,7 @@ async function main() {
   const donationRecipient = address("DONATION_RECIPIENT");
   // The mint is paid in an ERC-20, so the price is in whole tokens.
   const paymentToken = address("PAYMENT_TOKEN");
-  const price = parseEther(process.env.MINT_PRICE ?? "35000");
+  const price = parseEther(process.env.MINT_PRICE ?? "7777");
   const provenanceHash = required("PROVENANCE_HASH") as `0x${string}`;
   const unrevealedURI =
     process.env.UNREVEALED_URI ??
@@ -59,7 +59,7 @@ async function main() {
     : treasury;
   const publicClient = await viem.getPublicClient();
 
-  console.log("\nDeploying TreeGenesis");
+  console.log("\nDeploying Tree");
   console.log("  chain id          ", await publicClient.getChainId());
   console.log("  deployer          ", deployer.account.address);
   console.log("  balance           ", formatEther(await publicClient.getBalance({ address: deployer.account.address })), "ETH");
@@ -76,7 +76,7 @@ async function main() {
   console.log("  collection        ", contractURI);
   console.log("");
 
-  const tree = await viem.deployContract("TreeGenesis", [
+  const tree = await viem.deployContract("Tree", [
     paymentToken,
     donationRecipient,
     treasury,

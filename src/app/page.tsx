@@ -117,7 +117,7 @@ export default function Home() {
             <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8 lg:w-[62%] lg:max-w-[720px]">
               <Reveal delay={0.3}>
                 <div className="flex items-center gap-2">
-                  <Eyebrow>Genesis supply</Eyebrow>
+                  <Eyebrow>Total supply</Eyebrow>
                   <Provisional>Not yet live</Provisional>
                 </div>
                 <p className="num mt-3 text-[28px] leading-none text-ink">
@@ -331,7 +331,7 @@ export default function Home() {
           <Reveal>
             <div className="mt-16 border-t border-line pt-8">
               <div className="flex flex-wrap items-baseline justify-between gap-3">
-                <Eyebrow>Rarity distribution — 1,000 Genesis tokens</Eyebrow>
+                <Eyebrow>Rarity distribution — 1,000 tokens</Eyebrow>
                 <Provisional>Draft supply</Provisional>
               </div>
               <div className="mt-5 flex h-3 overflow-hidden rounded-full">
@@ -409,7 +409,7 @@ The donation route.
               { v: IMPACT.treesFunded.toLocaleString("en-US"), l: "trees reported planted", s: "Counted only from filed reports" },
               { v: `${IMPACT.donatedTokens.toLocaleString("en-US")}`, l: `${PAYMENT.symbol} donated`, s: `across ${IMPACT.transactions} transactions` },
               { v: String(IMPACT.projects), l: "projects", s: `${IMPACT.countries} countries` },
-              { v: IMPACT.minted.toLocaleString("en-US"), l: "trees minted", s: `of ${IMPACT.supply.toLocaleString("en-US")} Genesis` },
+              { v: IMPACT.minted.toLocaleString("en-US"), l: "trees minted", s: `of ${IMPACT.supply.toLocaleString("en-US")}` },
             ].map((s, i) => (
               <Reveal key={s.l} delay={i * 0.07}>
                 <div className="display text-[clamp(2.2rem,4.6vw,3.4rem)] text-paper">{s.v}</div>
@@ -560,7 +560,7 @@ The donation route.
             />
             <div className="relative">
               <h2 className="display mx-auto max-w-[16ch] text-[clamp(2rem,5.4vw,4.2rem)]">
-                The Genesis Forest opens with 1,000 trees.
+                The Forest opens with 1,000 trees.
               </h2>
               <p className="mx-auto mt-6 max-w-[50ch] text-[15px] leading-relaxed text-ink-2">
                 Nothing is live yet. This interface is published ahead of the

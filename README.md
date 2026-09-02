@@ -16,7 +16,7 @@ as such rather than relegating the disclosure to this file.
 | Route         | Contents                                                                        |
 | ------------- | ------------------------------------------------------------------------------- |
 | `/`           | Landing page: overview, scroll-driven evolution section, mint economics, species, rarity, FAQ |
-| `/collection` | Genesis Forest grid with species, rarity and stage filters, plus sorting          |
+| `/collection` | Collection grid with species, rarity and stage filters, plus sorting          |
 | `/tree/[id]`  | A single token: attributes, stage progress, and the append-only funding record    |
 | `/mint`       | Mint flow with a simulated wallet handshake, and the full specification           |
 | `/impact`     | Public ledger: donations with transaction hashes, project register, and method     |

@@ -51,25 +51,25 @@ export const STAGES: {
     id: "sapling",
     label: "Sapling",
     blurb: "The collection has donated a tenth of what a full sell-out would give. Every token advances together.",
-    unlock: "2,100,000 $TREE donated · about 100 mints",
+    unlock: "466,620 $TREE donated · about 100 mints",
   },
   {
     id: "young",
     label: "Young Tree",
     blurb: "Two fifths of the full donation is in. The canopy fills out for every holder at the same moment.",
-    unlock: "8,400,000 $TREE donated · about 400 mints",
+    unlock: "1,866,480 $TREE donated · about 400 mints",
   },
   {
     id: "mature",
     label: "Mature Tree",
     blurb: "Four fifths of the full donation is in. The final form, reached only if the collection nearly sells out.",
-    unlock: "16,800,000 $TREE donated · about 800 mints",
+    unlock: "3,732,960 $TREE donated · about 800 mints",
   },
 ];
 
 export const RARITIES: {
   id: Rarity;
-  /** Share of the 1,000-token Genesis supply. */
+  /** Share of the 1,000-token supply. */
   share: number;
   supply: number;
   tint: string;
@@ -153,7 +153,7 @@ export const TRAIT_GROUPS: { name: string; values: string[] }[] = [
 /* ── collection ───────────────────────────────────────── */
 
 /** Mint price, shared by the token rows and the MINT block below. */
-const MINT_PRICE = 35_000;
+const MINT_PRICE = 7_777;
 
 export type Tree = {
   id: number;
@@ -167,7 +167,6 @@ export type Tree = {
   canopy: string;
   trunk: string;
   effect: string;
-  genesis: boolean;
   /** Set once a partner confirms cost per tree. Null until then. */
   treesFunded: number | null;
   /** Null until the token is minted. */
@@ -198,7 +197,6 @@ const source = treesData as {
     canopy: string;
     trunk: string;
     effect: string;
-    genesis: boolean;
   }[];
 };
 
@@ -216,7 +214,6 @@ function toTree(row: (typeof source.trees)[number]): Tree {
     canopy: row.canopy,
     trunk: row.trunk,
     effect: row.effect,
-    genesis: row.genesis,
     treesFunded: null,
     owner: null,
     mintedAt: null,
@@ -401,7 +398,7 @@ export const PAYMENT = {
   address: process.env.NEXT_PUBLIC_PAYMENT_TOKEN ?? "",
 };
 
-/** "35,000 $TREE" */
+/** "7,777 $TREE" */
 export function priceLabel(quantity = 1) {
   return `${(MINT.price * quantity).toLocaleString("en-US")} ${PAYMENT.symbol}`;
 }
@@ -455,8 +452,8 @@ export const FAQ: { q: string; a: string }[] = [
     a: "No. One Tree Planted publishes a crypto donation address at onetreeplanted.org/pages/donate-crypto that anyone can send to, and that is what the contract does with the reforestation share. The organisation has not reviewed, approved or endorsed this project, and receives nothing from us beyond the donation itself. If that ever changes it will be stated here, dated.",
   },
   {
-    q: "What is the Genesis Forest?",
-    a: "The first collection: 1,000 numbered tokens, each carrying a Genesis marker. It establishes the standard later collections will follow. The marker records that a token came from the first collection and carries no entitlement.",
+    q: "How many tokens are there?",
+    a: "1,000, numbered and composed from eighteen photographed masters. The cap is written into the contract, so no further tokens can be minted into this collection. Nothing about holding one entitles you to a later collection, and none is promised.",
   },
   {
     q: "What is the current status of the project?",

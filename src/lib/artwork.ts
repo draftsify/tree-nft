@@ -26,7 +26,6 @@ export type Tree = {
   canopy: string;
   trunk: string;
   effect: string;
-  genesis: boolean;
 };
 
 export const TREES_DATA = treesData as { seed: string; supply: number; trees: Tree[] };

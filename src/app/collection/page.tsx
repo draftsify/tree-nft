@@ -16,7 +16,7 @@ export default function CollectionPage() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <div className="flex items-center gap-3">
-              <Eyebrow>Genesis Forest</Eyebrow>
+              <Eyebrow>The Forest</Eyebrow>
               <Provisional />
             </div>
             <h1 className="display mt-6 max-w-[14ch] text-[clamp(2.4rem,6vw,4.6rem)]">

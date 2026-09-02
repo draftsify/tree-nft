@@ -24,11 +24,6 @@ export default function TreeCard({ tree, priority = false }: { tree: Tree; prior
         <div className="absolute left-2.5 top-2.5">
           <RarityBadge rarity={tree.rarity} />
         </div>
-        {tree.genesis && (
-          <div className="absolute right-3 top-3 text-[10px] uppercase tracking-[0.1em] text-ink-3">
-            Genesis
-          </div>
-        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-1 pt-3">

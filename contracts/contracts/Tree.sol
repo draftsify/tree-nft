@@ -10,7 +10,7 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
- * @title Tree — Genesis Forest
+ * @title Tree
  * @notice A collectible ERC-721 whose mint revenue is split inside the minting
  *         transaction itself.
  *
@@ -32,7 +32,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
  *    confirm planting back to us, so a stage that depended on such a report
  *    would never unlock honestly. This one is derivable from chain state alone.
  */
-contract TreeGenesis is ERC721, ERC2981, Ownable, ReentrancyGuard {
+contract Tree is ERC721, ERC2981, Ownable, ReentrancyGuard {
     using Strings for uint256;
     using SafeERC20 for IERC20;
 

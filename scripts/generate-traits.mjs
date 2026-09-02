@@ -15,6 +15,9 @@ import { createHash } from "node:crypto";
 const SUPPLY = 1000;
 /** Photographed silhouettes available per species. */
 const VARIANTS = 3;
+// Every trait in data/trees.json falls out of this string. Changing it
+// reshuffles all 1,000 tokens, so it stays as written whatever the
+// collection is called.
 const SEED = "tree-genesis-forest-v1";
 
 /**
@@ -153,7 +156,6 @@ async function main() {
       canopy: weighted(random, TRAITS.Canopy),
       trunk: weighted(random, TRAITS.Trunk),
       effect: weighted(random, TRAITS.Effect),
-      genesis: true,
     };
   });
 

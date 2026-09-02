@@ -151,7 +151,7 @@ export default function MintPanel() {
           />
           <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5">
             <div>
-              <Eyebrow>Genesis Forest</Eyebrow>
+              <Eyebrow>The Forest</Eyebrow>
               <p className="num mt-1.5 text-[15px] text-ink">
                 {mintedCount.toLocaleString("en-US")} /{" "}
                 {supply.toLocaleString("en-US")} minted

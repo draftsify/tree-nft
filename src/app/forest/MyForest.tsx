@@ -86,7 +86,7 @@ export default function MyForest() {
           <div className="border-b border-line py-7 pr-6">
             <div className="display text-[36px]">{trees.length}</div>
             <div className="mt-2 text-[13px] font-medium text-ink">trees held</div>
-            <p className="mt-1.5 text-[12px] text-ink-3">All Genesis, all numbered.</p>
+            <p className="mt-1.5 text-[12px] text-ink-3">All numbered, all capped at 1,000.</p>
           </div>
           <div className="border-b border-line py-7 pr-6">
             <div className="display flex items-baseline gap-2 text-[36px]">

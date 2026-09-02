@@ -55,7 +55,7 @@ npm run provenance
 Should print:
 
 ```
-PROVENANCE_HASH=0x7a93a2fe60dae87b8f6240214ab4b479486a67bf6aa51536a317ef8659c8be2a
+PROVENANCE_HASH=0x005a832244b4dd8e1e18a9921eeae7a86b50bb066ddaa4bf4da06c056c5bdaa5
 ```
 
 It covers `data/trees.json` and all eighteen masters by content. If it differs,
