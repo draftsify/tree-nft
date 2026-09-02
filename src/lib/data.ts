@@ -39,25 +39,25 @@ export const STAGES: {
   {
     id: "seed",
     label: "Seed",
-    blurb: "Minted. The contribution is on-chain, nothing has left the treasury yet.",
+    blurb: "The token has been issued. Its share of the mint is held in the reforestation address and has not been sent.",
     unlock: "Mint confirmed",
   },
   {
     id: "sapling",
     label: "Sapling",
-    blurb: "The mint's reforestation share has been sent to the partner, with a public transaction hash.",
+    blurb: "The reforestation share has been sent to a partner organisation. The transaction hash is published on the impact page.",
     unlock: "Donation transaction settled",
   },
   {
     id: "young",
     label: "Young Tree",
-    blurb: "The partner has allocated the funds to a named planting site and season.",
-    unlock: "Allocation letter received",
+    blurb: "The partner has assigned the batch to a named planting site and confirmed the season in writing.",
+    unlock: "Allocation confirmed",
   },
   {
     id: "mature",
     label: "Mature Tree",
-    blurb: "Planting confirmed by the partner, with a dated report attached to the token.",
+    blurb: "The partner has filed a dated planting report. It is attached to the batch and to every token it covers.",
     unlock: "Planting report verified",
   },
 ];
@@ -91,7 +91,7 @@ export const SPECIES: {
     latin: "Quercus robur",
     supply: 3200,
     region: "Temperate Europe",
-    note: "The base form, in clear green glass. Broad canopy, and the longest-lived silhouette in the set.",
+    note: "The base form, in clear green glass. Broad canopy and the largest supply in the collection.",
   },
   {
     id: "pine",
@@ -99,7 +99,7 @@ export const SPECIES: {
     latin: "Pinus sylvestris",
     supply: 2400,
     region: "Boreal North",
-    note: "Cold teal glass. Cast for the northern restoration sites.",
+    note: "Teal glass, narrower crown. Associated with the boreal planting sites.",
   },
   {
     id: "maple",
@@ -107,7 +107,7 @@ export const SPECIES: {
     latin: "Acer saccharum",
     supply: 1900,
     region: "North America",
-    note: "Rose glass. The only species whose canopy shifts hue with the Season trait.",
+    note: "Rose glass. The only species whose canopy colour varies with the Season trait.",
   },
   {
     id: "sakura",
@@ -115,7 +115,7 @@ export const SPECIES: {
     latin: "Prunus serrulata",
     supply: 1400,
     region: "East Asia",
-    note: "Pink blossom glass. Short bloom window, which is why the supply is cut below Maple.",
+    note: "Pink blossom glass. Supply is set below Maple to reflect the shorter flowering window.",
   },
   {
     id: "redwood",
@@ -123,7 +123,7 @@ export const SPECIES: {
     latin: "Sequoia sempervirens",
     supply: 800,
     region: "Pacific Coast",
-    note: "Copper glass, dense crown. Restricted to Rare and above.",
+    note: "Copper glass, dense crown. Issued only at Rare and above.",
   },
   {
     id: "baobab",
@@ -131,7 +131,7 @@ export const SPECIES: {
     latin: "Adansonia digitata",
     supply: 300,
     region: "Sub-Saharan Africa",
-    note: "The scarcest form in Genesis. Amber glass, never issued below Epic.",
+    note: "Amber glass, and the smallest supply in the collection. Issued only at Epic and Legendary.",
   },
 ];
 
@@ -395,51 +395,51 @@ export const MINT = {
   perWallet: 5,
   /** Revenue split. Draft figures — set on-chain before launch. */
   split: [
-    { label: "Reforestation partner", pct: 60, note: "Sent as a single on-chain donation per batch, hash published." },
-    { label: "Artwork & metadata", pct: 18, note: "Illustration, trait generation, permanent storage." },
-    { label: "Operations", pct: 14, note: "Audit, gas, hosting, verification work." },
-    { label: "Treasury", pct: 8, note: "Multisig reserve for future collections." },
+    { label: "Reforestation partner", pct: 60, note: "Sent to partner organisations in batches. Each transaction hash is published." },
+    { label: "Artwork & metadata", pct: 18, note: "Artwork production, trait generation and permanent metadata storage." },
+    { label: "Operations", pct: 14, note: "Contract audit, gas, hosting and the verification process." },
+    { label: "Treasury", pct: 8, note: "Multisig reserve held against future collections." },
   ],
-  metadata: "Arweave, referenced by an on-chain pointer the owner can resolve without us.",
+  metadata: "Arweave, referenced by an on-chain pointer that resolves without our servers.",
 };
 
 export const FAQ: { q: string; a: string }[] = [
   {
-    q: "How many real trees does one mint fund?",
-    a: "We haven't fixed that number, and we won't publish one until a partner confirms it in writing. The mechanism is what's fixed: 60% of every mint is routed to the reforestation partner and the donation transaction hash is published on the impact page. Once cost-per-tree is agreed, the figure gets written into each token's metadata — not into a marketing line.",
+    q: "How many trees does one mint fund?",
+    a: "We have not set that figure. It will be published once a partner organisation confirms cost per tree in writing, and it will then be recorded in each token's metadata. What is already fixed is the mechanism: 60% of every mint is sent to reforestation partners, and each donation transaction hash is published on the impact page.",
   },
   {
-    q: "Is this an investment?",
-    a: "No. A Tree is a collectible with a funding record attached. There is no yield, no revenue share, no buyback and no promise about resale value. If you sell it, the price is whatever a buyer decides to pay — which may be less than you paid, or nothing.",
+    q: "Is a Tree token an investment?",
+    a: "No. It is a collectible with a funding record attached. It pays no yield, carries no revenue share and confers no rights over the project. If you resell it, the price is set by the buyer and may be lower than the mint price.",
   },
   {
-    q: "What actually makes the NFT evolve?",
-    a: "A verified milestone, never a clock. Seed at mint. Sapling when the donation settles on-chain. Young Tree when the partner allocates your batch to a named site. Mature Tree when a dated planting report is filed. Each transition writes a new metadata version and leaves the previous one readable.",
+    q: "What causes a token to change stage?",
+    a: "A verified milestone, not elapsed time. A token is issued as a Seed. It becomes a Sapling when the donation covering it settles on-chain, a Young Tree when the partner assigns that batch to a named site, and a Mature Tree when a dated planting report is filed. Each transition writes a new metadata version and the previous version remains readable.",
   },
   {
-    q: "What happens to the impact history if I sell?",
-    a: "It stays with the token. Ownership is one field; the funding record is a separate, append-only log keyed to the token id. A buyer inherits the full history, including the mint, every donation hash and every verification date.",
+    q: "What happens to the funding record if the token is sold?",
+    a: "It stays with the token. Ownership is a single field; the funding record is an append-only log keyed to the token id. The buyer inherits the full history, including the mint, every donation hash and every verification date.",
   },
   {
-    q: "Why Base, and why ERC-721?",
-    a: "ERC-721 because every major marketplace already reads it, so trading needs no bespoke venue from us. Base because the mint and the metadata updates are cheap enough that we can push a version on every milestone rather than batching them for cost.",
+    q: "Why Base and ERC-721?",
+    a: "ERC-721 is read by every major marketplace, so tokens can be traded without a venue of our own. Base keeps minting and metadata updates cheap enough to write a new version at each milestone rather than batching updates to reduce cost.",
   },
   {
-    q: "Can metadata be changed after mint?",
-    a: "Stage and impact fields can be updated, by design — that's the evolution system. Species, rarity and traits are frozen at mint and the freeze is enforced in the contract. Every update is versioned, so you can read what a token looked like at any earlier point.",
+    q: "Can metadata change after minting?",
+    a: "Stage and impact fields are updatable by design, since that is how the evolution system works. Species, rarity and traits are frozen at mint, and the freeze is enforced by the contract rather than by policy. Every update is versioned, so the state of a token at any earlier point can be read back.",
   },
   {
     q: "What is the Genesis Forest?",
-    a: "The first collection: 10,000 numbered tokens carrying a Genesis badge. It exists to fund the first planting seasons and to set the standard the later collections inherit. The badge marks when you arrived. It is not a claim on anything.",
+    a: "The first collection: 10,000 numbered tokens, each carrying a Genesis marker. It funds the first planting seasons and establishes the standard later collections will follow. The marker records that a token came from the first collection and carries no entitlement.",
   },
   {
-    q: "Where is this in development?",
-    a: "The interface is what you're looking at, and it's the only finished part. No contract is deployed, no wallet transaction is live, no donation has been made, and no charity partnership is signed. Every number on this site is placeholder data.",
+    q: "What is the current status of the project?",
+    a: "The interface is complete and is what you are looking at. No contract is deployed, no mint is live, no donation has been made and no partnership agreement is signed. Every figure shown on this site is placeholder data.",
   },
 ];
 
 export const JOURNAL: { tag: string; date: string; title: string; read: string }[] = [
-  { tag: "Method", date: "Aug 22, 2026", title: "Why we won't print a tree count yet.", read: "6 min" },
-  { tag: "Field", date: "Jul 30, 2026", title: "What a planting report has to contain.", read: "9 min" },
-  { tag: "Design", date: "Jun 11, 2026", title: "Drawing one tree six thousand ways.", read: "4 min" },
+  { tag: "Method", date: "Aug 22, 2026", title: "How we assess a reforestation partner", read: "6 min" },
+  { tag: "Field", date: "Jul 30, 2026", title: "What we require in a planting report", read: "9 min" },
+  { tag: "Design", date: "Jun 11, 2026", title: "Building the trait system", read: "4 min" },
 ];

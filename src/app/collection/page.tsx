@@ -20,12 +20,12 @@ export default function CollectionPage() {
               <Provisional />
             </div>
             <h1 className="display mt-6 max-w-[14ch] text-[clamp(2.4rem,6vw,4.6rem)]">
-              Ten thousand trees, one at a time.
+              The Genesis Forest.
             </h1>
-            <p className="mt-5 max-w-[54ch] text-[15px] leading-relaxed text-ink-2">
+            <p className="mt-5 max-w-[56ch] text-[15px] leading-relaxed text-ink-2">
               Species, rarity and traits are assigned at mint and frozen. Stage
-              is the only field that ever changes, and it changes only when a
-              funding milestone is verified.
+              is the only field that changes afterwards, and only once a funding
+              milestone has been verified.
             </p>
           </div>
 

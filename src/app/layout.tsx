@@ -22,13 +22,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://tree-nft.vercel.app",
   ),
-  title: "Tree — a digital tree, a funded forest",
+  title: "Tree — collectible trees that fund reforestation",
   description:
-    "Mint a unique digital tree. A fixed share of every mint is routed to reforestation, with the donation transaction published on-chain. Collectible, not an investment.",
+    "Collectible digital trees. A fixed share of every mint is sent to reforestation partners, and each donation is published with its transaction hash.",
   openGraph: {
-    title: "Tree — a digital tree, a funded forest",
+    title: "Tree — collectible trees that fund reforestation",
     description:
-      "Mint a unique digital tree. A fixed share of every mint funds real reforestation, verifiably.",
+      "Collectible digital trees whose mint revenue funds reforestation, with every donation published on-chain.",
     type: "website",
   },
 };

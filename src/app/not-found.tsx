@@ -16,10 +16,10 @@ export default function NotFound() {
         <div className="relative">
           <Eyebrow>404</Eyebrow>
           <h1 className="display mx-auto mt-6 max-w-[13ch] text-[clamp(2rem,5.4vw,3.6rem)]">
-            Nothing grows at this address.
+            This page does not exist.
           </h1>
           <p className="mx-auto mt-5 max-w-[42ch] text-[14.5px] leading-relaxed text-ink-2">
-            The page you asked for doesn&rsquo;t exist. The forest does.
+            The address you requested could not be found.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
             <ButtonLink href="/" size="lg">

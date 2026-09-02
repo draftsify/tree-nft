@@ -120,10 +120,10 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
 
       {filtered.length === 0 && (
         <div className="rounded-[20px] border border-dashed border-line-2 py-20 text-center">
-          <p className="display text-[22px]">No tree matches that combination.</p>
+          <p className="display text-[22px]">No tokens match this combination.</p>
           <p className="mt-2 text-[13.5px] text-ink-3">
-            Some pairings don&rsquo;t exist by design — Baobab is never issued
-            below Epic, for one.
+            Some combinations do not exist by design. Baobab, for example, is
+            never issued below Epic.
           </p>
         </div>
       )}

@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 };
 
 const SPEC: [string, string, string][] = [
-  ["Blockchain", MINT.chain, "L2 rollup, settled to Ethereum. Cheap enough to write a metadata version on every milestone."],
-  ["Standard", MINT.standard, "Read by every major marketplace, so trading needs no venue of ours."],
-  ["Supply", MINT.supply.toLocaleString("en-US"), "Hard cap in the contract. No later mints into this collection."],
+  ["Blockchain", MINT.chain, "An Ethereum L2. Low enough in cost to write a metadata version at every milestone."],
+  ["Standard", MINT.standard, "Read by every major marketplace, so tokens trade without a venue of ours."],
+  ["Supply", MINT.supply.toLocaleString("en-US"), "A hard cap in the contract. No further mints into this collection."],
   ["Price", `${MINT.priceEth} ETH`, `≈ $${MINT.priceUsdApprox} at the time of writing.`],
-  ["Per wallet", String(MINT.perWallet), "Enforced on-chain, not by the interface."],
+  ["Per wallet", String(MINT.perWallet), "Enforced by the contract rather than by the interface."],
   ["Metadata", "Arweave", MINT.metadata],
 ];
 
@@ -24,12 +24,12 @@ export default function MintPage() {
       <Section className="pb-14 pt-36 md:pt-44">
         <Eyebrow>Genesis Forest</Eyebrow>
         <h1 className="display mt-6 max-w-[14ch] text-[clamp(2.4rem,6.2vw,4.8rem)]">
-          Mint a tree that has to earn its own growth.
+          Mint a token from the Genesis Forest.
         </h1>
-        <p className="mt-6 max-w-[56ch] text-[15px] leading-relaxed text-ink-2">
-          You are buying a collectible and a funding record. There is no yield,
-          no revenue share and no promise about what it will be worth later.
-          Please read the panel on the right before you decide.
+        <p className="mt-6 max-w-[58ch] text-[15px] leading-relaxed text-ink-2">
+          A mint buys a collectible token and the funding record attached to it.
+          It carries no yield, no revenue share and no guarantee of future
+          value. Please read the disclosures alongside the panel before minting.
         </p>
       </Section>
 
@@ -42,7 +42,7 @@ export default function MintPage() {
         <div className="mx-auto w-full max-w-[1240px]">
           <Eyebrow>Specification</Eyebrow>
           <h2 className="display mt-5 max-w-[16ch] text-[clamp(1.8rem,4vw,3rem)]">
-            Decided before a line of the contract was written.
+            Fixed before the contract is written.
           </h2>
 
           <dl className="mt-12 grid border-t border-line md:grid-cols-3">
@@ -59,19 +59,19 @@ export default function MintPage() {
             <div>
               <h3 className="text-[15px] font-medium text-ink">Security</h3>
               <ul className="mt-3 flex flex-col gap-2.5 text-[13.5px] leading-relaxed text-ink-2">
-                <li>— External audit before deployment, report published in full including anything unresolved.</li>
-                <li>— Withdrawals behind a multisig; no single key can move funds.</li>
-                <li>— Pausable mint, but transfers can never be paused — your token stays yours if we go dark.</li>
-                <li>— Trait fields immutable after mint, enforced in the contract rather than by policy.</li>
+                <li>— External audit before deployment, with the report published in full, including unresolved findings.</li>
+                <li>— Withdrawals require a multisig. No single key can move funds.</li>
+                <li>— The mint is pausable. Transfers are not, so tokens remain usable if the project stops operating.</li>
+                <li>— Trait fields are immutable after mint, enforced by the contract rather than by policy.</li>
               </ul>
             </div>
             <div>
               <h3 className="text-[15px] font-medium text-ink">Still open</h3>
               <ul className="mt-3 flex flex-col gap-2.5 text-[13.5px] leading-relaxed text-ink-2">
-                <li>— No charity partnership is signed, so cost per tree is unknown.</li>
-                <li>— Jurisdiction and disclosure requirements for the donation flow are still being reviewed.</li>
-                <li>— Royalty rate on secondary sales is not fixed.</li>
-                <li>— The verification process for planting reports needs a second, independent reader.</li>
+                <li>— No partnership agreement is signed, so cost per tree is not yet known.</li>
+                <li>— Jurisdiction and disclosure requirements for the donation flow are under review.</li>
+                <li>— The royalty rate on secondary sales is not fixed.</li>
+                <li>— The verification process requires a second, independent reader of planting reports.</li>
               </ul>
             </div>
           </div>

@@ -27,13 +27,13 @@ export default function ImpactPage() {
           <Provisional />
         </div>
         <h1 className="display mt-6 max-w-[15ch] text-[clamp(2.4rem,6.2vw,4.8rem)]">
-          Where the money went, and what came back.
+          Donations sent, and results confirmed.
         </h1>
-        <p className="mt-6 max-w-[58ch] text-[15px] leading-relaxed text-ink-2">
-          Two columns matter here: what left the treasury, and what a partner
-          confirmed in writing afterwards. They are counted separately on
-          purpose — money sent is not the same as a tree in the ground, and
-          conflating them is how impact reporting usually goes wrong.
+        <p className="mt-6 max-w-[60ch] text-[15px] leading-relaxed text-ink-2">
+          Two figures are tracked separately: the amount sent to partner
+          organisations, and the planting a partner has since confirmed in
+          writing. Funds sent are not evidence of trees planted, so the two are
+          never combined into a single number.
         </p>
       </Section>
 
@@ -73,9 +73,9 @@ export default function ImpactPage() {
         </div>
 
         <p className="mt-4 text-[12px] leading-relaxed text-ink-3">
-          Every figure on this page is placeholder data. When the ledger is
-          live these numbers come from the indexer and the contract, never from
-          a file someone edits by hand.
+          Every figure on this page is placeholder data. Once the ledger is
+          live these values are read from the contract and the indexer rather
+          than from a file maintained by hand.
         </p>
       </Section>
 
@@ -86,7 +86,7 @@ export default function ImpactPage() {
             <div>
               <Eyebrow>Donations</Eyebrow>
               <h2 className="display mt-5 text-[clamp(1.8rem,4vw,2.8rem)]">
-                Every transaction, in order.
+                Transactions, in order.
               </h2>
             </div>
             <span className="text-[12.5px] text-ink-3">
@@ -145,9 +145,9 @@ export default function ImpactPage() {
           </div>
 
           <p className="mt-5 max-w-[70ch] text-[12px] leading-relaxed text-ink-3">
-            A dash in the last column means the money has moved but no partner
-            report has been filed yet. It is not a zero and it is not an
-            estimate — it stays blank until there is a document behind it.
+            A dash in the final column means the funds have been sent but no
+            partner report has been filed. It is neither a zero nor an estimate.
+            The field stays empty until a document supports it.
           </p>
         </div>
       </section>
@@ -158,7 +158,7 @@ export default function ImpactPage() {
           <div>
             <Eyebrow>Projects</Eyebrow>
             <h2 className="display mt-5 max-w-[16ch] text-[clamp(1.8rem,4vw,2.8rem)]">
-              Named sites, not &ldquo;a forest somewhere&rdquo;.
+              Named planting sites.
             </h2>
           </div>
           <span className="text-[12.5px] text-ink-3">{PROJECTS.length} sites</span>
@@ -202,16 +202,16 @@ export default function ImpactPage() {
           <div>
             <p className="eyebrow text-paper/40">Method</p>
             <h2 className="display mt-5 max-w-[12ch] text-[clamp(1.8rem,4vw,2.8rem)] text-paper">
-              How a number gets onto this page.
+              How a figure reaches this page.
             </h2>
           </div>
           <ol className="flex flex-col">
             {[
-              ["Mint settles", "The reforestation share accumulates in a dedicated address. Nothing is claimed at this point."],
-              ["Batch is sent", "Once the balance clears the partner's minimum, it goes out in one transaction. The hash is published the same day, before any allocation is known."],
-              ["Partner allocates", "The partner names the site and the planting window in writing. That letter is what moves affected tokens to Young Tree."],
-              ["Report is filed", "A dated report with counts and site photographs. Only then does a tree count appear in the table above, and only then do tokens reach Mature."],
-              ["Nothing is back-filled", "If a report never arrives, the row keeps its dash permanently. We don't estimate, and we don't quietly delete the batch."],
+              ["Mint settles", "The reforestation share accumulates in a dedicated address. No claim is made at this stage."],
+              ["Batch is sent", "Once the balance clears the partner's minimum it is sent in a single transaction. The hash is published the same day, before any allocation is known."],
+              ["Partner allocates", "The partner names the site and planting window in writing. That confirmation moves the affected tokens to Young Tree."],
+              ["Report is filed", "A dated report with counts and site photographs. Only then does a tree count appear in the table above and the tokens reach Mature."],
+              ["Records are not back-filled", "If a report never arrives, the row keeps its dash permanently. Figures are not estimated and batches are not removed."],
             ].map(([h, p], i) => (
               <li key={h} className="border-t border-paper/10 py-6 first:border-0 first:pt-0">
                 <div className="flex gap-5">

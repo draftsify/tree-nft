@@ -83,21 +83,21 @@ export default async function TreePage({
     {
       title: "Reforestation share sent",
       date: donation.date,
-      body: `${donation.amountAsset} routed to the reforestation partner as part of batch ${donation.id}.`,
+      body: `${donation.amountAsset} sent to the reforestation partner as part of batch ${donation.id}.`,
       hash: donation.txHash,
       done: stageIndex >= 1,
     },
     {
       title: "Allocated to a planting site",
       date: donation.status === "pending" ? null : "2026-07-15",
-      body: `Partner assigned batch ${donation.id} to ${donation.region}, planting window confirmed.`,
+      body: `The partner assigned batch ${donation.id} to ${donation.region} and confirmed the planting window.`,
       hash: null,
       done: stageIndex >= 2,
     },
     {
       title: "Planting report filed",
       date: donation.verifiedAt,
-      body: "Dated report and site photographs attached to the batch, and to every token funded by it.",
+      body: "A dated report with site photographs, attached to the batch and to every token it funded.",
       hash: null,
       done: stageIndex >= 3,
     },
@@ -200,7 +200,7 @@ export default async function TreePage({
                     {donation.treesFunded === null ? "—" : "3"}
                   </div>
                   <p className="mt-1 text-[12.5px] leading-relaxed text-ink-3">
-                    trees attributed to this token. Blank until the partner
+                    trees attributed to this token. Left blank until a partner
                     confirms cost per tree in writing.
                   </p>
                 </div>
@@ -245,9 +245,9 @@ export default async function TreePage({
                 </button>
               </div>
               <p className="mt-4 text-[11.5px] leading-relaxed text-ink-3">
-                Marketplace actions are inert — nothing is deployed. When they
-                work, they hand off to the standard ERC-721 interface; we don&rsquo;t
-                custody the token at any point.
+                Marketplace actions are inactive because no contract is
+                deployed. Once live they hand off to the standard ERC-721
+                interface, and the token is never held in custody by us.
               </p>
             </div>
           </div>
@@ -261,11 +261,11 @@ export default async function TreePage({
             <div>
               <Eyebrow>Permanent record</Eyebrow>
               <h2 className="display mt-5 max-w-[12ch] text-[clamp(1.8rem,4vw,3rem)]">
-                The part that never transfers.
+                The record attached to this token.
               </h2>
-              <p className="mt-4 max-w-[38ch] text-[14px] leading-relaxed text-ink-2">
-                Append-only and keyed to the token id. Selling the tree rewrites
-                the owner field and nothing below it.
+              <p className="mt-4 max-w-[40ch] text-[14px] leading-relaxed text-ink-2">
+                Append-only and keyed to the token id. A sale rewrites the owner
+                field and leaves everything below it unchanged.
               </p>
             </div>
 

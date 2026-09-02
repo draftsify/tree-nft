@@ -45,9 +45,8 @@ export default function Footer() {
               <span className="display text-[22px] tracking-[-0.04em]">Tree</span>
             </div>
             <p className="mt-5 max-w-[36ch] text-[14px] leading-relaxed text-paper/55">
-              A digital tree you own, and a funding record you can check. No
-              yield, no promises about price — just the collectible and the
-              receipt.
+              Collectible digital trees whose mint revenue funds reforestation,
+              with each donation published on-chain.
             </p>
 
             <form
@@ -79,8 +78,8 @@ export default function Footer() {
               </div>
               <p className="mt-2.5 text-[11.5px] text-paper/35">
                 {sent
-                  ? "Nothing was actually stored — this form has no backend yet."
-                  : "One message per verified planting report. Nothing else."}
+                  ? "Nothing was stored. This form is not connected to a backend."
+                  : "One message per verified planting report."}
               </p>
             </form>
           </div>
@@ -108,14 +107,15 @@ export default function Footer() {
 
         <div className="border-t border-paper/10 py-6">
           <p className="max-w-[92ch] text-[12px] leading-relaxed text-paper/40">
-            <span className="text-paper/70">Read this part.</span> Tree is an
+            <span className="text-paper/70">Important.</span> Tree is an
             interface prototype. No smart contract is deployed, no mint is live,
             no donation has been made and no reforestation partnership is
-            signed. Every figure shown — trees funded, dollars donated,
-            transaction hashes, holder counts — is placeholder data. A Tree NFT
-            is a collectible, not a security, a share or an investment: it pays
-            nothing, entitles you to nothing, and its resale value is whatever a
-            buyer decides it is, including nothing.
+            signed. Every figure shown on this site, including trees funded,
+            amounts donated, transaction hashes and holder counts, is
+            placeholder data. A Tree token is a collectible. It is not a
+            security, a share or an investment: it pays no yield, confers no
+            rights, and its resale value is determined solely by the secondary
+            market.
           </p>
         </div>
 

@@ -27,23 +27,23 @@ import {
 const PRINCIPLES = [
   {
     n: "01",
-    title: "One tree, drawn six thousand ways.",
-    body: "Every token is the same cast-glass oak, recomposed: species, canopy, trunk, season, light. The art is a system, not a folder of six thousand exports — which is why the traits can be verified against the contract rather than taken on faith.",
+    title: "Generative artwork",
+    body: "Every token is composed from one photographed glass sculpture: species, canopy, trunk, season and light are drawn from a fixed trait system at mint. Because the artwork is generated rather than hand-assigned, each token's traits can be checked against the contract.",
   },
   {
     n: "02",
-    title: "The receipt is the product.",
-    body: "A share of every mint leaves the treasury as one on-chain donation, and the hash goes on the impact page the same day. You are not asked to believe the money moved. You are shown where it went.",
+    title: "Published donations",
+    body: "The reforestation share of each mint is sent to partner organisations in batches. Every donation transaction hash is published on the impact page on the day it settles, alongside the project it was allocated to.",
   },
   {
     n: "03",
-    title: "It grows when something real happens.",
-    body: "Your tree advances a stage when a donation settles, when a partner allocates it to a site, when a planting report is filed. Never on a schedule, never because a launch calendar needed a moment.",
+    title: "Milestone-based evolution",
+    body: "A token advances when its donation settles, when a partner assigns the batch to a site, and when a planting report is filed. Stages are never released on a schedule.",
   },
   {
     n: "04",
-    title: "No claim we can't evidence.",
-    body: "You will not find a trees-per-mint figure on this site, because no partner has signed one yet. When that number exists it goes in the metadata, dated and sourced, and this sentence gets deleted.",
+    title: "No unverified claims",
+    body: "This site does not state how many trees a mint funds, because no partner has confirmed a cost per tree. When that figure is agreed it will be recorded in each token's metadata with its source and date.",
   },
 ];
 
@@ -51,17 +51,17 @@ const STEPS = [
   {
     n: "Step 01",
     title: "Connect",
-    body: "Any EVM wallet on Base. Read-only until you approve a transaction — connecting shows you the collection, nothing more.",
+    body: "Any EVM wallet on Base. Connecting is read-only and grants no permissions until you approve a transaction.",
   },
   {
     n: "Step 02",
     title: "Mint",
-    body: "Traits are assigned at mint from the contract's own randomness and frozen immediately. Species, rarity and traits can never be rewritten afterwards.",
+    body: "Traits are assigned by the contract at mint and frozen in the same transaction. Species, rarity and traits cannot be rewritten afterwards.",
   },
   {
     n: "Step 03",
     title: "Watch it change",
-    body: "Your token arrives as a Seed. It advances only when the funding milestone behind that stage is verified and filed against your token id.",
+    body: "Tokens are issued as a Seed. Each subsequent stage is written only after the corresponding funding milestone has been verified and filed against the token id.",
   },
 ];
 
@@ -86,15 +86,15 @@ export default function Home() {
               <Eyebrow>Genesis Forest · 10,000 trees</Eyebrow>
             </Reveal>
             <Reveal delay={0.06}>
-              <h1 className="display mt-6 max-w-[11ch] text-[clamp(2.7rem,6.6vw,5.4rem)] lg:max-w-[9ch]">
-                Own a tree. Fund a forest.
+              <h1 className="display mt-6 max-w-[13ch] text-[clamp(2.5rem,6.1vw,5rem)] lg:max-w-[11ch]">
+                Digital trees that fund real forests.
               </h1>
             </Reveal>
             <Reveal delay={0.14}>
               <p className="mt-6 max-w-[42ch] text-[15px] leading-relaxed text-ink-2 md:text-[16px]">
-                A collectible digital tree, and a public record of the
-                reforestation your mint paid for. The artwork is yours. The
-                receipt is everyone&rsquo;s.
+                Each token is a unique digital tree. A fixed share of every
+                mint is sent to reforestation partners, and every donation is
+                published with its transaction hash.
               </p>
             </Reveal>
             <Reveal delay={0.22}>
@@ -130,8 +130,7 @@ export default function Home() {
 
               <Reveal delay={0.36} className="hidden md:block">
                 <p className="max-w-[24ch] text-right text-[12.5px] leading-relaxed text-ink-3">
-                  Scroll. The tree grows the way the token does — one verified
-                  milestone at a time.
+                  Scroll to see how a token moves through its four stages.
                 </p>
               </Reveal>
             </div>
@@ -141,24 +140,24 @@ export default function Home() {
 
       {/* ── thesis ──────────────────────────────────────── */}
       <Section id="thesis" className="py-28 md:py-40">
-        <Eyebrow>What this is</Eyebrow>
+        <Eyebrow>Overview</Eyebrow>
         <ScrollWords
           className="display mt-8 max-w-[19ch] text-[clamp(2rem,6.2vw,5.2rem)]"
-          text="Most impact NFTs sell you a feeling. This one hands you the transaction."
+          text="Every figure on this site is tied to a transaction that can be checked independently."
         />
         <div className="mt-14 grid gap-10 border-t border-line pt-10 md:grid-cols-3">
           {[
             {
-              h: "A collectible first",
-              p: "If the environmental story vanished tomorrow, you'd still want to look at it. That's the bar. A beautiful object that happens to be honest, not a donation button wearing an image.",
+              h: "The artwork",
+              p: "Each token is a distinct composition drawn from a fixed set of species, canopy, trunk, season and light traits. Traits are assigned by the contract at mint and cannot be changed.",
             },
             {
-              h: "A funding record second",
-              p: "Each token carries an append-only log: the mint, the donation hash, the project it was allocated to, the date a planting report was filed. It's a ledger, and it reads like one.",
+              h: "The funding record",
+              p: "Each token carries an append-only log: the mint transaction, the donation that followed, the project the funds were allocated to, and the date a planting report was filed.",
             },
             {
-              h: "Never a return",
-              p: "There is no staking, no airdrop schedule, no floor-price mechanic and no buyback. What happens to the resale price is entirely between future buyers and sellers.",
+              h: "What it is not",
+              p: "There is no staking, airdrop schedule, floor-price mechanism or buyback. Resale prices are set by the secondary market and carry no guarantee.",
             },
           ].map((c, i) => (
             <Reveal key={c.h} delay={i * 0.08}>
@@ -196,12 +195,12 @@ export default function Home() {
           <div className="mx-auto w-full max-w-[1240px]">
             <Eyebrow>Evolution</Eyebrow>
             <h2 className="display mt-6 max-w-[18ch] text-[clamp(2rem,5.4vw,4.2rem)]">
-              It only grows when something is proven.
+              Four stages, each tied to a verified milestone.
             </h2>
-            <p className="mt-5 max-w-[52ch] text-[15px] leading-relaxed text-ink-2">
-              Four stages, four milestones. Each transition writes a new
-              metadata version against your token id and leaves the previous one
-              readable, so the history can be audited rather than trusted.
+            <p className="mt-5 max-w-[54ch] text-[15px] leading-relaxed text-ink-2">
+              Each transition writes a new metadata version against the token id
+              and leaves the previous version readable, so the full history of a
+              token can be audited after the fact.
             </p>
           </div>
         </div>
@@ -214,7 +213,7 @@ export default function Home() {
           <div>
             <Eyebrow>Minting</Eyebrow>
             <h2 className="display mt-6 max-w-[16ch] text-[clamp(2rem,5vw,3.8rem)]">
-              Three steps, then nothing to manage.
+              How minting works.
             </h2>
           </div>
           <ButtonLink href="/mint" variant="outline">
@@ -243,13 +242,13 @@ export default function Home() {
         {/* revenue split */}
         <div className="mt-16 grid gap-10 md:grid-cols-[1fr_1.2fr]">
           <Reveal>
-            <Eyebrow>Where the mint goes</Eyebrow>
-            <h3 className="display mt-5 max-w-[14ch] text-[clamp(1.6rem,3.2vw,2.6rem)]">
-              Split on-chain, not by memo.
+            <Eyebrow>Revenue allocation</Eyebrow>
+            <h3 className="display mt-5 max-w-[16ch] text-[clamp(1.6rem,3.2vw,2.6rem)]">
+              Allocation of mint revenue.
             </h3>
-            <p className="mt-4 max-w-[40ch] text-[14px] leading-relaxed text-ink-2">
-              Draft figures. They get written into the contract before launch
-              and can be read by anyone from the contract afterwards.
+            <p className="mt-4 max-w-[42ch] text-[14px] leading-relaxed text-ink-2">
+              These are draft figures. They will be written into the contract
+              before launch and can be read from it by anyone afterwards.
             </p>
           </Reveal>
 
@@ -280,14 +279,14 @@ export default function Home() {
         <div className="mx-auto w-full max-w-[1240px]">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <Eyebrow>Six species</Eyebrow>
+              <Eyebrow>Species</Eyebrow>
               <h2 className="display mt-6 max-w-[16ch] text-[clamp(2rem,5vw,3.8rem)]">
-                Scarcity that means something.
+                Six species, fixed supply.
               </h2>
-              <p className="mt-5 max-w-[52ch] text-[15px] leading-relaxed text-ink-2">
-                Supply per species is fixed in the contract and enforced at mint.
-                A rare tree is rare because there are fewer of them — not because
-                anyone expects it to be worth more.
+              <p className="mt-5 max-w-[54ch] text-[15px] leading-relaxed text-ink-2">
+                Supply per species is set in the contract and enforced at mint.
+                Rarity describes how many tokens exist at each tier. It is not a
+                statement about value.
               </p>
             </div>
             <ButtonLink href="/collection" variant="outline">
@@ -364,7 +363,7 @@ export default function Home() {
       <Section className="py-28 md:py-36">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <Eyebrow>In the forest right now</Eyebrow>
+            <Eyebrow>Latest tokens</Eyebrow>
             <h2 className="display mt-6 text-[clamp(2rem,5vw,3.6rem)]">
               Recently minted.
             </h2>
@@ -388,9 +387,9 @@ export default function Home() {
         <div className="mx-auto w-full max-w-[1240px]">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="eyebrow text-paper/40">The ledger</p>
+              <p className="eyebrow text-paper/40">Impact ledger</p>
               <h2 className="display mt-6 max-w-[16ch] text-[clamp(2rem,5vw,3.8rem)] text-paper">
-                Every donation, with its hash.
+                The donation record.
               </h2>
             </div>
             <ButtonLink
@@ -439,8 +438,8 @@ export default function Home() {
           </Reveal>
 
           <p className="mt-6 text-[12px] text-paper/35">
-            Sample rows. The partner column reads &ldquo;pending&rdquo; on every
-            entry because no agreement has been signed yet.
+            Sample rows. The partner field reads as pending on every entry
+            because no agreement has been signed.
           </p>
         </div>
       </section>
@@ -452,23 +451,23 @@ export default function Home() {
             <Eyebrow>Secondary market</Eyebrow>
             <ScrollWords
               className="display mt-7 max-w-[13ch] text-[clamp(1.9rem,4.6vw,3.6rem)]"
-              text="Sell it whenever you like. The history doesn't leave with you."
+              text="Tokens can be transferred and resold at any time. The funding record stays attached."
             />
           </div>
           <Reveal delay={0.1}>
             <div className="flex flex-col gap-5 md:pt-4">
               {[
                 {
-                  h: "Standard, so it trades anywhere",
-                  p: "ERC-721 on Base. OpenSea, Blur, Rarible and anything else that reads the standard — we run no marketplace of our own and take no cut of resales beyond the on-chain royalty.",
+                  h: "Standard token, any marketplace",
+                  p: "ERC-721 on Base, tradable on OpenSea, Blur, Rarible and any other venue that reads the standard. We operate no marketplace and take no share of resales beyond the on-chain royalty.",
                 },
                 {
-                  h: "Ownership is one field",
-                  p: "Transfers rewrite the owner and nothing else. The mint record, every donation hash and every verification date are keyed to the token id, not the wallet.",
+                  h: "Transfers change one field",
+                  p: "A transfer rewrites the owner and nothing else. The mint record, donation hashes and verification dates are keyed to the token id rather than to a wallet.",
                 },
                 {
-                  h: "A buyer inherits the proof",
-                  p: "Whoever holds token #00421 in five years can still read which donation funded it, which site it was allocated to, and the date the planting report was filed.",
+                  h: "The record passes to the buyer",
+                  p: "Whoever holds a token in five years can still read which donation funded it, which site it was allocated to, and the date the planting report was filed.",
                 },
               ].map((c) => (
                 <div key={c.h} className="border-t border-line pt-5">
@@ -506,12 +505,12 @@ export default function Home() {
         <div className="grid gap-12 md:grid-cols-[1fr_1.6fr]">
           <div>
             <Eyebrow>Questions</Eyebrow>
-            <h2 className="display mt-6 max-w-[10ch] text-[clamp(2rem,4.6vw,3.4rem)]">
-              The awkward ones first.
+            <h2 className="display mt-6 max-w-[12ch] text-[clamp(2rem,4.6vw,3.4rem)]">
+              Common questions.
             </h2>
-            <p className="mt-5 max-w-[34ch] text-[14px] leading-relaxed text-ink-2">
-              If a question here reads like a hedge, it&rsquo;s because the
-              honest answer is one.
+            <p className="mt-5 max-w-[36ch] text-[14px] leading-relaxed text-ink-2">
+              Covering the mint mechanism, what the token does and does not
+              confer, and the current state of the project.
             </p>
           </div>
           <Accordion items={FAQ} />
@@ -521,8 +520,8 @@ export default function Home() {
       {/* ── journal ─────────────────────────────────────── */}
       <Section id="journal" className="pb-28 md:pb-36">
         <div className="flex items-end justify-between gap-6">
-          <h2 className="display text-[clamp(1.8rem,4vw,3rem)]">From the journal.</h2>
-          <span className="text-[13px] text-ink-3">Coming with launch</span>
+          <h2 className="display text-[clamp(1.8rem,4vw,3rem)]">Journal.</h2>
+          <span className="text-[13px] text-ink-3">Published at launch</span>
         </div>
         <div className="mt-10 grid border-t border-line md:grid-cols-3">
           {JOURNAL.map((j, i) => (
@@ -554,12 +553,12 @@ export default function Home() {
             />
             <div className="relative">
               <h2 className="display mx-auto max-w-[16ch] text-[clamp(2rem,5.4vw,4.2rem)]">
-                Collect a tree. Keep the receipt.
+                The Genesis Forest opens with 10,000 trees.
               </h2>
-              <p className="mx-auto mt-6 max-w-[48ch] text-[15px] leading-relaxed text-ink-2">
-                The Genesis Forest opens with 10,000 numbered trees. Nothing is
-                live yet — this is the interface, published early so it can be
-                argued with before anything is deployed.
+              <p className="mx-auto mt-6 max-w-[50ch] text-[15px] leading-relaxed text-ink-2">
+                Nothing is live yet. This interface is published ahead of the
+                contract so that the mechanism and the disclosures can be
+                reviewed before anything is deployed.
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-2.5">
                 <ButtonLink href="/mint" size="lg">

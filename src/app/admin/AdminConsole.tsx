@@ -39,12 +39,12 @@ export default function AdminConsole() {
           <Provisional>Read-only demo</Provisional>
         </div>
         <h1 className="display mt-6 max-w-[16ch] text-[clamp(2.2rem,5.4vw,4rem)]">
-          The step everyone else keeps private.
+          How a partner report becomes a stage change.
         </h1>
-        <p className="mt-6 max-w-[58ch] text-[15px] leading-relaxed text-ink-2">
-          This is how a partner report becomes a stage change. It is published
-          because a transparency claim that hides its own review process is not
-          a transparency claim. Nothing here writes anything.
+        <p className="mt-6 max-w-[60ch] text-[15px] leading-relaxed text-ink-2">
+          This console is published rather than kept internal so that the
+          verification step can be inspected alongside the ledger it produces.
+          The controls below are inert and write nothing.
         </p>
       </Section>
 
@@ -108,7 +108,7 @@ export default function AdminConsole() {
 
               <Field
                 label="Evidence reference"
-                hint="A permanent link — the report is pinned, not hosted on our own server."
+                hint="A permanent link. The report is pinned rather than hosted on our own server."
               >
                 <input
                   value={evidence}
@@ -215,9 +215,9 @@ export default function AdminConsole() {
         {/* ── rules ──────────────────────────────────── */}
         <div className="mt-14 grid border-t border-line md:grid-cols-3">
           {[
-            ["No back-dating", "The report date comes from the document. If a partner sends a report late, the row shows both dates rather than the flattering one."],
-            ["No partial credit", "A batch is either reported or it isn't. Nothing is pro-rated to make a quarter look better."],
-            ["No silent edits", "Every write is a new version with a pointer to the one it supersedes. Corrections are visible as corrections."],
+            ["No back-dating", "The report date is taken from the document. Where a report arrives late, both dates are shown."],
+            ["No partial credit", "A batch is either reported or it is not. Figures are never pro-rated across periods."],
+            ["No silent edits", "Every write is a new version carrying a pointer to the one it supersedes, so corrections remain visible."],
           ].map(([h, p]) => (
             <div key={h} className="border-b border-line py-6 pr-8">
               <h3 className="text-[14.5px] font-medium text-ink">{h}</h3>

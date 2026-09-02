@@ -74,9 +74,9 @@ export default function WalletModal() {
             </div>
 
             <p className="px-3.5 py-3.5 text-[11.5px] leading-relaxed text-ink-3">
-              Demo only. Nothing connects to a real wallet, no signature is
-              requested and no transaction is sent — choosing a provider just
-              unlocks the holder screens with sample data.
+              Demonstration only. No wallet is contacted, no signature is
+              requested and no transaction is sent. Selecting a provider loads
+              the holder screens with sample data.
             </p>
           </motion.div>
         </motion.div>

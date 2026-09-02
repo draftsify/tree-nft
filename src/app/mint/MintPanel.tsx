@@ -74,15 +74,15 @@ export default function MintPanel() {
                 <div className="flex items-center gap-2">
                   <span className="size-2 rounded-full bg-moss" />
                   <p className="text-[13px] text-ink-2">
-                    Simulated mint complete — nothing was sent.
+                    Simulation complete. No transaction was sent.
                   </p>
                 </div>
                 <h3 className="display mt-4 text-[26px]">
                   {qty === 1 ? "Your tree is a Seed." : `${qty} trees, all Seeds.`}
                 </h3>
                 <p className="mt-2 max-w-[46ch] text-[13.5px] leading-relaxed text-ink-2">
-                  It stays a Seed until the reforestation share for this batch
-                  settles on-chain. That&rsquo;s the only thing that moves it.
+                  A token remains a Seed until the reforestation share covering
+                  its batch settles on-chain.
                 </p>
 
                 <div className="mt-6 grid grid-cols-3 gap-2">
@@ -173,9 +173,9 @@ export default function MintPanel() {
                     <span className="num text-[13px] text-ink">{toPartner} ETH</span>
                   </div>
                   <p className="mt-2 text-[11.5px] leading-relaxed text-ink-3">
-                    60% of the mint, batched and sent as one transaction whose
-                    hash is published on the impact page. The number of trees
-                    that buys is not yet known — see the note beside this panel.
+                    60% of the mint, batched and sent as a single transaction
+                    whose hash is published on the impact page. The number of
+                    trees this funds is not yet established.
                   </p>
                 </div>
 
@@ -187,8 +187,8 @@ export default function MintPanel() {
                     className="mt-0.5 size-4 accent-[#5b7150]"
                   />
                   <span className="text-[12.5px] leading-relaxed text-ink-2">
-                    I understand this is a collectible with no financial return,
-                    and that resale value is set entirely by other buyers.
+                    I understand that this is a collectible with no financial
+                    return and that resale value is set by the secondary market.
                   </span>
                 </label>
 
@@ -212,7 +212,7 @@ export default function MintPanel() {
                     </Button>
                   )}
                   <p className="mt-3 text-center text-[11.5px] text-ink-3">
-                    Simulation only. No contract, no transaction, no charge.
+                    Simulation only. No contract, transaction or charge.
                   </p>
                 </div>
               </motion.div>
@@ -231,20 +231,20 @@ export default function MintPanel() {
           <ul className="mt-5 flex flex-col gap-4">
             {[
               [
-                "No trees-per-mint figure exists yet.",
-                "We won't publish one until a partner confirms cost per tree in writing. Anyone quoting you a number today is guessing.",
+                "No trees-per-mint figure has been set.",
+                "One will be published only once a partner confirms cost per tree in writing. Any figure quoted before then is an estimate.",
               ],
               [
                 "This is not an investment.",
-                "No yield, no revenue share, no buyback, no floor support. If you sell, the price is whatever a buyer offers — possibly less than you paid.",
+                "The token carries no yield, revenue share, buyback or price support. Resale value is set by the buyer and may be below the mint price.",
               ],
               [
-                "Your tree may stay a Seed for months.",
-                "Stages advance on verified milestones. Planting seasons are seasonal; a batch minted in November may not be planted until spring.",
+                "A token may remain a Seed for months.",
+                "Stages advance on verified milestones, and planting is seasonal. A batch minted in November may not be planted until spring.",
               ],
               [
-                "Traits are random and final.",
-                "You cannot choose a species or rarity, and nothing can be rerolled. What the contract assigns is what you get.",
+                "Traits are assigned at random and are final.",
+                "Species and rarity cannot be selected, and nothing can be rerolled after mint.",
               ],
             ].map(([h, p]) => (
               <li key={h} className="border-t border-line pt-4 first:border-0 first:pt-0">
@@ -260,7 +260,7 @@ export default function MintPanel() {
           <ul className="mt-4 flex flex-col gap-2.5 text-[13.5px] leading-relaxed text-ink-2">
             <li>— The contract source and its verified bytecode.</li>
             <li>— Every donation transaction hash, on the impact page.</li>
-            <li>— Each token&rsquo;s metadata versions, including superseded ones.</li>
+            <li>— The metadata versions of each token, including superseded ones.</li>
             <li>— Supply per species, read directly from the contract.</li>
           </ul>
           <div className="mt-5 flex flex-wrap gap-x-4 gap-y-1.5">

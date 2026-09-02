@@ -33,11 +33,11 @@ export default function MyForest() {
           <div className="relative">
             <Eyebrow>My Forest</Eyebrow>
             <h1 className="display mx-auto mt-6 max-w-[14ch] text-[clamp(2rem,5.4vw,3.8rem)]">
-              Connect a wallet to see your trees.
+              Connect a wallet to view your tokens.
             </h1>
-            <p className="mx-auto mt-5 max-w-[46ch] text-[14.5px] leading-relaxed text-ink-2">
+            <p className="mx-auto mt-5 max-w-[48ch] text-[14.5px] leading-relaxed text-ink-2">
               Connecting is read-only and no signature is requested. In this
-              prototype it loads three sample tokens so the screen can be
+              prototype it loads three sample tokens so that the screen can be
               reviewed.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
@@ -69,7 +69,7 @@ export default function MyForest() {
               <span className="num text-[12px] text-ink-3">{address}</span>
             </div>
             <h1 className="display mt-6 text-[clamp(2.4rem,6vw,4.4rem)]">
-              {trees.length} trees, growing at their own pace.
+              {trees.length} tokens held.
             </h1>
           </div>
           <ButtonLink href="/mint" variant="outline">
@@ -93,8 +93,8 @@ export default function MyForest() {
             </div>
             <div className="mt-2 text-[13px] font-medium text-ink">real trees funded</div>
             <p className="mt-1.5 text-[12px] leading-relaxed text-ink-3">
-              Blank until a partner confirms cost per tree. It will never be an
-              estimate.
+              Left blank until a partner confirms cost per tree. It will not be
+              estimated.
             </p>
           </div>
           <div className="border-b border-line py-7 pr-6">
@@ -149,7 +149,7 @@ export default function MyForest() {
         <div className="mx-auto w-full max-w-[1240px]">
           <Eyebrow>Activity</Eyebrow>
           <h2 className="display mt-5 text-[clamp(1.6rem,3.4vw,2.4rem)]">
-            What changed, and why.
+            Stage changes.
           </h2>
 
           <div className="mt-8 border-t border-line">
@@ -164,8 +164,8 @@ export default function MyForest() {
                 >
                   <span className="num text-[13px] text-ink">#{t.tokenId}</span>
                   <span className="text-[13.5px] text-ink-2">
-                    {species.name} advanced to <span className="text-ink">{stage.label}</span> —{" "}
-                    {stage.unlock.toLowerCase()}
+                    {species.name} advanced to <span className="text-ink">{stage.label}</span>.{" "}
+                    {stage.unlock}.
                   </span>
                   <StatusDot status={t.status} />
                   <span className="num text-[12px] text-ink-3">{t.mintedAt}</span>
