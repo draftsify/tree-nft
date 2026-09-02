@@ -25,13 +25,10 @@ function address(name: string): `0x${string}` {
 
 async function main() {
   const donationRecipient = address("DONATION_RECIPIENT");
-  const treasury = address("TREASURY");
-  const price = parseEther(process.env.MINT_PRICE_ETH ?? "0.0016");
+  const price = parseEther(process.env.MINT_PRICE_ETH ?? "0.0006");
   const provenanceHash = required("PROVENANCE_HASH") as `0x${string}`;
   const unrevealedURI = process.env.UNREVEALED_URI ?? "ar://unrevealed.json";
-  const royaltyReceiver = process.env.ROYALTY_RECEIVER
-    ? address("ROYALTY_RECEIVER")
-    : treasury;
+
   const royaltyBps = BigInt(process.env.ROYALTY_BPS ?? "500");
 
   // Stages unlock at 10%, 40% and 80% of the donation a full sell-out produces.
@@ -45,6 +42,15 @@ async function main() {
 
   const { viem } = await network.connect();
   const [deployer] = await viem.getWalletClients();
+
+  // No separate treasury: the remainder returns to the deploying wallet unless
+  // TREASURY names another. Still immutable once written.
+  const treasury = process.env.TREASURY
+    ? address("TREASURY")
+    : getAddress(deployer.account.address);
+  const royaltyReceiver = process.env.ROYALTY_RECEIVER
+    ? address("ROYALTY_RECEIVER")
+    : treasury;
   const publicClient = await viem.getPublicClient();
 
   console.log("\nDeploying TreeGenesis");
