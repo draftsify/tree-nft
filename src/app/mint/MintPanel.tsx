@@ -22,7 +22,7 @@ import {
 type Phase = "idle" | "approving" | "confirming" | "minting" | "done";
 
 export default function MintPanel() {
-  const { connected, setOpen, getWalletClient } = useWallet();
+  const { connected, fullAddress, setOpen, getWalletClient } = useWallet();
   const [qty, setQty] = useState(1);
   const [phase, setPhase] = useState<Phase>("idle");
   const [minted, setMinted] = useState<number[]>([]);
@@ -30,6 +30,10 @@ export default function MintPanel() {
   const [chain, setChain] = useState<ChainState | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [holdings, setHoldings] = useState<{
+    tokens: bigint;
+    nfts: number;
+  } | null>(null);
 
   // Live collection state. Absent a deployment this stays null and the panel
   // shows its pre-launch figures instead.
@@ -40,6 +44,46 @@ export default function MintPanel() {
   }, []);
   useEffect(refresh, [refresh]);
 
+  /**
+   * What this wallet holds, which decides whether the mint can succeed at all.
+   *
+   * Both limits are enforced by the contract, so submitting past either one
+   * costs the buyer gas for a transaction that reverts. Reading them here is
+   * what turns that into a disabled button and a sentence instead.
+   */
+  const readHoldings = useCallback(() => {
+    if (!isDeployed || !chain || !fullAddress) {
+      setHoldings(null);
+      return;
+    }
+    const account = fullAddress as Address;
+    publicClient
+      .multicall({
+        allowFailure: false,
+        contracts: [
+          {
+            address: chain.paymentToken,
+            abi: ERC20_ABI,
+            functionName: "balanceOf",
+            args: [account],
+          },
+          {
+            address: CONTRACT_ADDRESS as Address,
+            abi: TREE_ABI,
+            functionName: "balanceOf",
+            args: [account],
+          },
+        ],
+      })
+      .then(([tokens, nfts]) =>
+        setHoldings({ tokens: tokens as bigint, nfts: Number(nfts) }),
+      )
+      // A failed read must not masquerade as an empty wallet, so this leaves
+      // holdings unknown and the mint enabled; the contract still refuses.
+      .catch(() => setHoldings(null));
+  }, [chain, fullAddress]);
+  useEffect(readHoldings, [readHoldings]);
+
   const price = chain
     ? Number(formatUnits(chain.mintPrice, PAYMENT.decimals))
     : MINT.price;
@@ -49,6 +93,19 @@ export default function MintPanel() {
   const total = (qty * price).toLocaleString("en-US");
   const toPartner = Math.round(qty * price * 0.6).toLocaleString("en-US");
   const live = chain !== null && chain.mintOpen;
+
+  const due = chain ? chain.mintPrice * BigInt(qty) : BigInt(0);
+  const held = holdings?.tokens ?? null;
+  const shortfall = held !== null && held < due ? due - held : null;
+  const slotsLeft = holdings ? Math.max(0, perWallet - holdings.nfts) : perWallet;
+  const maxQty = Math.max(1, Math.min(perWallet, slotsLeft));
+
+  // Holding four already means the stepper should not offer five.
+  useEffect(() => {
+    setQty((q) => Math.min(q, maxQty));
+  }, [maxQty]);
+
+  const blocked = shortfall !== null || slotsLeft === 0;
 
   async function run() {
     setError(null);
@@ -73,6 +130,20 @@ export default function MintPanel() {
 
       const owner = wallet.account!.address as Address;
       const due = chain.mintPrice * BigInt(qty);
+
+      // Re-checked at the moment of the click rather than trusted from the
+      // render, since a balance can move in between.
+      const balance = await publicClient.readContract({
+        address: chain.paymentToken,
+        abi: ERC20_ABI,
+        functionName: "balanceOf",
+        args: [owner],
+      });
+      if (balance < due) {
+        throw new Error(
+          `This wallet holds ${Number(formatUnits(balance, PAYMENT.decimals)).toLocaleString("en-US", { maximumFractionDigits: 0 })} ${PAYMENT.symbol} and the mint costs ${Number(formatUnits(due, PAYMENT.decimals)).toLocaleString("en-US", { maximumFractionDigits: 0 })}.`,
+        );
+      }
 
       // An ERC-20 mint needs the spender approved first. Approve exactly what
       // this mint costs rather than an unlimited allowance: a buyer should not
@@ -123,6 +194,7 @@ export default function MintPanel() {
       setMinted(logs.map((l) => Number(l.args.tokenId)));
       setPhase("done");
       refresh();
+      readHoldings();
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       setError(
@@ -270,12 +342,14 @@ export default function MintPanel() {
                       />
                       <span className="num w-10 text-center text-[26px] text-ink">{qty}</span>
                       <Stepper
-                        onClick={() => setQty((q) => Math.min(MINT.perWallet, q + 1))}
-                        disabled={busy || qty >= perWallet}
+                        onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
+                        disabled={busy || qty >= maxQty}
                         label="+"
                       />
                       <span className="ml-1 text-[12px] text-ink-3">
-                        max {perWallet}
+                        {holdings && slotsLeft < perWallet
+                          ? `${slotsLeft} left of ${perWallet}`
+                          : `max ${perWallet}`}
                       </span>
                     </div>
                   </div>
@@ -289,6 +363,46 @@ export default function MintPanel() {
                     </p>
                   </div>
                 </div>
+
+                {holdings && (
+                  <div className="mt-6 border-t border-line pt-4">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="text-[13px] text-ink-2">
+                        Your balance
+                      </span>
+                      <span
+                        className={`num text-[13px] ${shortfall ? "text-bark" : "text-ink"}`}
+                      >
+                        {Number(
+                          formatUnits(holdings.tokens, PAYMENT.decimals),
+                        ).toLocaleString("en-US", {
+                          maximumFractionDigits: 0,
+                        })}{" "}
+                        {PAYMENT.symbol}
+                      </span>
+                    </div>
+                    {shortfall !== null && (
+                      <p className="mt-2 text-[11.5px] leading-relaxed text-ink-3">
+                        {Number(
+                          formatUnits(shortfall, PAYMENT.decimals),
+                        ).toLocaleString("en-US", {
+                          maximumFractionDigits: 0,
+                        })}{" "}
+                        {PAYMENT.symbol} short of {qty}{" "}
+                        {qty > 1 ? "trees" : "tree"}. Lower the quantity, or get{" "}
+                        {PAYMENT.symbol} first — the mint is paid in it, not in
+                        ETH.
+                      </p>
+                    )}
+                    {slotsLeft === 0 && (
+                      <p className="mt-2 text-[11.5px] leading-relaxed text-ink-3">
+                        This wallet already holds {perWallet}, which is the
+                        limit the contract enforces. A further mint would be
+                        refused on chain.
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 <div className="mt-6 border-t border-line pt-4">
                   <div className="flex items-baseline justify-between gap-3">
@@ -326,7 +440,7 @@ export default function MintPanel() {
                     <Button
                       size="lg"
                       className="w-full"
-                      disabled={!ack || busy || (isDeployed && !live)}
+                      disabled={!ack || busy || (isDeployed && !live) || blocked}
                       onClick={run}
                     >
                       {phase === "approving"
@@ -335,7 +449,11 @@ export default function MintPanel() {
                           ? "Confirm the mint in your wallet…"
                           : phase === "minting"
                             ? "Minting…"
-                            : `Mint ${qty} tree${qty > 1 ? "s" : ""}`}
+                            : slotsLeft === 0
+                              ? `Wallet limit reached`
+                              : shortfall !== null
+                                ? `Not enough ${PAYMENT.symbol}`
+                                : `Mint ${qty} tree${qty > 1 ? "s" : ""}`}
                     </Button>
                   ) : (
                     <Button size="lg" className="w-full" onClick={() => setOpen(true)}>
