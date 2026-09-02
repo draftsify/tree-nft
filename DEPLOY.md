@@ -31,6 +31,7 @@ afterwards. Check both against their sources now, not later.
 | Reforestation reserve | `DONATION_RECIPIENT` in `.env` | an address you control, ideally a multisig |
 | Treasury | `0xe3fEd943483d4c5D544b234b8311A4D6A08613e3` | your own records |
 | Payment token | `PAYMENT_TOKEN` in `.env` | the deployed $TREE contract |
+| Deployer, who becomes owner | `0xBa7CF22443f68395564Cb17B5709c118c94E06f1` | `EXPECTED_DEPLOYER`, which aborts on a mismatch |
 
 **The contract does not pay One Tree Planted directly, and must not be told
 to.** The mint settles in $TREE on Robinhood Chain; a charity donation address
@@ -66,13 +67,29 @@ deploying. The value is already filled into `contracts/.env.example`.
 
 ```bash
 cd contracts
-cp .env.example .env          # then fill DEPLOYER_KEY and PROVENANCE_HASH
-npm run deploy
+cp .env.example .env          # then fill DEPLOYER_KEY
+npm run deploy                # prints everything, deploys nothing
 ```
 
-The script prints the chain, the deployer, its balance, and every value it is
-about to write, with the immutable ones under their own heading. Read that
-block. It stops there only in the sense that you can still Ctrl-C.
+The first run always stops. It prints the chain, the deployer, its balance and
+every value it is about to write, with the immutable ones under their own
+heading, and then exits without sending a transaction. Read that block properly:
+it is the last point at which the donation recipient and the treasury can still
+be changed.
+
+Three things abort the run before anything is sent:
+
+- `DEPLOYER_KEY` producing an address other than `EXPECTED_DEPLOYER`. The
+  deployer becomes the owner, so the wrong key decides who can open the mint.
+- `DONATION_RECIPIENT` being the charity's address, for the reason above.
+- A deployer holding no ETH on the chain, which otherwise fails as an opaque
+  RPC error halfway through.
+
+When the summary is right:
+
+```bash
+CONFIRM_DEPLOY=yes npm run deploy
+```
 
 Record the deployed address.
 

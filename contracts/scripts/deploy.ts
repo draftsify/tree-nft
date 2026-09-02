@@ -6,10 +6,17 @@ import { parseEther, formatEther, getAddress, isAddress } from "viem";
  * because two of them can never be changed afterwards: the donation recipient
  * and the treasury. Run it once, read the summary, and only then confirm.
  *
+ * Running it prints the summary and stops. Nothing is deployed until the same
+ * command is run again with CONFIRM_DEPLOY=yes, so the summary is always read
+ * before it is acted on rather than scrolling past a transaction already sent.
+ *
  *   RPC_URL=... DEPLOYER_KEY=0x... \
  *   DONATION_RECIPIENT=0x... TREASURY=0x... \
  *   PROVENANCE_HASH=0x... npm run deploy
  */
+
+/** One Tree Planted's public donation address. */
+const CHARITY = "0x62233D5483515A79ac06CEcEbac7D399fDF8a99b";
 
 function required(name: string): string {
   const v = process.env[name];
@@ -58,11 +65,39 @@ async function main() {
     ? address("ROYALTY_RECEIVER")
     : treasury;
   const publicClient = await viem.getPublicClient();
+  const from = getAddress(deployer.account.address);
+  const balance = await publicClient.getBalance({ address: from });
+
+  // The deployer becomes the owner, so the wrong key here is not a small
+  // mistake: it decides who can open the mint and repoint the metadata.
+  if (process.env.EXPECTED_DEPLOYER) {
+    const expected = address("EXPECTED_DEPLOYER");
+    if (from !== expected) {
+      throw new Error(
+        `DEPLOYER_KEY belongs to ${from}, but EXPECTED_DEPLOYER is ${expected}. ` +
+          "Wrong key, or wrong expectation. Resolve it before deploying.",
+      );
+    }
+  }
+
+  // The recipient is immutable and the mint pays in an ERC-20 the charity
+  // cannot use. Sending there would repeat, irreversibly, on every mint.
+  if (donationRecipient === getAddress(CHARITY)) {
+    throw new Error(
+      "DONATION_RECIPIENT is the charity's donation address. It must be the " +
+        "project's own reforestation reserve; the charity is the end of the " +
+        "published route, not the contract's recipient. See DEPLOY.md.",
+    );
+  }
+
+  if (balance === 0n) {
+    throw new Error(`${from} holds no ETH on this chain. Fund it for gas first.`);
+  }
 
   console.log("\nDeploying Tree");
   console.log("  chain id          ", await publicClient.getChainId());
-  console.log("  deployer          ", deployer.account.address);
-  console.log("  balance           ", formatEther(await publicClient.getBalance({ address: deployer.account.address })), "ETH");
+  console.log("  deployer / owner  ", from);
+  console.log("  balance           ", formatEther(balance), "ETH");
   console.log("\n  IMMUTABLE — check these twice, they can never be changed:");
   console.log("  payment token     ", paymentToken);
   console.log("  donation recipient", donationRecipient);
@@ -75,6 +110,13 @@ async function main() {
   console.log("  royalty           ", `${Number(royaltyBps) / 100}% to ${royaltyReceiver}`);
   console.log("  collection        ", contractURI);
   console.log("");
+
+  if (process.env.CONFIRM_DEPLOY !== "yes") {
+    console.log("  Nothing has been deployed.");
+    console.log("  Read the values above. Every line under IMMUTABLE is permanent.");
+    console.log("  To go ahead, run the same command again with CONFIRM_DEPLOY=yes\n");
+    return;
+  }
 
   const tree = await viem.deployContract("Tree", [
     paymentToken,
@@ -93,8 +135,10 @@ async function main() {
   console.log("\nNext:");
   console.log("  1. Verify the source on https://robinhoodchain.blockscout.com");
   console.log(`  2. Set NEXT_PUBLIC_CONTRACT_ADDRESS=${tree.address} in the web app`);
-  console.log("  3. Upload the artwork, then setBaseURI, then freezeMetadata");
-  console.log("  4. setMintOpen(true) only once the above is done\n");
+  console.log("  3. setBaseURI to the metadata route, then check one token URI");
+  console.log("  4. setMintOpen(true) only once the above is done");
+  console.log("  Do NOT call freezeMetadata while metadata is served over HTTP:");
+  console.log("  it would promise an immutability the files do not have.\n");
 }
 
 main().catch((e) => {
