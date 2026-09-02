@@ -51,7 +51,7 @@ export default function AdminConsole() {
       <Section className="pb-24">
         <div className="grid gap-4 lg:grid-cols-[1.1fr_1fr]">
           {/* ── form ─────────────────────────────────── */}
-          <div className="rounded-[24px] border border-line bg-white p-6 md:p-8">
+          <div className="border-t border-line pt-6">
             <h2 className="display text-[22px]">File a partner report</h2>
 
             <div className="mt-7 flex flex-col gap-5">
@@ -118,7 +118,7 @@ export default function AdminConsole() {
                 />
               </Field>
 
-              <div className="rounded-[14px] bg-paper-2 p-4">
+              <div className="border-t border-line pt-4">
                 <p className="text-[12.5px] leading-relaxed text-ink-2">
                   Filing this would advance{" "}
                   <span className="num text-ink">{Math.round(affected)}</span> tokens
@@ -151,7 +151,7 @@ export default function AdminConsole() {
 
           {/* ── batch detail + preview ───────────────── */}
           <div className="flex flex-col gap-4">
-            <div className="rounded-[24px] border border-line bg-paper-2 p-6">
+            <div className="border-t border-line pt-6">
               <div className="flex items-center justify-between gap-3">
                 <Eyebrow>Selected batch</Eyebrow>
                 <StatusDot status={selected.status} />
@@ -179,7 +179,7 @@ export default function AdminConsole() {
               </dl>
             </div>
 
-            <div className="flex-1 rounded-[24px] border border-line bg-white p-6">
+            <div className="flex-1 border-t border-line pt-6">
               <Eyebrow>Metadata diff</Eyebrow>
               {preview && complete ? (
                 <pre className="mono mt-4 overflow-x-auto rounded-[14px] bg-deep p-4 text-[11.5px] leading-relaxed text-paper/80">
@@ -213,13 +213,13 @@ export default function AdminConsole() {
         </div>
 
         {/* ── rules ──────────────────────────────────── */}
-        <div className="mt-10 grid gap-px overflow-hidden rounded-[24px] border border-line bg-line md:grid-cols-3">
+        <div className="mt-14 grid border-t border-line md:grid-cols-3">
           {[
             ["No back-dating", "The report date comes from the document. If a partner sends a report late, the row shows both dates rather than the flattering one."],
             ["No partial credit", "A batch is either reported or it isn't. Nothing is pro-rated to make a quarter look better."],
             ["No silent edits", "Every write is a new version with a pointer to the one it supersedes. Corrections are visible as corrections."],
           ].map(([h, p]) => (
-            <div key={h} className="bg-paper p-6">
+            <div key={h} className="border-b border-line py-6 pr-8">
               <h3 className="text-[14.5px] font-medium text-ink">{h}</h3>
               <p className="mt-2 text-[13px] leading-relaxed text-ink-2">{p}</p>
             </div>

@@ -32,7 +32,6 @@ export type ImpactStatus =
 export const STAGES: {
   id: StageId;
   label: string;
-  glyph: string;
   blurb: string;
   /** Milestone that unlocks this stage. Nothing unlocks on a timer. */
   unlock: string;
@@ -40,28 +39,24 @@ export const STAGES: {
   {
     id: "seed",
     label: "Seed",
-    glyph: "\u{1F331}",
     blurb: "Minted. The contribution is on-chain, nothing has left the treasury yet.",
     unlock: "Mint confirmed",
   },
   {
     id: "sapling",
     label: "Sapling",
-    glyph: "\u{1F33F}",
     blurb: "The mint's reforestation share has been sent to the partner, with a public transaction hash.",
     unlock: "Donation transaction settled",
   },
   {
     id: "young",
     label: "Young Tree",
-    glyph: "\u{1F333}",
     blurb: "The partner has allocated the funds to a named planting site and season.",
     unlock: "Allocation letter received",
   },
   {
     id: "mature",
     label: "Mature Tree",
-    glyph: "\u{1F332}",
     blurb: "Planting confirmed by the partner, with a dated report attached to the token.",
     unlock: "Planting report verified",
   },
@@ -152,6 +147,9 @@ export const TRAIT_GROUPS: { name: string; values: string[] }[] = [
 
 /* ── collection ───────────────────────────────────────── */
 
+/** Mint price, shared by the token rows and the MINT block below. */
+const MINT_PRICE_ETH = 0.0016;
+
 export type Tree = {
   id: number;
   tokenId: string;
@@ -238,7 +236,7 @@ function makeTree(id: number): Tree {
     treesFunded: 3,
     owner: `0x${(id * 7919).toString(16).padStart(4, "0")}…${(id * 31).toString(16).padStart(4, "0")}`,
     status,
-    priceEth: 0.04,
+    priceEth: MINT_PRICE_ETH,
   };
 }
 
@@ -277,9 +275,9 @@ export const DONATIONS: Donation[] = [
   {
     id: "D-0007",
     date: "2026-08-18",
-    amountUsd: 4200,
+    amountUsd: 1250,
     asset: "ETH",
-    amountAsset: "1.312 ETH",
+    amountAsset: "0.391 ETH",
     txHash: "0x7f2a91c4e8b3d5670a1f4e29c8b7d3a5610fe8c24b93d7a5e10c8f42b7d93a561",
     chain: "Base",
     partner: "Pending partner agreement",
@@ -292,61 +290,61 @@ export const DONATIONS: Donation[] = [
   {
     id: "D-0006",
     date: "2026-07-02",
-    amountUsd: 3150,
+    amountUsd: 950,
     asset: "ETH",
-    amountAsset: "0.981 ETH",
+    amountAsset: "0.297 ETH",
     txHash: "0x3c8d15af92b7e4c60d8a3f57192bce4d7a06f38c15be92d7a4c60f8b3d15ae927",
     chain: "Base",
     partner: "Pending partner agreement",
     projectId: "PRJ-03",
     region: "Atlantic Forest, Brazil",
     status: "planted",
-    treesFunded: 1980,
+    treesFunded: 910,
     verifiedAt: "2026-08-24",
   },
   {
     id: "D-0005",
     date: "2026-05-29",
-    amountUsd: 2480,
+    amountUsd: 750,
     asset: "ETH",
-    amountAsset: "0.774 ETH",
+    amountAsset: "0.234 ETH",
     txHash: "0x91be47d3a08c5f26e94b17d3a6c085f27e14bd93a6c05f8e274bd13a96c05fe28",
     chain: "Base",
     partner: "Pending partner agreement",
     projectId: "PRJ-02",
     region: "Scottish Highlands",
     status: "verified",
-    treesFunded: 1550,
+    treesFunded: 720,
     verifiedAt: "2026-07-11",
   },
   {
     id: "D-0004",
     date: "2026-04-14",
-    amountUsd: 1640,
+    amountUsd: 550,
     asset: "ETH",
-    amountAsset: "0.512 ETH",
+    amountAsset: "0.172 ETH",
     txHash: "0x2d6f83b19ac47e50d2f68a3b91c47e60d5f2a89b31c470ed5f2a68b93c17e40d5",
     chain: "Base",
     partner: "Pending partner agreement",
     projectId: "PRJ-01",
     region: "Kenya Highlands",
     status: "verified",
-    treesFunded: 1025,
+    treesFunded: 535,
     verifiedAt: "2026-06-02",
   },
   {
     id: "D-0003",
     date: "2026-03-06",
-    amountUsd: 980,
+    amountUsd: 352,
     asset: "ETH",
-    amountAsset: "0.306 ETH",
+    amountAsset: "0.110 ETH",
     txHash: "0x5a1c94e7d2b8036f5a1c94e7d2b8036f5a1c94e7d2b8036f5a1c94e7d2b8036f5",
     chain: "Base",
     partner: "Pending partner agreement",
     projectId: "PRJ-01",
     region: "Kenya Highlands",
     status: "verified",
-    treesFunded: 610,
+    treesFunded: 340,
     verifiedAt: "2026-04-28",
   },
 ];
@@ -378,7 +376,7 @@ export const IMPACT = {
   minted: 1284,
   supply: 10000,
   donatedUsd: DONATIONS.reduce((a, d) => a + d.amountUsd, 0),
-  donatedEth: 3.885,
+  donatedEth: 1.204,
   treesFunded: DONATIONS.reduce((a, d) => a + (d.treesFunded ?? 0), 0),
   projects: PROJECTS.length,
   countries: new Set(PROJECTS.map((p) => p.country)).size,
@@ -391,8 +389,8 @@ export const IMPACT = {
 export const MINT = {
   chain: "Base",
   standard: "ERC-721",
-  priceEth: 0.04,
-  priceUsdApprox: 128,
+  priceEth: 0.0016,
+  priceUsdApprox: 5,
   supply: 10000,
   perWallet: 5,
   /** Revenue split. Draft figures — set on-chain before launch. */

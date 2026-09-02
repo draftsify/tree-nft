@@ -9,9 +9,9 @@ export default function TreeCard({ tree, priority = false }: { tree: Tree; prior
   return (
     <Link
       href={`/tree/${tree.id}`}
-      className="group flex flex-col overflow-hidden rounded-[20px] border border-line bg-white transition-all duration-500 hover:border-line-2"
+      className="group flex flex-col"
     >
-      <div className="relative aspect-square overflow-hidden bg-paper-2">
+      <div className="relative aspect-square overflow-hidden rounded-[14px] bg-paper-2">
         <Image
           src={speciesImage(tree.species)}
           alt={`Tree #${tree.tokenId} — ${species.name}`}
@@ -20,17 +20,17 @@ export default function TreeCard({ tree, priority = false }: { tree: Tree; prior
           priority={priority}
           className="scale-[0.94] object-contain p-3 transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-100"
         />
-        <div className="absolute left-3 top-3">
+        <div className="absolute left-2.5 top-2.5">
           <RarityBadge rarity={tree.rarity} />
         </div>
         {tree.genesis && (
-          <div className="absolute right-3 top-3 rounded-full border border-line bg-paper/80 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-ink-3 backdrop-blur-sm">
+          <div className="absolute right-3 top-3 text-[10px] uppercase tracking-[0.1em] text-ink-3">
             Genesis
           </div>
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 border-t border-line p-3.5">
+      <div className="flex flex-1 flex-col gap-1 pt-3">
         <div className="flex items-baseline justify-between gap-2">
           <span className="num text-[13px] text-ink">#{tree.tokenId}</span>
           <span className="text-[13px] text-ink-2">{species.name}</span>

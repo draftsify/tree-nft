@@ -17,8 +17,8 @@ export default function MintPanel() {
   const [minted, setMinted] = useState<number[]>([]);
   const [ack, setAck] = useState(false);
 
-  const total = (qty * MINT.priceEth).toFixed(3);
-  const toPartner = (qty * MINT.priceEth * 0.6).toFixed(3);
+  const total = (qty * MINT.priceEth).toFixed(4);
+  const toPartner = (qty * MINT.priceEth * 0.6).toFixed(4);
 
   function run() {
     setPhase("confirming");
@@ -36,8 +36,8 @@ export default function MintPanel() {
   return (
     <div className="grid gap-4 lg:grid-cols-[1.15fr_1fr]">
       {/* ── the machine ──────────────────────────────── */}
-      <div className="overflow-hidden rounded-[24px] border border-line bg-white">
-        <div className="relative aspect-[16/10] bg-paper-2">
+      <div>
+        <div className="relative aspect-[16/10] overflow-hidden rounded-[18px] bg-paper-2">
           <Image
             src="/tree/tree.webp"
             alt=""
@@ -62,7 +62,7 @@ export default function MintPanel() {
           </div>
         </div>
 
-        <div className="border-t border-line p-6">
+        <div className="mt-6 border-t border-line pt-6">
           <AnimatePresence mode="wait">
             {phase === "done" ? (
               <motion.div
@@ -92,7 +92,7 @@ export default function MintPanel() {
                       <Link
                         key={id}
                         href={`/tree/${id}`}
-                        className="group overflow-hidden rounded-[14px] border border-line bg-paper-2"
+                        className="group overflow-hidden rounded-[12px] bg-paper-2"
                       >
                         <div className="relative aspect-square">
                           <Image
@@ -103,7 +103,7 @@ export default function MintPanel() {
                             className="scale-[0.9] object-contain transition-transform duration-500 group-hover:scale-100"
                           />
                         </div>
-                        <div className="flex items-center justify-between gap-1 border-t border-line px-2.5 py-2">
+                        <div className="flex items-center justify-between gap-1 px-1 py-2">
                           <span className="num text-[11px] text-ink">#{t.tokenId}</span>
                           <RarityBadge rarity={t.rarity} />
                         </div>
@@ -167,7 +167,7 @@ export default function MintPanel() {
                   </div>
                 </div>
 
-                <div className="mt-6 rounded-[16px] bg-paper-2 p-4">
+                <div className="mt-6 border-t border-line pt-4">
                   <div className="flex items-baseline justify-between gap-3">
                     <span className="text-[13px] text-ink-2">To the reforestation partner</span>
                     <span className="num text-[13px] text-ink">{toPartner} ETH</span>
@@ -223,7 +223,7 @@ export default function MintPanel() {
 
       {/* ── the caveats ──────────────────────────────── */}
       <div className="flex flex-col gap-4">
-        <div className="rounded-[24px] border border-line bg-paper-2 p-6">
+        <div className="border-t border-line pt-5">
           <div className="flex items-center gap-3">
             <Eyebrow>Read before minting</Eyebrow>
             <Provisional>Not live</Provisional>
@@ -255,7 +255,7 @@ export default function MintPanel() {
           </ul>
         </div>
 
-        <div className="rounded-[24px] border border-line bg-white p-6">
+        <div className="border-t border-line pt-5">
           <Eyebrow>What you can check</Eyebrow>
           <ul className="mt-4 flex flex-col gap-2.5 text-[13.5px] leading-relaxed text-ink-2">
             <li>— The contract source and its verified bytecode.</li>
@@ -263,11 +263,11 @@ export default function MintPanel() {
             <li>— Each token&rsquo;s metadata versions, including superseded ones.</li>
             <li>— Supply per species, read directly from the contract.</li>
           </ul>
-          <div className="mt-5 flex flex-wrap gap-1.5">
+          <div className="mt-5 flex flex-wrap gap-x-4 gap-y-1.5">
             {SPECIES.map((s) => (
               <span
                 key={s.id}
-                className="rounded-full border border-line bg-paper-2 px-2.5 py-1 text-[11.5px] text-ink-2"
+                className="text-[11.5px] text-ink-3"
               >
                 {s.name} · {s.supply.toLocaleString("en-US")}
               </span>

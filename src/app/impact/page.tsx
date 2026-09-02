@@ -39,7 +39,7 @@ export default function ImpactPage() {
 
       {/* ── headline numbers ────────────────────────────── */}
       <Section className="pb-20">
-        <div className="grid gap-px overflow-hidden rounded-[24px] border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid border-t border-line sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
               v: IMPACT.treesFunded.toLocaleString("en-US"),
@@ -63,7 +63,7 @@ export default function ImpactPage() {
             },
           ].map((s, i) => (
             <Reveal key={s.l} delay={i * 0.06}>
-              <div className="h-full bg-paper p-7">
+              <div className="h-full border-b border-line py-7 pr-7">
                 <div className="display text-[clamp(2.2rem,4.4vw,3.2rem)]">{s.v}</div>
                 <div className="mt-3 text-[13.5px] font-medium text-ink">{s.l}</div>
                 <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-3">{s.s}</p>
@@ -164,10 +164,10 @@ export default function ImpactPage() {
           <span className="text-[12.5px] text-ink-3">{PROJECTS.length} sites</span>
         </div>
 
-        <div className="mt-10 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-x-8 gap-y-8 md:grid-cols-2 lg:grid-cols-4">
           {PROJECTS.map((p, i) => (
             <Reveal key={p.id} delay={(i % 4) * 0.06}>
-              <article className="flex h-full flex-col rounded-[20px] border border-line bg-white p-5">
+              <article className="flex h-full flex-col border-t border-line pt-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="num text-[11.5px] text-ink-3">{p.id}</span>
                   <StatusDot status={p.status} />

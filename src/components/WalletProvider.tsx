@@ -20,11 +20,11 @@ import {
 
 export type WalletId = "metamask" | "walletconnect" | "phantom" | "coinbase";
 
-export const WALLETS: { id: WalletId; name: string; hint: string; glyph: string }[] = [
-  { id: "metamask", name: "MetaMask", hint: "Browser extension", glyph: "\u{1F98A}" },
-  { id: "walletconnect", name: "WalletConnect", hint: "Scan with any mobile wallet", glyph: "\u{1F517}" },
-  { id: "coinbase", name: "Coinbase Wallet", hint: "Extension or mobile", glyph: "\u{1F535}" },
-  { id: "phantom", name: "Phantom", hint: "For a future Solana collection", glyph: "\u{1F47B}" },
+export const WALLETS: { id: WalletId; name: string; hint: string }[] = [
+  { id: "metamask", name: "MetaMask", hint: "Browser extension" },
+  { id: "walletconnect", name: "WalletConnect", hint: "Scan with any mobile wallet" },
+  { id: "coinbase", name: "Coinbase Wallet", hint: "Extension or mobile" },
+  { id: "phantom", name: "Phantom", hint: "For a future Solana collection" },
 ];
 
 type WalletState = {

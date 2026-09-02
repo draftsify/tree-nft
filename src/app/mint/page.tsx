@@ -45,9 +45,9 @@ export default function MintPage() {
             Decided before a line of the contract was written.
           </h2>
 
-          <dl className="mt-12 grid gap-px overflow-hidden rounded-[20px] border border-line bg-line md:grid-cols-3">
+          <dl className="mt-12 grid border-t border-line md:grid-cols-3">
             {SPEC.map(([k, v, note]) => (
-              <div key={k} className="bg-paper p-6">
+              <div key={k} className="border-b border-line py-6 pr-8">
                 <dt className="eyebrow">{k}</dt>
                 <dd className="display mt-3 text-[24px]">{v}</dd>
                 <p className="mt-2.5 text-[12.5px] leading-relaxed text-ink-3">{note}</p>

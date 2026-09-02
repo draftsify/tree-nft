@@ -44,7 +44,7 @@ export default function CollectionBrowser({ trees }: { trees: Tree[] }) {
   return (
     <Section className="pb-28">
       {/* filter rail */}
-      <div className="sticky top-20 z-30 -mx-1 mb-8 rounded-[20px] border border-line bg-paper/85 px-3 py-3 backdrop-blur-xl">
+      <div className="sticky top-[76px] z-30 mb-8 border-b border-line bg-paper/95 py-3.5 backdrop-blur-xl">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <FilterRow
             label="Species"

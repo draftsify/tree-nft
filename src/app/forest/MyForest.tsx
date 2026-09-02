@@ -12,7 +12,7 @@ import {
   Section,
   StatusDot,
 } from "@/components/ui";
-import { MY_TREE_IDS, SPECIES, STAGES, TREES } from "@/lib/data";
+import { MINT, MY_TREE_IDS, SPECIES, STAGES, TREES } from "@/lib/data";
 
 export default function MyForest() {
   const { connected, address, setOpen } = useWallet();
@@ -21,7 +21,7 @@ export default function MyForest() {
   if (!connected) {
     return (
       <Section className="pb-32 pt-40 md:pt-52">
-        <div className="relative overflow-hidden rounded-[28px] border border-line bg-paper-2 px-6 py-24 text-center md:px-16">
+        <div className="relative overflow-hidden rounded-[28px] bg-paper-2 px-6 py-24 text-center md:px-16">
           <Image
             src="/tree/tree-sm.webp"
             alt=""
@@ -80,13 +80,13 @@ export default function MyForest() {
 
       {/* ── personal impact ─────────────────────────────── */}
       <Section className="pb-14">
-        <div className="grid gap-px overflow-hidden rounded-[24px] border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-          <div className="bg-paper p-6">
+        <div className="grid border-t border-line sm:grid-cols-2 lg:grid-cols-4">
+          <div className="border-b border-line py-7 pr-6">
             <div className="display text-[36px]">{trees.length}</div>
             <div className="mt-2 text-[13px] font-medium text-ink">trees held</div>
             <p className="mt-1.5 text-[12px] text-ink-3">All Genesis, all numbered.</p>
           </div>
-          <div className="bg-paper p-6">
+          <div className="border-b border-line py-7 pr-6">
             <div className="display flex items-baseline gap-2 text-[36px]">
               —
               <Provisional />
@@ -97,16 +97,16 @@ export default function MyForest() {
               estimate.
             </p>
           </div>
-          <div className="bg-paper p-6">
+          <div className="border-b border-line py-7 pr-6">
             <div className="num display text-[36px]">
-              {(trees.length * 0.04).toFixed(2)}
+              {(trees.length * MINT.priceEth).toFixed(4)}
             </div>
             <div className="mt-2 text-[13px] font-medium text-ink">ETH contributed</div>
             <p className="mt-1.5 text-[12px] text-ink-3">
-              {(trees.length * 0.04 * 0.6).toFixed(3)} ETH of it routed to reforestation.
+              {(trees.length * MINT.priceEth * 0.6).toFixed(4)} ETH of it routed to reforestation.
             </p>
           </div>
-          <div className="bg-paper p-6">
+          <div className="border-b border-line py-7 pr-6">
             <div className="display text-[36px]">
               {new Set(trees.map((t) => t.region)).size}
             </div>
@@ -118,15 +118,12 @@ export default function MyForest() {
         </div>
 
         {/* stage strip */}
-        <div className="mt-3 rounded-[24px] border border-line bg-white p-6">
+        <div className="mt-12 border-t border-line pt-6">
           <Eyebrow>Stage spread</Eyebrow>
           <div className="mt-5 grid gap-4 sm:grid-cols-4">
             {stageCounts.map((s) => (
               <div key={s.id} className={s.count ? "" : "opacity-40"}>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-[16px]" aria-hidden>
-                    {s.glyph}
-                  </span>
                   <span className="num text-[22px] text-ink">{s.count}</span>
                 </div>
                 <div className="mt-1 text-[13px] text-ink">{s.label}</div>
@@ -155,7 +152,7 @@ export default function MyForest() {
             What changed, and why.
           </h2>
 
-          <div className="mt-8 overflow-hidden rounded-[20px] border border-line bg-white">
+          <div className="mt-8 border-t border-line">
             {trees.map((t) => {
               const species = SPECIES.find((s) => s.id === t.species)!;
               const stage = STAGES.find((s) => s.id === t.stage)!;
@@ -163,7 +160,7 @@ export default function MyForest() {
                 <Link
                   key={t.id}
                   href={`/tree/${t.id}`}
-                  className="grid gap-2 border-b border-line p-5 transition-colors last:border-0 hover:bg-paper-2 md:grid-cols-[auto_1fr_auto_auto] md:items-center md:gap-6"
+                  className="grid gap-2 border-b border-line py-5 transition-colors hover:text-ink md:grid-cols-[auto_1fr_auto_auto] md:items-center md:gap-6"
                 >
                   <span className="num text-[13px] text-ink">#{t.tokenId}</span>
                   <span className="text-[13.5px] text-ink-2">

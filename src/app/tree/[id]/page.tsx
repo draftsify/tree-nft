@@ -118,7 +118,7 @@ export default async function TreePage({
         <div className="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           {/* artwork */}
           <div>
-            <div className="relative aspect-square overflow-hidden rounded-[24px] border border-line bg-white">
+            <div className="relative aspect-square overflow-hidden rounded-[24px] bg-paper-2">
               <Image
                 src={speciesImage(tree.species, "lg")}
                 alt={`Tree #${tree.tokenId}`}
@@ -134,7 +134,7 @@ export default async function TreePage({
             </div>
 
             {/* stage rail */}
-            <div className="mt-4 rounded-[20px] border border-line bg-white p-5">
+            <div className="mt-6 border-t border-line pt-5">
               <div className="flex items-center justify-between">
                 <Eyebrow>Evolution</Eyebrow>
                 <span className="text-[12px] text-ink-3">
@@ -154,8 +154,8 @@ export default async function TreePage({
               <div className="mt-4 grid grid-cols-4 gap-2">
                 {STAGES.map((s, i) => (
                   <div key={s.id} className={i <= stageIndex ? "" : "opacity-35"}>
-                    <div className="text-[14px]" aria-hidden>
-                      {s.glyph}
+                    <div className="num text-[11px] text-ink-3">
+                      {String(i + 1).padStart(2, "0")}
                     </div>
                     <div className="mt-1 text-[11.5px] text-ink-2">{s.label}</div>
                   </div>
@@ -179,9 +179,9 @@ export default async function TreePage({
               {tree.rarity} {species.name} · <span className="italic">{species.latin}</span>
             </p>
 
-            <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-[20px] border border-line bg-line">
+            <dl className="mt-8 grid grid-cols-2 border-t border-line">
               {attributes.map(([k, v]) => (
-                <div key={k} className="bg-white p-4">
+                <div key={k} className="border-b border-line py-4 pr-4">
                   <dt className="eyebrow">{k}</dt>
                   <dd className="mt-1.5 text-[14px] text-ink">{v}</dd>
                 </div>
@@ -189,7 +189,7 @@ export default async function TreePage({
             </dl>
 
             {/* impact summary */}
-            <div className="mt-4 rounded-[20px] border border-line bg-paper-2 p-5">
+            <div className="mt-8 border-t border-line pt-5">
               <div className="flex items-center justify-between gap-3">
                 <Eyebrow>Impact</Eyebrow>
                 <StatusDot status={tree.status} />
@@ -214,7 +214,7 @@ export default async function TreePage({
             </div>
 
             {/* ownership + market */}
-            <div className="mt-4 rounded-[20px] border border-line bg-white p-5">
+            <div className="mt-8 border-t border-line pt-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <Eyebrow>Current owner</Eyebrow>

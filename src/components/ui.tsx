@@ -70,11 +70,10 @@ export function RarityBadge({ rarity, className = "" }: { rarity: Rarity; classN
 
 export function StageBadge({ stage, className = "" }: { stage: StageId; className?: string }) {
   const s = STAGES.find((x) => x.id === stage)!;
+  const step = STAGES.findIndex((x) => x.id === stage) + 1;
   return (
-    <span
-      className={`inline-flex h-6 items-center gap-1.5 rounded-full border border-line bg-white px-2.5 text-[11px] font-medium text-ink-2 ${className}`}
-    >
-      <span aria-hidden>{s.glyph}</span>
+    <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium text-ink-2 ${className}`}>
+      <span className="num text-ink-3">0{step}</span>
       {s.label}
     </span>
   );

@@ -123,7 +123,8 @@ export default function Home() {
                   <span className="text-ink-3"> / {IMPACT.supply.toLocaleString("en-US")}</span>
                 </p>
                 <p className="mt-2.5 text-[12.5px] text-ink-3">
-                  {MINT.priceEth} ETH · {MINT.chain} · {MINT.standard}
+                  {MINT.priceEth} ETH ≈ ${MINT.priceUsdApprox} · {MINT.chain} ·{" "}
+                  {MINT.standard}
                 </p>
               </Reveal>
 
@@ -137,26 +138,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ── ticker ──────────────────────────────────────── */}
-      <div className="border-y border-line bg-paper py-4">
-        <Marquee
-          duration={54}
-          items={[
-            "ERC-721 on Base",
-            "60% of every mint routed to reforestation",
-            "Donation hashes published",
-            "Metadata versioned, never overwritten",
-            "Traits frozen at mint",
-            "Impact history travels with the token",
-            "No yield. No revenue share. No promises.",
-          ].map((t) => (
-            <span key={t} className="text-[13px] text-ink-2">
-              {t}
-            </span>
-          ))}
-        />
-      </div>
 
       {/* ── thesis ──────────────────────────────────────── */}
       <Section id="thesis" className="py-28 md:py-40">
@@ -192,10 +173,10 @@ export default function Home() {
 
       {/* ── principles ──────────────────────────────────── */}
       <Section className="pb-28 md:pb-40">
-        <div className="grid gap-px overflow-hidden rounded-[24px] border border-line bg-line md:grid-cols-2">
+        <div className="grid border-t border-line md:grid-cols-2">
           {PRINCIPLES.map((p, i) => (
             <Reveal key={p.n} delay={(i % 2) * 0.08}>
-              <div className="flex h-full flex-col bg-paper p-7 md:p-10">
+              <div className="flex h-full flex-col border-b border-line py-10 md:pr-12 md:[&:nth-child(odd)]:pr-16">
                 <span className="num text-[12px] text-ink-3">{p.n}</span>
                 <h3 className="display mt-6 max-w-[16ch] text-[clamp(1.4rem,2.6vw,2.1rem)]">
                   {p.title}
@@ -243,10 +224,10 @@ export default function Home() {
 
         <DrawLine className="mt-12" />
 
-        <div className="grid gap-px bg-line md:grid-cols-3">
+        <div className="grid md:grid-cols-3">
           {STEPS.map((s, i) => (
             <Reveal key={s.n} delay={i * 0.08}>
-              <div className="h-full bg-paper py-10 md:px-8 md:first:pl-0">
+              <div className="h-full py-10 md:pr-10">
                 <Eyebrow>{s.n}</Eyebrow>
                 <h3 className="display mt-5 text-[24px]">{s.title}</h3>
                 <p className="mt-3 max-w-[38ch] text-[14px] leading-relaxed text-ink-2">
@@ -273,9 +254,9 @@ export default function Home() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <div className="overflow-hidden rounded-[20px] border border-line bg-white">
+            <div className="border-t border-line">
               {MINT.split.map((s) => (
-                <div key={s.label} className="border-b border-line p-5 last:border-0">
+                <div key={s.label} className="border-b border-line py-5">
                   <div className="flex items-baseline justify-between gap-4">
                     <span className="text-[14.5px] font-medium text-ink">{s.label}</span>
                     <span className="num text-[15px] text-ink">{s.pct}%</span>
@@ -317,8 +298,8 @@ export default function Home() {
           <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {SPECIES.map((s, i) => (
               <Reveal key={s.id} delay={(i % 3) * 0.07}>
-                <article className="flex h-full flex-col overflow-hidden rounded-[20px] border border-line bg-paper">
-                  <div className="relative aspect-[4/3] bg-white">
+                <article className="flex h-full flex-col border-t border-line pt-4">
+                  <div className="relative aspect-[4/3]">
                     <Image
                       src={speciesImage(s.id)}
                       alt={s.name}
@@ -326,17 +307,17 @@ export default function Home() {
                       sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 380px"
                       className="object-contain p-6"
                     />
-                    <span className="num absolute right-4 top-4 text-[11px] text-ink-3">
+                    <span className="num absolute right-0 top-0 text-[11px] text-ink-3">
                       {s.supply.toLocaleString("en-US")}
                     </span>
                   </div>
-                  <div className="flex flex-1 flex-col border-t border-line p-5">
+                  <div className="flex flex-1 flex-col pt-4">
                     <div className="flex items-baseline gap-2">
                       <h3 className="display text-[21px]">{s.name}</h3>
                       <span className="text-[12px] italic text-ink-3">{s.latin}</span>
                     </div>
                     <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink-2">{s.note}</p>
-                    <p className="mt-4 border-t border-line pt-3 text-[11.5px] uppercase tracking-[0.08em] text-ink-3">
+                    <p className="mt-4 text-[11.5px] uppercase tracking-[0.08em] text-ink-3">
                       {s.region}
                     </p>
                   </div>
@@ -347,7 +328,7 @@ export default function Home() {
 
           {/* rarity bar */}
           <Reveal>
-            <div className="mt-14 rounded-[20px] border border-line bg-paper p-6 md:p-8">
+            <div className="mt-16 border-t border-line pt-8">
               <div className="flex flex-wrap items-baseline justify-between gap-3">
                 <Eyebrow>Rarity distribution — 10,000 Genesis tokens</Eyebrow>
                 <Provisional>Draft supply</Provisional>
@@ -438,11 +419,11 @@ export default function Home() {
           </div>
 
           <Reveal>
-            <div className="mt-14 overflow-hidden rounded-[20px] border border-paper/10">
+            <div className="mt-14 border-t border-paper/10">
               {DONATIONS.slice(0, 3).map((d) => (
                 <div
                   key={d.id}
-                  className="grid gap-3 border-b border-paper/10 p-5 last:border-0 md:grid-cols-[auto_1fr_auto_auto] md:items-center md:gap-6"
+                  className="grid gap-3 border-b border-paper/10 py-5 md:grid-cols-[auto_1fr_auto_auto] md:items-center md:gap-6"
                 >
                   <span className="num text-[12px] text-paper/40">{d.date}</span>
                   <span className="text-[14px] text-paper/85">{d.region}</span>
@@ -543,10 +524,10 @@ export default function Home() {
           <h2 className="display text-[clamp(1.8rem,4vw,3rem)]">From the journal.</h2>
           <span className="text-[13px] text-ink-3">Coming with launch</span>
         </div>
-        <div className="mt-10 grid gap-px bg-line md:grid-cols-3">
+        <div className="mt-10 grid border-t border-line md:grid-cols-3">
           {JOURNAL.map((j, i) => (
             <Reveal key={j.title} delay={i * 0.07}>
-              <article className="h-full bg-paper py-8 md:px-7 md:first:pl-0">
+              <article className="h-full py-8 md:pr-10">
                 <div className="flex items-center gap-3 text-[11.5px] text-ink-3">
                   <span className="rounded-full border border-line px-2 py-0.5">{j.tag}</span>
                   <span>{j.date}</span>
@@ -562,7 +543,7 @@ export default function Home() {
       {/* ── closing ─────────────────────────────────────── */}
       <Section className="pb-32">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[28px] border border-line bg-paper-2 px-6 py-20 text-center md:px-16 md:py-28">
+          <div className="relative overflow-hidden rounded-[28px] bg-paper-2 px-6 py-20 text-center md:px-16 md:py-28">
             <Image
               src="/tree/tree-sm.webp"
               alt=""
@@ -593,7 +574,9 @@ export default function Home() {
                 <span>·</span>
                 <span>{MINT.chain}</span>
                 <span>·</span>
-                <span>{MINT.priceEth} ETH</span>
+                <span>
+                  {MINT.priceEth} ETH ≈ ${MINT.priceUsdApprox}
+                </span>
                 <span>·</span>
                 <span>Max {MINT.perWallet} per wallet</span>
               </div>

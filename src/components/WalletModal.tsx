@@ -56,8 +56,11 @@ export default function WalletModal() {
                   disabled={connecting !== null}
                   className="group flex items-center gap-3 rounded-[16px] border border-line bg-white px-3.5 py-3 text-left transition-colors hover:border-line-2 disabled:opacity-50"
                 >
-                  <span className="grid size-9 place-items-center rounded-full bg-paper-2 text-[16px]" aria-hidden>
-                    {w.glyph}
+                  <span
+                    className="grid size-9 place-items-center rounded-full bg-paper-2 text-[13px] font-medium text-ink-2"
+                    aria-hidden
+                  >
+                    {w.name[0]}
                   </span>
                   <span className="flex-1">
                     <span className="block text-[14px] font-medium text-ink">{w.name}</span>
